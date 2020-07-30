@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 
 namespace EasyCraft.Core
@@ -38,13 +39,36 @@ namespace EasyCraft.Core
         {
             string[] dirs =
             {
-                "log/weberr"
+                "log/weberr",
+                "db",
+                "core",
+                "server"
             };
             foreach (string dir in dirs)
             {
                 Directory.CreateDirectory(dir);
             }
-            
+
         }
+
+        public static void CheckUpdate()
+        {
+            WebClient w = new WebClient();
+            string bak = w.DownloadString("https://www.easycraft.top/version.php");
+            VersionCallback b = System.Text.Json.JsonSerializer.Deserialize<VersionCallback>(bak);
+            if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
+            {
+                FastConsole.PrintWarning("The Newst Version Of EasyCraft is " + b.version);
+                FastConsole.PrintInfo("Update Log: " + b.log);
+                FastConsole.PrintInfo("You can go to xxxxxxxxxx to update");
+                FastConsole.PrintInfo("Press [Enter] to continue which is NOT RECOMMENDED");
+                Console.ReadKey();
+            }
+        }
+    }
+    public class VersionCallback
+    {
+        public string version { get; set; }
+        public string log { get; set; }
     }
 }

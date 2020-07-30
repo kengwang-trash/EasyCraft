@@ -19,7 +19,7 @@ namespace EasyCraft.Web
             {
                 cookiedic.Add(cookie.Name, cookie);
             }
-            throw new Exception("This is an error!");
+            
         }
     }
 }

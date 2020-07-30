@@ -20,11 +20,13 @@ namespace EasyCraft.Web
                 listener.Prefixes.Add("http://+:" + Settings.httpport.ToString() + "/");
                 listener.Start();
                 listener.BeginGetContext(RequestHandle, null);
-                Console.WriteLine("Started HTTP Listen");
+                FastConsole.PrintSuccess("Started HTTP Listen on "+ Settings.httpport.ToString());
             }
             catch (Exception e)
             {
-
+                FastConsole.PrintError("Cannot Start HTTP Listen on " + Settings.httpport.ToString() + ": " + e.Message);
+                FastConsole.PrintError("Press [Enter] to ignore this error which is NOT RECOMMENDED");
+                Console.ReadKey();
             }
 
         }
@@ -45,13 +47,20 @@ namespace EasyCraft.Web
             catch (Exception e)
             {
                 string logid = Functions.GetRandomString(15, true, true, true, false, "");
+                FastConsole.PrintWarning("Web 500: " + e.Message);
                 File.WriteAllText(string.Format("log/weberr/{0}.log", logid), "========= EasyCraft Error Log =========" + "\r\nError Message:" + e.Message + "\r\nTrance:" + e.StackTrace);
                 responseString = "<h1>500 Internal Server Error</h1><hr />Log ID: " + logid + "<br />Time:" + DateTime.Now.ToString() + "<br />Server: EasyCraft<br />";
                 response.StatusCode = 500;
                 byte[] buff = Encoding.UTF8.GetBytes(responseString);
                 response.OutputStream.Write(buff, 0, buff.Length);
                 // 必须关闭输出流
-                response.Close();
+                try
+                {
+                    response.Close();
+                }catch (Exception ex)
+                {
+                    //ignore
+                }
             }
         }
     }

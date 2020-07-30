@@ -9,11 +9,22 @@ namespace EasyCraft.Core
     {
         public static void PrintInfo(string message)
         {
+
             string print = "[INFO] " + message;
-            Console.WriteLine(print);
+            if (Settings.logLevel == LogLevel.noserver || Settings.logLevel == LogLevel.all)
+                Console.WriteLine(print);
             File.AppendAllTextAsync("log.log", "[ " + DateTime.Now.ToString() + " INFO] " + message);
         }
-        
+
+        public static void PrintTrash(string message)
+        {
+
+            string print = "[INFO] " + message;
+            if (Settings.logLevel >= LogLevel.notrash)
+                Console.WriteLine(print);
+            File.AppendAllTextAsync("log.log", "[ " + DateTime.Now.ToString() + " INFO] " + message);
+        }
+
         public static void PrintSuccess(string message)
         {
             ConsoleColor currentForeColor = Console.ForegroundColor;
