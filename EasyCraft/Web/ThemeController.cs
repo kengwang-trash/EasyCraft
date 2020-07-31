@@ -13,9 +13,7 @@ namespace EasyCraft.Web
         static Dictionary<string, string> themeConfig = new Dictionary<string, string>();
         static string themeName = "Default";
         HttpListenerRequest request;
-        Dictionary<string, string> cookies = new Dictionary<string, string>();
-        static Dictionary<string, Dictionary<string, string>> MultiSessions;
-        Dictionary<string, string> session = new Dictionary<string, string>();
+
 
         public static void LoadComponent()
         {
@@ -30,17 +28,7 @@ namespace EasyCraft.Web
         public ThemeController(HttpListenerRequest request)
         {
             this.request = request;
-            foreach (Cookie cookie in request.Cookies)
-            {
-                if (!cookie.Expired)
-                {
-                    cookies.Add(cookie.Name, cookie.Value);
-                }
-            }
-            if (cookies["SESSDATA"] == "")
-            {
-
-            }
+            
         }
 
         public static void LoadThemeConfig()

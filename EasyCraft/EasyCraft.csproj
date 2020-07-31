@@ -3,15 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Debug;Release;Personal Debug</Configurations>
+    <Configurations>Debug;Release</Configurations>
     <Authors>EasyCraft Panel Team</Authors>
     <Description>A Minecraft Server Panel</Description>
     <Copyright>Kengwang</Copyright>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Db\db.db" />
-  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Db\db.db" />
