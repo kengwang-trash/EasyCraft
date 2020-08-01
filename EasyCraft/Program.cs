@@ -47,16 +47,18 @@ namespace EasyCraft
                     }
                 }
             }
-            FastConsole.PrintInfo("Checking Update");
+            FastConsole.PrintInfo("Loading Language Pack");
+            Language.LoadLanguagePack();
+            FastConsole.PrintInfo(Language.t("Checking Update"));
             Functions.CheckUpdate();
-            FastConsole.PrintWarning("You are running the alpha version of EasyCraft, it's not stable");
-            FastConsole.PrintInfo("Initialize Directories");
+            FastConsole.PrintWarning(Language.t("You are running the alpha version of EasyCraft, it's not stable"));
+            FastConsole.PrintInfo(Language.t("Initialize Directories"));
             Functions.InitDirectory();
-            FastConsole.PrintInfo("Loading Database");
+            FastConsole.PrintInfo(Language.t("Loading Database"));
             Database.Connect();
-            FastConsole.PrintInfo("Loading Servers");
+            FastConsole.PrintInfo(Language.t("Loading Servers"));
             ServerManager.LoadServers();
-            FastConsole.PrintInfo("Starting HTTP Server");
+            FastConsole.PrintInfo(Language.t("Starting HTTP Server"));
             HTTPServer.StartListen();
             string c = "";
             while ((c = Console.ReadLine()) != "exit")

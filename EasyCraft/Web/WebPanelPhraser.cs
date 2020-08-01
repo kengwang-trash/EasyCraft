@@ -59,15 +59,16 @@ namespace EasyCraft.Web
                 response.AppendCookie(sesscookie);
                 session = new Dictionary<string, string>();
             }
-            if (request.HttpMethod=="POST" && request.ContentType == "application/x-www-form-urlencoded")
+            if (request.HttpMethod == "POST" && request.ContentType == "application/x-www-form-urlencoded")
             {
                 StreamReader sr = new StreamReader(request.InputStream);
-                string postraw=sr.ReadToEnd();
-                FastConsole.PrintTrash("[POSTDATA]" + postraw);
+                string postraw = sr.ReadToEnd();
+                //FastConsole.PrintTrash("[POSTDATA]" + postraw);
+                POST=PhrasePOST(postraw);
             }
 
             uri = request.Url;
-            FastConsole.PrintTrash("["+request.HttpMethod+"]:" + uri.AbsolutePath);
+            FastConsole.PrintTrash("[" + request.HttpMethod + "]:" + uri.AbsolutePath);
             if (session.ContainsKey("auth"))
             {
                 user = new User(session["auth"]);
@@ -77,10 +78,27 @@ namespace EasyCraft.Web
             {
                 if (req.QueryString["fun"] == "login")
                 {
-
+                    if (POST.ContainsKey("username") && POST.ContainsKey("password"))
+                    {
+                        user = new User(POST["username"], POST["password"]);
+                    }
                 }
             }
             response.Close();
+        }
+
+        private static Dictionary<string, string> PhrasePOST(string postraw)
+        {
+            Dictionary<string, string> ans = new Dictionary<string, string>();
+            if (postraw.Length == 0) return ans;
+            string[] ps = postraw.Split('&');
+            foreach (string pd in ps)
+            {
+                string key = Uri.UnescapeDataString(pd.Substring(0, pd.IndexOf("=")));
+                string value = Uri.UnescapeDataString(pd.Substring(pd.IndexOf("=") + 1));
+                ans.Add(key, value);
+            }
+            return ans;
         }
     }
 }

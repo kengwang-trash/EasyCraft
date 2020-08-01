@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace EasyCraft.Core
@@ -54,16 +55,34 @@ namespace EasyCraft.Core
         public static void CheckUpdate()
         {
             WebClient w = new WebClient();
-            string bak = w.DownloadString("https://www.easycraft.top/version.php");
+            string bak = w.DownloadString("https://api.easycraft.top/version.php");
             VersionCallback b = System.Text.Json.JsonSerializer.Deserialize<VersionCallback>(bak);
             if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
             {
-                FastConsole.PrintWarning("The Newst Version Of EasyCraft is " + b.version);
-                FastConsole.PrintInfo("Update Log: " + b.log);
-                FastConsole.PrintInfo("You can go to xxxxxxxxxx to update");
-                FastConsole.PrintInfo("Press [Enter] to continue which is NOT RECOMMENDED");
+                FastConsole.PrintWarning(string.Format(Language.t("The Newst Version Of EasyCraft is {0}"), b.version));
+                FastConsole.PrintInfo(string.Format(Language.t("Update Log: {0}"), b.log));
+                FastConsole.PrintInfo(string.Format(Language.t("You can go to https://www.easycraft.top to update")));
+                FastConsole.PrintWarning(string.Format(Language.t("Press [Enter] to continue which is NOT RECOMMENDED")));
                 Console.ReadKey();
             }
+        }
+
+        public static string MD5(string str)
+        {
+            string cl = str;
+            string pwd = "";
+            MD5 md5 = System.Security.Cryptography.MD5.Create();//实例化一个md5对像
+            // 加密后是一个字节类型的数组，这里要注意编码UTF8/Unicode等的选择　
+            byte[] s = md5.ComputeHash(Encoding.UTF8.GetBytes(cl));
+            // 通过使用循环，将字节类型的数组转换为字符串，此字符串是常规字符格式化所得
+            for (int i = 0; i < s.Length; i++)
+            {
+                // 将得到的字符串使用十六进制类型格式。格式后的字符是小写的字母，如果使用大写（X）则格式后的字符是大写字符
+
+                pwd = pwd + s[i].ToString("x");
+
+            }
+            return pwd;
         }
     }
     public class VersionCallback

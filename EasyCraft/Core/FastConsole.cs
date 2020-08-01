@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace EasyCraft.Core
 {
@@ -57,6 +59,8 @@ namespace EasyCraft.Core
             File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " ERROR] " + message + "\r\n");
         }
 
+
+
         public static void PrintFatal(string message)
         {
             ConsoleColor currentForeColor = Console.ForegroundColor;
@@ -65,6 +69,33 @@ namespace EasyCraft.Core
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
             File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " FATAL] " + message + "\r\n");
+        }
+    }
+
+
+    class Language
+    {
+        public static Dictionary<string, string> dic = new Dictionary<string, string>();
+
+        public static void LoadLanguagePack()
+        {
+            try
+            {
+                string fi = File.ReadAllText("lang.json");
+                dic = JsonSerializer.Deserialize<Dictionary<string, string>>(fi);
+            }
+            catch (Exception e)
+            {
+
+            }
+
+        }
+
+        public static string t(string input)
+        {
+            File.AppendAllTextAsync("dic.txt", input+"\r\n");
+            if (!dic.ContainsKey(input)) return input;
+            return dic[input];
         }
     }
 }

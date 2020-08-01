@@ -53,7 +53,7 @@ namespace EasyCraft.Core
             }
             else
             {
-                FastConsole.PrintWarning("Server " + id.ToString() + " Load Failed.");
+                FastConsole.PrintWarning(string.Format(Language.t("Server {0} Load Failed."), id));
             }
 
         }
@@ -81,7 +81,7 @@ namespace EasyCraft.Core
             }
             catch (Exception e)
             {
-                PrintError("Core " + core + " Load Failed: " + e.Message);
+                PrintError(string.Format(Language.t("Core {0} Load Failed: {1}"), core, e.Message));
                 return;
             }
 
@@ -111,7 +111,7 @@ namespace EasyCraft.Core
             }
             catch (Exception e)
             {
-                PrintError("Cannot Start Server: " + e.Message);
+                PrintError(string.Format(Language.t("Cannot Start Server: {0}"), e.Message));
             }
         }
 

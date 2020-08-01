@@ -20,12 +20,12 @@ namespace EasyCraft.Web
                 listener.Prefixes.Add("http://+:" + Settings.httpport.ToString() + "/");
                 listener.Start();
                 listener.BeginGetContext(RequestHandle, null);
-                FastConsole.PrintSuccess("Started HTTP Listen on "+ Settings.httpport.ToString());
+                FastConsole.PrintSuccess(string.Format(Language.t("Started HTTP Listen on {0}"), Settings.httpport.ToString()));
             }
             catch (Exception e)
             {
-                FastConsole.PrintError("Cannot Start HTTP Listen on " + Settings.httpport.ToString() + ": " + e.Message);
-                FastConsole.PrintError("Press [Enter] to ignore this error which is NOT RECOMMENDED");
+                FastConsole.PrintError(string.Format(Language.t("Cannot Start HTTP Listen on {0}:{1}"), Settings.httpport.ToString(), e.Message));
+                FastConsole.PrintError(Language.t("Press [Enter] to ignore this error which is NOT RECOMMENDED"));
                 Console.ReadKey();
             }
 
@@ -38,6 +38,7 @@ namespace EasyCraft.Web
             HttpListenerResponse response = context.Response;
             HttpListenerRequest request = context.Request;
             response.ContentEncoding = Encoding.UTF8;
+            response.Headers.Set("Server", "EasyCraft 1.0.0 over");
             string responseString = "";
             try
             {
@@ -57,7 +58,8 @@ namespace EasyCraft.Web
                 try
                 {
                     response.Close();
-                }catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     //ignore
                 }
