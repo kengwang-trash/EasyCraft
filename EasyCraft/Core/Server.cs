@@ -36,9 +36,10 @@ namespace EasyCraft.Core
         public void RefreshServerConfig()
         {
             SQLiteCommand c = Database.DB.CreateCommand();
-            c.CommandText = "SELECT * FROM server WHERE id = [id] ";
-            c.Parameters.AddWithValue("[id]", id);
+            c.CommandText = "SELECT * FROM server WHERE id = $id ";
+            c.Parameters.AddWithValue("$id", id);
             SQLiteDataReader render = c.ExecuteReader();
+            
             if (render.Read())
             {
                 name = render.GetString(1);
