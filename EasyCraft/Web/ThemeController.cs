@@ -66,7 +66,7 @@ namespace EasyCraft.Web
                         {
                             if (elseidx <= endifidx && elseidx != -1)
                             {//有else,输出else前的内容
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, pagetext.Length - 1 - elseidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, elseidx-iflidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
                             }
                             else
                             {//删掉逻辑判断标签
@@ -104,6 +104,22 @@ namespace EasyCraft.Web
                     int includelidx = pagetext.IndexOf("}", includeidx);
                     string comname = pagetext.Substring(includeidx + 9, pagetext.IndexOf(" ", includeidx) - 9 - includeidx);
                     pagetext = pagetext.Substring(0, includeidx) + PhraseComponent(comname, wp) + pagetext.Substring(includelidx + 1, pagetext.Length - 1 - includelidx);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            //变量替换
+            while (true)
+            {
+                int varidx = pagetext.IndexOf("{var.");
+                if (varidx != -1)
+                {
+                    int varlidx = pagetext.IndexOf("}", varidx) + 1;
+                    string varname = pagetext.Substring(varidx + 1, varlidx - varidx - 2);
+                    string varval = PhraseVarName.VarString(varname, wp);
+                    pagetext = pagetext.Substring(0, varidx) + varval + pagetext.Substring(varlidx,pagetext.Length - 1 - varlidx);
                 }
                 else
                 {
@@ -183,8 +199,8 @@ namespace EasyCraft.Web
                         break;
                     }
                 }
-                return pagetext;
 
+                return pagetext;
             }
             else
             {
@@ -211,17 +227,60 @@ namespace EasyCraft.Web
 
     class PhraseVarName
     {
-        public static bool isBool(string var, WebPanelPhraser wp)
+        public static bool isBool(string varname, WebPanelPhraser wp)
         {
-            switch (var)
+            bool result = false;
+            bool reverse = false;
+            if (varname.StartsWith('!'))
             {
-                case "user.login":
-                    return wp.user.islogin;
-                    break;
-                default:
-                    return false;
-                    break;
+                reverse = true;
+                varname = varname.TrimStart('!');
             }
+            try
+            {
+                switch (varname)
+                {
+                    case "var.user.login":
+                        result = wp.user.islogin;
+                        break;
+                    default:
+                        result = false;
+                        break;
+                }
+
+                return reverse ? !result : result;
+            }
+            catch (Exception e)
+            {
+                return reverse ? !result : result;
+            }
+        }
+
+        public static string VarString(string varname, WebPanelPhraser wp)
+        {
+            try
+            {
+                switch (varname)
+                {
+                    case "var.user.username":
+                        return wp.user.name;
+                        break;
+                    case "var.user.email":
+                        return wp.user.email;
+                        break;
+                    case "var.user.uid":
+                        return wp.user.uid.ToString();
+                        break;
+                    default:
+                        return "null";
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                return "null";
+            }
+
         }
     }
 }

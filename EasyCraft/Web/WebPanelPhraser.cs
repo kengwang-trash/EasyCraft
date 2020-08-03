@@ -20,7 +20,7 @@ namespace EasyCraft.Web
         public static Dictionary<string, Dictionary<string, string>> MultiSessions = new Dictionary<string, Dictionary<string, string>>();
         public Dictionary<string, string> session = new Dictionary<string, string>();
         public Uri uri = null;
-        public User user;
+        public User user = new User("thisisadefaultuser");
         public Dictionary<string, string> GET = new Dictionary<string, string>();
         public Dictionary<string, string> POST = new Dictionary<string, string>();
 
@@ -69,6 +69,7 @@ namespace EasyCraft.Web
 
             uri = request.Url;
             FastConsole.PrintTrash("[" + request.HttpMethod + "]:" + uri.AbsolutePath);
+
             if (session.ContainsKey("auth"))
             {
                 user = new User(session["auth"]);
@@ -95,6 +96,7 @@ namespace EasyCraft.Web
                     {
                         UserLogin callback = new UserLogin();
                         callback.code = -1;
+                        PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
                     }
 
                 }
