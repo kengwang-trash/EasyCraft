@@ -93,7 +93,6 @@ namespace EasyCraft.Core
 
         public static string t(string input)
         {
-            File.AppendAllTextAsync("dic.txt", input+"\r\n");
             if (!dic.ContainsKey(input)) return input;
             return dic[input];
         }

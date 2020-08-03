@@ -49,6 +49,7 @@ namespace EasyCraft.Web.Classes
             if (!r.HasRows)
             {
                 islogin = false;
+                FastConsole.PrintWarning(string.Format(Language.t("User {0} try to login but faild."), username));
                 return;
             }
             else
@@ -65,6 +66,8 @@ namespace EasyCraft.Web.Classes
                 co.Parameters.AddWithValue("$auth", auth);
                 co.Parameters.AddWithValue("$uid", uid);
                 co.ExecuteNonQuery();
+                FastConsole.PrintSuccess(string.Format(Language.t("User {0} Login Successful."), username));
+
             }
         }
     }

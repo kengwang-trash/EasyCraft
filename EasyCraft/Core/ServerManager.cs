@@ -9,17 +9,17 @@ namespace EasyCraft.Core
 {
     class ServerManager
     {
-        public static List<Server> servers = new List<Server>();
+        public static Dictionary<int, Server> servers = new Dictionary<int, Server>();
 
         public static void LoadServers()
         {
             SQLiteCommand c = Database.DB.CreateCommand();
             c.CommandText = "SELECT id FROM server";
-            SQLiteDataReader render = c.ExecuteReader();            
+            SQLiteDataReader render = c.ExecuteReader();
             while (render.Read())
             {
                 Server s = new Server(render.GetInt32(0));
-                servers.Add(s);
+                servers.Add(render.GetInt32(0), s);
             }
         }
     }

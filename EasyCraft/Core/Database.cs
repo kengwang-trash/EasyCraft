@@ -15,6 +15,8 @@ namespace EasyCraft
         {
             try
             {
+                if (!File.Exists(Environment.CurrentDirectory + "/db/db.db"))
+                    throw new Exception("Database File Not Found");
                 var connectionString = new SQLiteConnectionStringBuilder()
                 {
                     DataSource = Environment.CurrentDirectory + "/db/db.db",
@@ -22,6 +24,7 @@ namespace EasyCraft
                 }.ToString();
                 DB = new SQLiteConnection(connectionString);
                 DB.Open();
+                Check();
             }
             catch (Exception e)
             {
@@ -43,7 +46,7 @@ namespace EasyCraft
             if (sr.HasRows)
             {
                 sr.Read();
-                if (sr.GetInt32(1) != 1)
+                if (sr.GetInt32(0) != 1)
                 {
                     FastConsole.PrintError(Language.t("Database Not Complecatible. Press [Enter] to overwrite database (dangerous) OR Exit EasyCraft to check & backup your database"));
                     Console.ReadKey();
@@ -65,8 +68,11 @@ namespace EasyCraft
         {
             try
             {
-                System.IO.File.Create(Environment.CurrentDirectory + "/db/db.db");
-                File.WriteAllText(Environment.CurrentDirectory + "/db/db.db", Resource1.db.ToString());
+                if (!File.Exists(Environment.CurrentDirectory + "/db/db.db"))
+                    System.IO.File.Create(Environment.CurrentDirectory + "/db/db.db");
+                if (DB != null)
+                    DB.Close();
+                File.WriteAllBytes(Environment.CurrentDirectory + "/db/db.db", Resource1.db);
                 var connectionString = new SQLiteConnectionStringBuilder()
                 {
                     DataSource = Environment.CurrentDirectory + "/db/db.db"
@@ -76,7 +82,7 @@ namespace EasyCraft
             }
             catch (Exception e)
             {
-                FastConsole.PrintFatal(string.Format(Language.t("Database Create Error: {0}"),e.Message));
+                FastConsole.PrintFatal(string.Format(Language.t("Database Create Error: {0}"), e.Message));
                 FastConsole.PrintFatal(Language.t("EasyCraft Cannot Run anymore, Press [Enter] to exit"));
                 Console.ReadKey();
                 Environment.Exit(-5);
