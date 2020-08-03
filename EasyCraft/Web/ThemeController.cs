@@ -66,7 +66,7 @@ namespace EasyCraft.Web
                         {
                             if (elseidx <= endifidx && elseidx != -1)
                             {//有else,输出else前的内容
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, elseidx-iflidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, elseidx - iflidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
                             }
                             else
                             {//删掉逻辑判断标签
@@ -102,8 +102,29 @@ namespace EasyCraft.Web
                 if (includeidx != -1)
                 {
                     int includelidx = pagetext.IndexOf("}", includeidx);
-                    string comname = pagetext.Substring(includeidx + 9, pagetext.IndexOf(" ", includeidx) - 9 - includeidx);
-                    pagetext = pagetext.Substring(0, includeidx) + PhraseComponent(comname, wp) + pagetext.Substring(includelidx + 1, pagetext.Length - 1 - includelidx);
+                    int spacestart = pagetext.IndexOf(" ", includeidx);
+                    int kstart = pagetext.IndexOf("}", includeidx);
+                    int stringend = Math.Min(spacestart, kstart);
+                    string comname = pagetext.Substring(includeidx + 9, stringend - 9 - includeidx);
+                    Dictionary<string, string> vars = new Dictionary<string, string>();
+                    if (spacestart <= kstart)
+                    {//有空格 有参数
+                        string varsstring = pagetext.Substring(spacestart, kstart - spacestart).Trim();
+                        string[] varitems = varsstring.Split(',');
+                        foreach (string varitem in varitems)
+                        {
+                            string[] kv = varitem.Split('=');
+                            if (kv[1].StartsWith("\""))
+                            {//直接哦~
+                                vars.Add(kv[0], kv[1].Trim('\"'));
+                            }
+                            else
+                            {
+                                vars.Add(kv[0], PhraseVarName.VarString(kv[1], wp));
+                            }
+                        }
+                    }
+                    pagetext = pagetext.Substring(0, includeidx) + PhraseComponent(comname, vars, wp) + pagetext.Substring(includelidx + 1, pagetext.Length - 1 - includelidx);
                 }
                 else
                 {
@@ -119,7 +140,7 @@ namespace EasyCraft.Web
                     int varlidx = pagetext.IndexOf("}", varidx) + 1;
                     string varname = pagetext.Substring(varidx + 1, varlidx - varidx - 2);
                     string varval = PhraseVarName.VarString(varname, wp);
-                    pagetext = pagetext.Substring(0, varidx) + varval + pagetext.Substring(varlidx,pagetext.Length - 1 - varlidx);
+                    pagetext = pagetext.Substring(0, varidx) + varval + pagetext.Substring(varlidx, pagetext.Length - 1 - varlidx);
                 }
                 else
                 {
@@ -129,7 +150,7 @@ namespace EasyCraft.Web
             return pagetext;
         }
 
-        public static string PhraseComponent(string component,/*Dictionary<string,string> vars,*/ WebPanelPhraser wp)
+        public static string PhraseComponent(string component, Dictionary<string, string> postvars, WebPanelPhraser wp)
         {
             if (CheckComponentPath(component))
             {
@@ -184,22 +205,57 @@ namespace EasyCraft.Web
                 }
 
 
-                //Include 判断
                 while (true)
                 {
                     int includeidx = pagetext.IndexOf("{include:");
                     if (includeidx != -1)
                     {
                         int includelidx = pagetext.IndexOf("}", includeidx);
-                        string comname = pagetext.Substring(includeidx + 9, pagetext.IndexOf(" ", includeidx) - 9 - includeidx);
-                        pagetext = pagetext.Substring(0, includeidx) + PhraseComponent(comname, wp) + pagetext.Substring(includelidx + 1, pagetext.Length - 1 - includelidx);
+                        int spacestart = pagetext.IndexOf(" ", includeidx);
+                        int kstart = pagetext.IndexOf("}", includeidx);
+                        int stringend = Math.Min(spacestart, kstart);
+                        string comname = pagetext.Substring(includeidx + 9, stringend - 9 - includeidx);
+                        Dictionary<string, string> vars = new Dictionary<string, string>();
+                        if (spacestart <= kstart)
+                        {//有空格 有参数
+                            string varsstring = pagetext.Substring(spacestart, kstart - spacestart).Trim();
+                            string[] varitems = varsstring.Split(',');
+                            foreach (string varitem in varitems)
+                            {
+                                string[] kv = varitem.Split('=');
+                                if (kv[1].StartsWith("\""))
+                                {//直接哦~
+                                    vars.Add(kv[0], kv[1].Trim('\"'));
+                                }
+                                else
+                                {
+                                    vars.Add(kv[0], PhraseVarName.VarString(kv[1], wp));
+                                }
+                            }
+                        }
+                        pagetext = pagetext.Substring(0, includeidx) + PhraseComponent(comname, vars, wp) + pagetext.Substring(includelidx + 1, pagetext.Length - 1 - includelidx);
                     }
                     else
                     {
                         break;
                     }
                 }
-
+                //变量
+                while (true)
+                {
+                    int varidx = pagetext.IndexOf("{var.");
+                    if (varidx != -1)
+                    {
+                        int varlidx = pagetext.IndexOf("}", varidx) + 1;
+                        string varname = pagetext.Substring(varidx + 1, varlidx - varidx - 2);
+                        string varval = PhraseVarName.VarString(varname, wp, postvars);
+                        pagetext = pagetext.Substring(0, varidx) + varval + pagetext.Substring(varlidx, pagetext.Length - 1 - varlidx);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
                 return pagetext;
             }
             else
@@ -241,7 +297,7 @@ namespace EasyCraft.Web
                 switch (varname)
                 {
                     case "var.user.login":
-                        result = wp.user.islogin;
+                        result = VarString("var.user.login", wp) == "true";
                         break;
                     default:
                         result = false;
@@ -256,12 +312,15 @@ namespace EasyCraft.Web
             }
         }
 
-        public static string VarString(string varname, WebPanelPhraser wp)
+        public static string VarString(string varname, WebPanelPhraser wp, Dictionary<string, string> postvar = null)
         {
             try
             {
                 switch (varname)
                 {
+                    case "var.user.login":
+                        return wp.user.islogin ? "true" : "false";
+                        break;
                     case "var.user.username":
                         return wp.user.name;
                         break;
@@ -272,7 +331,15 @@ namespace EasyCraft.Web
                         return wp.user.uid.ToString();
                         break;
                     default:
-                        return "null";
+                        if (postvar == null || !postvar.ContainsKey(varname))
+                        {
+                            return "null";
+                        }
+                        else
+                        {
+                            return postvar[varname];
+                        }
+                        
                         break;
                 }
             }
