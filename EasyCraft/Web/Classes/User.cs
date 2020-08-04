@@ -17,6 +17,7 @@ namespace EasyCraft.Web.Classes
         public readonly int type;
         public User(string auth)
         {
+            if (auth == "rawobj") return;
             SQLiteCommand c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM user WHERE auth = $auth";
             c.Parameters.AddWithValue("$auth", auth);

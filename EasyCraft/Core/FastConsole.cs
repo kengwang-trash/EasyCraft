@@ -84,7 +84,7 @@ namespace EasyCraft.Core
                 string fi = File.ReadAllText("lang.json");
                 dic = JsonSerializer.Deserialize<Dictionary<string, string>>(fi);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

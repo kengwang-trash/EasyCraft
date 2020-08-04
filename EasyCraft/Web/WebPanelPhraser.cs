@@ -19,8 +19,8 @@ namespace EasyCraft.Web
         public Dictionary<string, string> cookies = new Dictionary<string, string>();
         public static Dictionary<string, Dictionary<string, string>> MultiSessions = new Dictionary<string, Dictionary<string, string>>();
         public Dictionary<string, string> session = new Dictionary<string, string>();
+        public HTTPVars vars = new HTTPVars();
         public Uri uri = null;
-        public User user = new User("thisisadefaultuser");
         public Dictionary<string, string> GET = new Dictionary<string, string>();
         public Dictionary<string, string> POST = new Dictionary<string, string>();
 
@@ -72,40 +72,20 @@ namespace EasyCraft.Web
 
             if (session.ContainsKey("auth"))
             {
-                user = new User(session["auth"]);
+                vars.user = new User(session["auth"]);
             }
 
-            if (uri.AbsolutePath == "/api/login")
+            if (uri.AbsolutePath.StartsWith("/api/"))
             {
-                if (POST.ContainsKey("username") && POST.ContainsKey("password"))
-                {
-                    user = new User(POST["username"], POST["password"]);
-                    if (user.islogin)
-                    {
-                        session["auth"] = user.auth;
-                        UserLogin callback = new UserLogin();
-                        callback.code = 0;
-                        callback.message = "成功登陆";
-                        callback.data = new LoginUserInfo();
-                        callback.data.username = user.name;
-                        callback.data.uid = user.uid;
-                        callback.data.email = user.email;
-                        PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
-                    }
-                    else
-                    {
-                        UserLogin callback = new UserLogin();
-                        callback.code = -1;
-                        PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
-                    }
+                string absolutepage = uri.AbsolutePath.Substring(5);
+                Api.PhraseAPI(absolutepage, this);
 
-                }
             }
             else if (uri.AbsolutePath.StartsWith("/page/"))
             {
                 string absolutepage = uri.AbsolutePath.Substring(6);
                 if (CheckPagePath(absolutepage))
-                {                    
+                {
                     PrintWeb(ThemeController.LoadPage(absolutepage, this));
                 }
                 else
@@ -113,10 +93,8 @@ namespace EasyCraft.Web
                     Print404();
                 }
             }
-            if (!MultiSessions.ContainsKey(cookies["SESSDATA"]))
-                MultiSessions.Add(cookies["SESSDATA"], session);
-            else
-                MultiSessions[cookies["SESSDATA"]] = session;
+
+            MultiSessions[cookies["SESSDATA"]] = session;
             response.Close();
         }
 
@@ -142,7 +120,7 @@ namespace EasyCraft.Web
             PrintWeb("<h1>404 Not Found</h1><hr />Path: " + uri.AbsoluteUri + "<br />Time:" + DateTime.Now.ToString() + "<br />Server: EasyCraft<br />");
         }
 
-        private void PrintWeb(string echo)
+        public void PrintWeb(string echo)
         {
             byte[] buff = Encoding.UTF8.GetBytes(echo);
             response.OutputStream.Write(buff, 0, buff.Length);

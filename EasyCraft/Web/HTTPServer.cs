@@ -59,7 +59,7 @@ namespace EasyCraft.Web
                 {
                     response.Close();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //ignore
                 }

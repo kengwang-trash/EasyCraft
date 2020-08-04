@@ -306,7 +306,7 @@ namespace EasyCraft.Web
 
                 return reverse ? !result : result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return reverse ? !result : result;
             }
@@ -319,17 +319,13 @@ namespace EasyCraft.Web
                 switch (varname)
                 {
                     case "var.user.login":
-                        return wp.user.islogin ? "true" : "false";
-                        break;
+                        return wp.vars.user.islogin ? "true" : "false";
                     case "var.user.username":
-                        return wp.user.name;
-                        break;
+                        return wp.vars.user.name;
                     case "var.user.email":
-                        return wp.user.email;
-                        break;
+                        return wp.vars.user.email;
                     case "var.user.uid":
-                        return wp.user.uid.ToString();
-                        break;
+                        return wp.vars.user.uid.ToString();
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {
@@ -339,11 +335,9 @@ namespace EasyCraft.Web
                         {
                             return postvar[varname];
                         }
-                        
-                        break;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "null";
             }
