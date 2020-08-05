@@ -93,6 +93,19 @@ namespace EasyCraft.Web
                     Print404();
                 }
             }
+            else if (uri.AbsolutePath.StartsWith("/assets/"))
+            {
+                string absolutepage = uri.AbsolutePath.Substring(8);
+                if (CheckAssetsPath(absolutepage))
+                {
+                    response.Headers.Add("Cache-Control:max-age=259200");//设置为三天的缓存
+                    PrintWeb(File.ReadAllText("theme/" + ThemeController.themeName + "/assets/" + absolutepage));
+                }
+                else
+                {
+                    Print404();
+                }
+            }
 
             MultiSessions[cookies["SESSDATA"]] = session;
             response.Close();
@@ -105,6 +118,22 @@ namespace EasyCraft.Web
                 return false;
             }
             if (File.Exists("theme/" + ThemeController.themeName + "/page/" + page + ".html"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool CheckAssetsPath(string page)
+        {
+            if (page.Contains("..") || page.Contains('~') || page.Contains('\'') || page.Contains('\"') || page.Contains('\"'))
+            {
+                return false;
+            }
+            if (File.Exists("theme/" + ThemeController.themeName + "/assets/" + page))
             {
                 return true;
             }

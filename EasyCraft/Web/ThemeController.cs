@@ -66,11 +66,11 @@ namespace EasyCraft.Web
                         {
                             if (elseidx <= endifidx && elseidx != -1)
                             {//有else,输出else前的内容
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, elseidx - iflidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, elseidx - iflidx) + pagetext.Substring(endifidx + 7);
                             }
                             else
                             {//删掉逻辑判断标签
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, endifidx - iflidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx + 1, endifidx - iflidx - 1) + pagetext.Substring(endifidx + 7);
                             }
                             continue;
                         }
@@ -78,11 +78,11 @@ namespace EasyCraft.Web
                         {
                             if (elseidx <= endifidx && elseidx != -1)
                             {//有else,输出else的内容
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(elseidx + 6, endifidx - elseidx - 6) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(elseidx + 6, endifidx - elseidx - 6) + pagetext.Substring(endifidx + 7);
                             }
                             else
                             {//删掉逻辑判断标签
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(endifidx + 7);
                             }
                             continue;
                         }
@@ -168,7 +168,7 @@ namespace EasyCraft.Web
                         string varname = pagetext.Substring(ifidx + 4, pagetext.IndexOf("}", ifidx) - 4 - ifidx);
                         if (pagetext.IndexOf("{if:", iflidx) != -1 && endifidx > pagetext.IndexOf("{if:", iflidx))
                         {//是否为嵌套IF md还要写
-                            return "<h1>The combined IF statement is not supported temporarily, please re-write. Thanks!<h1>";
+                            return "<h1>The combined IF statement is not supported temporarily, please re-write. Thanks!<h1> Error throw in component: " + component;
                         }
                         else
                         {//不嵌套,万岁~
@@ -176,11 +176,11 @@ namespace EasyCraft.Web
                             {
                                 if (elseidx <= endifidx && elseidx != -1)
                                 {//有else,输出else前的内容
-                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, pagetext.Length - 1 - elseidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, elseidx - iflidx) + pagetext.Substring(endifidx + 7);
                                 }
                                 else
                                 {//删掉逻辑判断标签
-                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, endifidx - iflidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx + 1, endifidx - iflidx - 1) + pagetext.Substring(endifidx + 7);
                                 }
                                 continue;
                             }
@@ -188,11 +188,11 @@ namespace EasyCraft.Web
                             {
                                 if (elseidx <= endifidx && elseidx != -1)
                                 {//有else,输出else的内容
-                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(elseidx + 6, endifidx - elseidx - 6) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(elseidx + 6, endifidx - elseidx - 6) + pagetext.Substring(endifidx + 7);
                                 }
                                 else
                                 {//删掉逻辑判断标签
-                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(endifidx + 7, pagetext.Length - 1 - endifidx - 7);
+                                    pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(endifidx + 7);
                                 }
                                 continue;
                             }

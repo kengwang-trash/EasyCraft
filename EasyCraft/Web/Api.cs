@@ -64,6 +64,19 @@ namespace EasyCraft.Web
                         wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
                     }
                     break;
+                case "register":
+                    if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password"))
+                    {
+
+                    }
+                    else
+                    {
+                        Register callback = new Register();
+                        callback.code = -3;
+                        callback.message = "注册失败,参数不全";
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                    }
+                    break;
             }
         }
     }
