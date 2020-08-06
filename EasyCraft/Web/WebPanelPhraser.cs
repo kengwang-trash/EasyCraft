@@ -99,7 +99,7 @@ namespace EasyCraft.Web
                 if (CheckAssetsPath(absolutepage))
                 {
                     response.Headers.Add("Cache-Control:max-age=259200");//设置为三天的缓存
-                    PrintWeb(File.ReadAllText("theme/" + ThemeController.themeName + "/assets/" + absolutepage));
+                    PrintWeb(File.ReadAllBytes("theme/" + ThemeController.themeName + "/assets/" + absolutepage));
                 }
                 else
                 {
@@ -153,6 +153,11 @@ namespace EasyCraft.Web
         {
             byte[] buff = Encoding.UTF8.GetBytes(echo);
             response.OutputStream.Write(buff, 0, buff.Length);
+        }
+
+        public void PrintWeb(byte[] echo)
+        {
+            response.OutputStream.Write(echo, 0, echo.Length);
         }
 
         private static Dictionary<string, string> PhrasePOST(string postraw)

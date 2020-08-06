@@ -71,5 +71,32 @@ namespace EasyCraft.Web.Classes
 
             }
         }
+
+        public static User Register(string username, string password, string email)
+        {
+            SQLiteCommand c = Database.DB.CreateCommand();
+            c.CommandText = "INSERT INTO `user` (username, password, email, `type`) VALUES ( $username , $password , $email , 1)";
+            c.Parameters.AddWithValue("$username", username);
+            string pwmd5 = Functions.MD5(password);
+            c.Parameters.AddWithValue("$password", pwmd5);
+            c.Parameters.AddWithValue("$email", email);
+            if (c.ExecuteNonQuery() != 0)
+            {
+                return new User(username, password);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static bool Exist(string username)
+        {
+            SQLiteCommand c = Database.DB.CreateCommand();
+            c.CommandText = "SELECT * FROM user WHERE username = $username ";
+            c.Parameters.AddWithValue("$username", username);
+            SQLiteDataReader r = c.ExecuteReader();
+            return r.HasRows;
+        }
     }
 }

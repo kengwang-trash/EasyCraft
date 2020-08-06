@@ -104,10 +104,14 @@ namespace EasyCraft.Web
                     int includelidx = pagetext.IndexOf("}", includeidx);
                     int spacestart = pagetext.IndexOf(" ", includeidx);
                     int kstart = pagetext.IndexOf("}", includeidx);
+                    if (spacestart == -1)
+                    {
+                        spacestart = kstart;
+                    }
                     int stringend = Math.Min(spacestart, kstart);
                     string comname = pagetext.Substring(includeidx + 9, stringend - 9 - includeidx);
                     Dictionary<string, string> vars = new Dictionary<string, string>();
-                    if (spacestart <= kstart)
+                    if (spacestart < kstart)
                     {//有空格 有参数
                         string varsstring = pagetext.Substring(spacestart, kstart - spacestart).Trim();
                         string[] varitems = varsstring.Split(',');
@@ -155,7 +159,7 @@ namespace EasyCraft.Web
             if (CheckComponentPath(component))
             {
                 string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/component/" + component + ".html");
-
+                
                 //if 判断
                 while (true)
                 {
@@ -208,16 +212,20 @@ namespace EasyCraft.Web
                 while (true)
                 {
                     int includeidx = pagetext.IndexOf("{include:");
-                    if (includeidx != -1)
+                if (includeidx != -1)
+                {
+                    int includelidx = pagetext.IndexOf("}", includeidx);
+                    int spacestart = pagetext.IndexOf(" ", includeidx);
+                    int kstart = pagetext.IndexOf("}", includeidx);
+                    if (spacestart == -1)
                     {
-                        int includelidx = pagetext.IndexOf("}", includeidx);
-                        int spacestart = pagetext.IndexOf(" ", includeidx);
-                        int kstart = pagetext.IndexOf("}", includeidx);
-                        int stringend = Math.Min(spacestart, kstart);
-                        string comname = pagetext.Substring(includeidx + 9, stringend - 9 - includeidx);
-                        Dictionary<string, string> vars = new Dictionary<string, string>();
-                        if (spacestart <= kstart)
-                        {//有空格 有参数
+                        spacestart = kstart;
+                    }
+                    int stringend = Math.Min(spacestart, kstart);
+                    string comname = pagetext.Substring(includeidx + 9, stringend - 9 - includeidx);
+                    Dictionary<string, string> vars = new Dictionary<string, string>();
+                    if (spacestart < kstart)
+                    {//有空格 有参数
                             string varsstring = pagetext.Substring(spacestart, kstart - spacestart).Trim();
                             string[] varitems = varsstring.Split(',');
                             foreach (string varitem in varitems)

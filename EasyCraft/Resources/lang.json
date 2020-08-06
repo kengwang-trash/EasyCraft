@@ -21,5 +21,12 @@
     "Cannot Start HTTP Listen on {0}:{1}":"无法在 {0} 端口上监听服务器: {1}",
     "Press [Enter] to ignore this error which is NOT RECOMMENDED":"按下 [Enter] 来忽略 (不推荐)",
     "User {0} try to login but faild.":"用户 {0} 登录失败",
-    "User {0} Login Successful.":"用户 {0} 成功登录"
+    "User {0} Login Successful.":"用户 {0} 成功登录",
+    "Login failed, too many attempts!":"登录失败,尝试次数过多",
+    "Login Successful":"成功登录",
+    "Login failed, account or password is wrong":"登录失败,账号或密码错误!",
+    "Login failed, parameters are incomplete":"登录失败,参数不完整",
+    "Registration failed with incomplete parameters":"注册失败,参数不全",
+    "Registration failed, username already exists":"注册失败,用户名已存在",
+	"Registration failed":"注册失败"
 }
