@@ -202,6 +202,13 @@ namespace EasyCraft.Web
                             goto linephrase;
                         }
                         //////////////////////  SET 定义变量结束   /////////////////////////
+
+                        if (true)
+                        {//啥都不是
+                            rettext += "{";
+                            lastphraseidx = phraseidx + 1;
+                            goto linephrase;
+                        }
                     }
                 }
                 catch (Exception e)
@@ -269,6 +276,8 @@ namespace EasyCraft.Web
                         return wp.vars.user.email;
                     case "var.user.uid":
                         return wp.vars.user.uid.ToString();
+                    case "var.user.qq":
+                        return wp.vars.user.qq;
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {

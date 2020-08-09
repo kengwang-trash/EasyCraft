@@ -46,7 +46,7 @@ namespace EasyCraft
             if (sr.HasRows)
             {
                 sr.Read();
-                if (sr.GetInt32(0) != 1)
+                if (sr.GetInt32(0) != 2)
                 {
                     FastConsole.PrintError(Language.t("Database Not Complecatible. Press [Enter] to overwrite database (dangerous) OR Exit EasyCraft to check & backup your database"));
                     Console.ReadKey();

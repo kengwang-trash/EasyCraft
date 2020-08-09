@@ -83,15 +83,28 @@ namespace EasyCraft.Web
             }
             else if (uri.AbsolutePath.StartsWith("/page/"))
             {
-                string absolutepage = uri.AbsolutePath.Substring(6);
-                if (CheckPagePath(absolutepage))
+                if (vars.user.islogin || uri.AbsolutePath == "/page/login")
                 {
-                    PrintWeb(ThemeController.LoadPage(absolutepage, this));
+                    string absolutepage = uri.AbsolutePath.Substring(6);
+                    if (CheckPagePath(absolutepage))
+                    {
+                        PrintWeb(ThemeController.LoadPage(absolutepage, this));
+                    }
+                    else
+                    {
+                        Print404();
+                    }
                 }
                 else
                 {
-                    Print404();
+                    response.StatusCode = 302;
+                    response.Headers.Add("Location: /page/login");
                 }
+
+            }else if (uri.AbsolutePath == "/")
+            {
+                response.StatusCode = 302;
+                response.Headers.Add("Location: /page/index");
             }
             else if (uri.AbsolutePath.StartsWith("/assets/"))
             {

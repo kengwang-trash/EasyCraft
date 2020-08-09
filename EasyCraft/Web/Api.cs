@@ -77,7 +77,7 @@ namespace EasyCraft.Web
                         }
                         else
                         {
-                            User user = User.Register(wp.POST["username"], wp.POST["password"], wp.POST["email"]);
+                            User user = User.Register(wp.POST["username"], wp.POST["password"], wp.POST["email"], wp.POST["qq"]);
                             if (user == null)
                             {
                                 Register callback = new Register();

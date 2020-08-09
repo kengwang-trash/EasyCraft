@@ -15,6 +15,7 @@ namespace EasyCraft.Web.Classes
         public readonly string auth;
         public readonly string email;
         public readonly int type;
+        public readonly string qq;
         public User(string auth)
         {
             if (auth == "rawobj") return;
@@ -36,6 +37,7 @@ namespace EasyCraft.Web.Classes
                 email = r.GetString(3);
                 this.auth = r.GetString(4);
                 type = r.GetInt32(5);
+                qq = r.GetString(6);
             }
         }
 
@@ -62,6 +64,7 @@ namespace EasyCraft.Web.Classes
                 email = r.GetString(3);
                 auth = Functions.MD5(Functions.GetRandomString(15) + pwmd5);
                 type = r.GetInt32(5);
+                qq = r.GetString(6);
                 SQLiteCommand co = Database.DB.CreateCommand();
                 co.CommandText = "UPDATE user SET auth = $auth WHERE uid = $uid ";
                 co.Parameters.AddWithValue("$auth", auth);
@@ -72,14 +75,15 @@ namespace EasyCraft.Web.Classes
             }
         }
 
-        public static User Register(string username, string password, string email)
+        public static User Register(string username, string password, string email,string qq)
         {
             SQLiteCommand c = Database.DB.CreateCommand();
-            c.CommandText = "INSERT INTO `user` (username, password, email, `type`) VALUES ( $username , $password , $email , 1)";
+            c.CommandText = "INSERT INTO `user` (username, password, email, `type` , `qq` ) VALUES ( $username , $password , $email , 1 , $qq)";
             c.Parameters.AddWithValue("$username", username);
             string pwmd5 = Functions.MD5(password);
             c.Parameters.AddWithValue("$password", pwmd5);
             c.Parameters.AddWithValue("$email", email);
+            c.Parameters.AddWithValue("$qq", qq);
             if (c.ExecuteNonQuery() != 0)
             {
                 return new User(username, password);
