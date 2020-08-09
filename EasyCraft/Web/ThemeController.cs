@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Reflection.Emit;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -22,7 +23,7 @@ namespace EasyCraft.Web
             string[] files = Directory.GetFiles("panel/themes/" + themeName + "/components/", "*.html");
             foreach (string file in files)
             {
-                component.Add(Path.GetFileNameWithoutExtension(file), File.ReadAllText(file));
+                component[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
             }
         }
 
@@ -45,7 +46,7 @@ namespace EasyCraft.Web
         public static string LoadPage(string name, WebPanelPhraser wp)
         {
             string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/page/" + name + ".html");
-            return PhraseStatment(pagetext, new Dictionary<string, string>(), wp);
+            return PhraseStatment(pagetext, new Dictionary<string, string>(), wp, "page." + name);
         }
 
         public static string PhraseComponent(string component, Dictionary<string, string> postvars, WebPanelPhraser wp)
@@ -53,7 +54,7 @@ namespace EasyCraft.Web
             if (CheckComponentPath(component))
             {
                 string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/component/" + component + ".html");
-                return PhraseStatment(pagetext, postvars, wp);
+                return PhraseStatment(pagetext, postvars, wp, "comp." + component);
 
             }
             else
@@ -62,20 +63,167 @@ namespace EasyCraft.Web
             }
         }
 
-        private static string PhraseStatment(string pagetext, Dictionary<string, string> postvars, WebPanelPhraser wp)
+        private static string PhraseStatment(string text, Dictionary<string, string> postvars, WebPanelPhraser wp, string pageidf = "unknown")
         {
+            string rettext = "";
+            string[] lines = text.Split("\r\n");
+            bool canprint = true;
+            bool inifcond = false;
+            for (int lid = 0; lid < lines.Length; lid++)
+            {
+                rettext += "\r\n";
+                string line = lines[lid];
+                int phraseidx = 0;
+                int lastphraseidx = 0;
+                goto linephrase;
+            linephrase:
+                try
+                {
+                    phraseidx = line.IndexOf("{", lastphraseidx);
+                    if (phraseidx == -1)
+                    {//这行不需要编译
+                        if (inifcond && !canprint) continue; //在if中不允许输出
+                        rettext += line.Substring(lastphraseidx);
+                    }
+                    else
+                    {
+                        string phrasecod = line.Substring(phraseidx, 4);
+                        if ((inifcond && !canprint) && (phrasecod != "{end" && phrasecod != "{els"))
+                        {//假如说if不允许就真滴不允许了,后面放心大胆写
+                            lastphraseidx = line.IndexOf('}', phraseidx);
+                            goto linephrase;
+                        }
 
+                        if (!(inifcond && !canprint))
+                        {
+                            rettext += line.Substring(lastphraseidx, phraseidx - lastphraseidx);
+                        }
+                        if (phrasecod == "{end")
+                        {//if结束,允许print
+                            inifcond = false;
+                            canprint = true;
+                            lastphraseidx = phraseidx + 7;
+                            goto linephrase;
+                        }
+                        if (phrasecod == "{els")
+                        {
+                            if (!inifcond) throw new Exception("Unexpected endif without if statement start");
+                            canprint = !canprint;
+                            lastphraseidx = phraseidx + 6;
+                            goto linephrase;
+                        }
+                        //正式开始啦~ ^_^
+                        //////////////////////// INCLUDE 语法开始 /////////////////////////
+                        if (phrasecod == "{inc")
+                        {
+                            int includelidx = line.IndexOf("}", phraseidx);
+                            int spacestart = line.IndexOf(" ", phraseidx);
+                            int kstart = line.IndexOf("}", phraseidx);
+                            if (spacestart == -1)
+                            {
+                                spacestart = kstart;
+                            }
+                            int stringend = Math.Min(spacestart, kstart);
+                            string comname = line.Substring(phraseidx + 9, stringend - 9 - phraseidx);
+                            Dictionary<string, string> vars = new Dictionary<string, string>();
+                            if (spacestart < kstart)
+                            {//有空格 有参数
+                                string varsstring = line.Substring(spacestart, kstart - spacestart).Trim();
+                                string[] varitems = varsstring.Split(',');
+                                foreach (string varitem in varitems)
+                                {
+                                    string[] kv = varitem.Split('=');
+                                    if (kv.Length != 2) throw new Exception("Include parameter passing error");
+                                    if (kv[1].StartsWith("\""))
+                                    {//直接哦~
+                                        vars[kv[0]] = kv[1].Trim('\"');
+                                    }
+                                    else
+                                    {
+                                        vars[kv[0]] = PhraseVarName.VarString(kv[1], wp);
+                                    }
+                                }
+                            }
+                            rettext += PhraseComponent(comname, vars, wp);
+                            lastphraseidx = kstart + 1;
+                            goto linephrase;
+                        }
+                        //////////////////////// INCLUDE 语法结束 /////////////////////////
+
+                        ///////////////////////   IF    语法开始  ////////////////////////
+
+                        if (phrasecod == "{if:")
+                        {
+                            if (inifcond) throw new Exception("Currently does not support nested IF statements");
+                            inifcond = true;
+                            int iflidx = line.IndexOf("}", phraseidx);
+                            string varname = line.Substring(phraseidx + 4, iflidx - 4 - phraseidx);
+                            if (PhraseVarName.isBool(varname, wp, postvars))
+                            {
+                                canprint = true;
+                            }
+                            else
+                            {
+                                canprint = false;
+                            }
+                            lastphraseidx = iflidx + 1;
+                            goto linephrase;
+                        }
+                        ///////////////////////   IF    语法结束  ////////////////////////
+
+                        /////////////////////  VAR 变量输出语法开始 ////////////////////////
+                        if (phrasecod == "{var")
+                        {
+                            int varlidx = line.IndexOf("}", phraseidx) + 1;
+                            string varname = line.Substring(phraseidx + 1, varlidx - phraseidx - 2);
+                            string varval = PhraseVarName.VarString(varname, wp, postvars);
+                            rettext += varval;
+                            lastphraseidx = varlidx;
+                            goto linephrase;
+                        }
+                        /////////////////////  VAR 变量输出语法结束 ////////////////////////
+
+                        //////////////////////  SET 定义变量开始   /////////////////////////
+                        if (phrasecod == "{set")
+                        {
+                            int eqidx = line.IndexOf("=", phraseidx);
+                            int setlidx = line.IndexOf("}", phraseidx) + 1;
+                            string varname = line.Substring(phraseidx + 5, eqidx - phraseidx - 5).Trim(' ');
+                            string varval = line.Substring(eqidx + 1, setlidx - eqidx - 2).Trim(' ');
+                            if (varval.StartsWith("\""))
+                            {
+                                postvars[varname] = varval.Trim('"');
+                            }
+                            else
+                            {
+                                postvars[varname] = PhraseVarName.VarString(varval, wp, postvars);
+                            }
+                            lastphraseidx = setlidx;
+                            goto linephrase;
+                        }
+                        //////////////////////  SET 定义变量结束   /////////////////////////
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Theme Phrase Error: at \"" + pageidf + "\" Line " + (lid + 1).ToString() + " Position: " + (phraseidx + 1).ToString(), e);
+                }
+
+            }
+
+            return rettext;
+            /////////////////////////// 旧的语法 //////////////////////////////
             //if 判断
             while (true)
             {
-                int ifidx = pagetext.IndexOf("{if:");
+                int ifidx = text.IndexOf("{if:");
                 if (ifidx != -1)
                 {
-                    int iflidx = pagetext.IndexOf("}", ifidx) + 1;
-                    int endifidx = pagetext.IndexOf("{endif}", iflidx);
-                    int elseidx = pagetext.IndexOf("{else}", iflidx);
-                    string varname = pagetext.Substring(ifidx + 4, pagetext.IndexOf("}", ifidx) - 4 - ifidx);
-                    if (pagetext.IndexOf("{if:", iflidx) != -1 && endifidx > pagetext.IndexOf("{if:", iflidx))
+                    int iflidx = text.IndexOf("}", ifidx) + 1;
+                    int endifidx = text.IndexOf("{endif}", iflidx);
+                    int elseidx = text.IndexOf("{else}", iflidx);
+                    string varname = text.Substring(ifidx + 4, text.IndexOf("}", ifidx) - 4 - ifidx);
+                    if (text.IndexOf("{if:", iflidx) != -1 && endifidx > text.IndexOf("{if:", iflidx))
                     {//是否为嵌套IF md还要写
                         return "<h1>The combined IF statement is not supported temporarily, please re-write. Thanks!<h1> Error throw in component: " + component;
                     }
@@ -85,11 +233,11 @@ namespace EasyCraft.Web
                         {
                             if (elseidx <= endifidx && elseidx != -1)
                             {//有else,输出else前的内容
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx, elseidx - iflidx) + pagetext.Substring(endifidx + 7);
+                                text = text.Substring(0, ifidx) + text.Substring(iflidx, elseidx - iflidx) + text.Substring(endifidx + 7);
                             }
                             else
                             {//删掉逻辑判断标签
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(iflidx + 1, endifidx - iflidx - 1) + pagetext.Substring(endifidx + 7);
+                                text = text.Substring(0, ifidx) + text.Substring(iflidx + 1, endifidx - iflidx - 1) + text.Substring(endifidx + 7);
                             }
                             continue;
                         }
@@ -97,11 +245,11 @@ namespace EasyCraft.Web
                         {
                             if (elseidx <= endifidx && elseidx != -1)
                             {//有else,输出else的内容
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(elseidx + 6, endifidx - elseidx - 6) + pagetext.Substring(endifidx + 7);
+                                text = text.Substring(0, ifidx) + text.Substring(elseidx + 6, endifidx - elseidx - 6) + text.Substring(endifidx + 7);
                             }
                             else
                             {//删掉逻辑判断标签
-                                pagetext = pagetext.Substring(0, ifidx) + pagetext.Substring(endifidx + 7);
+                                text = text.Substring(0, ifidx) + text.Substring(endifidx + 7);
                             }
                             continue;
                         }
@@ -116,37 +264,37 @@ namespace EasyCraft.Web
 
             while (true)
             {
-                int includeidx = pagetext.IndexOf("{include:");
+                int includeidx = text.IndexOf("{include:");
                 if (includeidx != -1)
                 {
-                    int includelidx = pagetext.IndexOf("}", includeidx);
-                    int spacestart = pagetext.IndexOf(" ", includeidx);
-                    int kstart = pagetext.IndexOf("}", includeidx);
+                    int includelidx = text.IndexOf("}", includeidx);
+                    int spacestart = text.IndexOf(" ", includeidx);
+                    int kstart = text.IndexOf("}", includeidx);
                     if (spacestart == -1)
                     {
                         spacestart = kstart;
                     }
                     int stringend = Math.Min(spacestart, kstart);
-                    string comname = pagetext.Substring(includeidx + 9, stringend - 9 - includeidx);
+                    string comname = text.Substring(includeidx + 9, stringend - 9 - includeidx);
                     Dictionary<string, string> vars = new Dictionary<string, string>();
                     if (spacestart < kstart)
                     {//有空格 有参数
-                        string varsstring = pagetext.Substring(spacestart, kstart - spacestart).Trim();
+                        string varsstring = text.Substring(spacestart, kstart - spacestart).Trim();
                         string[] varitems = varsstring.Split(',');
                         foreach (string varitem in varitems)
                         {
                             string[] kv = varitem.Split('=');
                             if (kv[1].StartsWith("\""))
                             {//直接哦~
-                                vars.Add(kv[0], kv[1].Trim('\"'));
+                                vars[kv[0]] = kv[1].Trim('\"');
                             }
                             else
                             {
-                                vars.Add(kv[0], PhraseVarName.VarString(kv[1], wp));
+                                vars[kv[0]] = PhraseVarName.VarString(kv[1], wp);
                             }
                         }
                     }
-                    pagetext = pagetext.Substring(0, includeidx) + PhraseComponent(comname, vars, wp) + pagetext.Substring(includelidx + 1, pagetext.Length - 1 - includelidx);
+                    text = text.Substring(0, includeidx) + PhraseComponent(comname, vars, wp) + text.Substring(includelidx + 1, text.Length - 1 - includelidx);
                 }
                 else
                 {
@@ -156,20 +304,20 @@ namespace EasyCraft.Web
             //变量
             while (true)
             {
-                int varidx = pagetext.IndexOf("{var.");
+                int varidx = text.IndexOf("{var.");
                 if (varidx != -1)
                 {
-                    int varlidx = pagetext.IndexOf("}", varidx) + 1;
-                    string varname = pagetext.Substring(varidx + 1, varlidx - varidx - 2);
+                    int varlidx = text.IndexOf("}", varidx) + 1;
+                    string varname = text.Substring(varidx + 1, varlidx - varidx - 2);
                     string varval = PhraseVarName.VarString(varname, wp, postvars);
-                    pagetext = pagetext.Substring(0, varidx) + varval + pagetext.Substring(varlidx, pagetext.Length - 1 - varlidx);
+                    text = text.Substring(0, varidx) + varval + text.Substring(varlidx, text.Length - 1 - varlidx);
                 }
                 else
                 {
                     break;
                 }
             }
-            return pagetext;
+            return text;
         }
 
 
@@ -193,7 +341,7 @@ namespace EasyCraft.Web
 
     class PhraseVarName
     {
-        public static bool isBool(string varname, WebPanelPhraser wp)
+        public static bool isBool(string varname, WebPanelPhraser wp, Dictionary<string, string> postvar = null)
         {
             bool result = false;
             bool reverse = false;
@@ -204,16 +352,7 @@ namespace EasyCraft.Web
             }
             try
             {
-                switch (varname)
-                {
-                    case "var.user.login":
-                        result = VarString("var.user.login", wp) == "true";
-                        break;
-                    default:
-                        result = false;
-                        break;
-                }
-
+                result = VarString(varname, wp, postvar) == "true";
                 return reverse ? !result : result;
             }
             catch (Exception)

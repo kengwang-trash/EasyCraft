@@ -19,7 +19,7 @@ namespace EasyCraft.Core
             while (render.Read())
             {
                 Server s = new Server(render.GetInt32(0));
-                servers.Add(render.GetInt32(0), s);
+                servers[render.GetInt32(0)] = s;
             }
         }
     }

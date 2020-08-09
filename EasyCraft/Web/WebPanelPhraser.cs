@@ -32,7 +32,7 @@ namespace EasyCraft.Web
             {
                 if (!cookie.Expired)
                 {
-                    cookies.Add(cookie.Name, cookie.Value);
+                    cookies[cookie.Name] = cookie.Value;
                 }
             }
             if (cookies.ContainsKey("SESSDATA"))
@@ -56,7 +56,7 @@ namespace EasyCraft.Web
                     HttpOnly = true
                 };
                 response.AppendCookie(sesscookie);
-                cookies.Add("SESSDATA", sesscookie.Value);
+                cookies["SESSDATA"] = sesscookie.Value;
                 session = new Dictionary<string, string>();
             }
             if (request.HttpMethod == "POST" && request.ContentType == "application/x-www-form-urlencoded")
@@ -169,7 +169,7 @@ namespace EasyCraft.Web
             {
                 string key = Uri.UnescapeDataString(pd.Substring(0, pd.IndexOf("=")));
                 string value = Uri.UnescapeDataString(pd.Substring(pd.IndexOf("=") + 1));
-                ans.Add(key, value);
+                ans[key] = value;
             }
             return ans;
         }

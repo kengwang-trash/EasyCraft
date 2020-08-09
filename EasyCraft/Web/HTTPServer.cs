@@ -49,7 +49,7 @@ namespace EasyCraft.Web
             {
                 string logid = Functions.GetRandomString(15, true, true, true, false, "");
                 FastConsole.PrintWarning("Web 500: " + e.Message);
-                File.WriteAllText(string.Format("log/weberr/{0}.log", logid), "========= EasyCraft Error Log =========" + "\r\nError Message:" + e.Message + "\r\nTrance:" + e.StackTrace);
+                Write500Log(logid, e);
                 responseString = "<h1>500 Internal Server Error</h1><hr />Log ID: " + logid + "<br />Time:" + DateTime.Now.ToString() + "<br />Server: EasyCraft<br />";
                 response.StatusCode = 500;
                 byte[] buff = Encoding.UTF8.GetBytes(responseString);
@@ -64,6 +64,12 @@ namespace EasyCraft.Web
                     //ignore
                 }
             }
+        }
+
+        static void Write500Log(string logid,Exception e)
+        {
+            File.AppendAllTextAsync(string.Format("log/weberr/{0}.log", logid), "========= EasyCraft Error Log =========" + "\r\nError Message: " + e.Message + "\r\nTrance: \r\n" + e.StackTrace+"\r\n\r\n");
+            if (e.InnerException != null) Write500Log(logid, e.InnerException);
         }
     }
 }
