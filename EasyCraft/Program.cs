@@ -21,7 +21,7 @@ namespace EasyCraft
  ============== Copyright Kengwang ===============
 ");
             int argc = args.Length;
-            FastConsole.logLevel = FastConsoleLogLevel.all;
+            FastConsole.logLevel = FastConsoleLogLevel.notrash;
             for (int i = 0; i < argc; i++)
             {
                 if (args[i] == "--loglevel")

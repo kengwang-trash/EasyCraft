@@ -29,7 +29,7 @@ namespace EasyCraft.Web
 
         public static void InitPage()
         {
-            component.Clear();
+            page.Clear();
             string[] files = Directory.GetFiles("theme/" + themeName + "/page/", "*.html");
             foreach (string file in files)
             {
@@ -66,7 +66,7 @@ namespace EasyCraft.Web
             }
             else
             {
-                return "Theme Error: Component " + comname + " Not Found";
+                return "Theme Error: Component \"" + comname + "\" Not Found";
             }
         }
 

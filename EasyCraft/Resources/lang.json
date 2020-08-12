@@ -28,5 +28,8 @@
     "Login failed, parameters are incomplete":"登录失败,参数不完整",
     "Registration failed with incomplete parameters":"注册失败,参数不全",
     "Registration failed, username already exists":"注册失败,用户名已存在",
-	"Registration failed":"注册失败"
+    "Registration failed":"注册失败",
+    "Initialize Theme":"加载主题中",
+    "Loading Passive WebSocket Server":"加载 WebSocket 服务器中",
+    "Passive WebSocket Server Started at {0}":"WebSocket 服务器监听在 {0}"
 }

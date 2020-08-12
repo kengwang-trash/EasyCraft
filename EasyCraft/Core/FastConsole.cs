@@ -13,7 +13,7 @@ namespace EasyCraft.Core
         {
 
             string print = "[INFO] " + message;
-            if (logLevel == FastConsoleLogLevel.noserver || logLevel == FastConsoleLogLevel.all)
+            if (logLevel >= FastConsoleLogLevel.noserver)
                 Console.WriteLine(print);
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
         }
@@ -22,7 +22,7 @@ namespace EasyCraft.Core
         {
 
             string print = "[DEBUG] " + message;
-            if (logLevel >= FastConsoleLogLevel.notrash)
+            if (logLevel > FastConsoleLogLevel.notrash)
             {
                 Console.WriteLine(print);
                 //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " DEBUG] " + message + "\r\n");
