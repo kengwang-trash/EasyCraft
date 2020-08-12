@@ -39,7 +39,7 @@ namespace EasyCraft.Core
             c.CommandText = "SELECT * FROM server WHERE id = $id ";
             c.Parameters.AddWithValue("$id", id);
             SQLiteDataReader render = c.ExecuteReader();
-            
+
             if (render.Read())
             {
                 name = render.GetString(1);
@@ -62,14 +62,14 @@ namespace EasyCraft.Core
         private void PrintLog(string message)
         {
             log += message;
-            if (Settings.logLevel == LogLevel.all)
+            if (FastConsole.logLevel == FastConsoleLogLevel.all)
                 FastConsole.PrintInfo("[server" + id + "] " + message);
         }
 
         private void PrintError(string message)
         {
             log += message;
-            if (Settings.logLevel == LogLevel.all)
+            if (FastConsole.logLevel == FastConsoleLogLevel.all)
                 FastConsole.PrintWarning("[server" + id + "] " + message);
         }
 

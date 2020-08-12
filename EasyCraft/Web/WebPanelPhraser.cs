@@ -86,7 +86,7 @@ namespace EasyCraft.Web
                 if (vars.user.islogin || uri.AbsolutePath == "/page/login")
                 {
                     string absolutepage = uri.AbsolutePath.Substring(6);
-                    if (CheckPagePath(absolutepage))
+                    if (ThemeController.CheckPagePath(absolutepage))
                     {
                         PrintWeb(ThemeController.LoadPage(absolutepage, this));
                     }
@@ -101,7 +101,8 @@ namespace EasyCraft.Web
                     response.Headers.Add("Location: /page/login");
                 }
 
-            }else if (uri.AbsolutePath == "/")
+            }
+            else if (uri.AbsolutePath == "/")
             {
                 response.StatusCode = 302;
                 response.Headers.Add("Location: /page/index");
@@ -119,26 +120,20 @@ namespace EasyCraft.Web
                     Print404();
                 }
             }
+            try
+            {
+                if (cookies["SESSDATA"] != null && session != null && MultiSessions != null && cookies != null)
+                    MultiSessions[cookies["SESSDATA"]] = session;
+                response.Close();
+            }
+            catch (Exception e)
+            {
+                //潜在BUG,可能某些情况不会写session
+            }
 
-            MultiSessions[cookies["SESSDATA"]] = session;
-            response.Close();
         }
 
-        private bool CheckPagePath(string page)
-        {
-            if (page.Contains('.') || page.Contains('~') || page.Contains('\'') || page.Contains('\"') || page.Contains('\"'))
-            {
-                return false;
-            }
-            if (File.Exists("theme/" + ThemeController.themeName + "/page/" + page + ".html"))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+
 
         private bool CheckAssetsPath(string page)
         {

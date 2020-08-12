@@ -13,19 +13,19 @@ namespace EasyCraft.Core
         {
 
             string print = "[INFO] " + message;
-            if (Settings.logLevel == LogLevel.noserver || Settings.logLevel == LogLevel.all)
+            if (logLevel == FastConsoleLogLevel.noserver || logLevel == FastConsoleLogLevel.all)
                 Console.WriteLine(print);
-            File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
+            //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
         }
 
         public static void PrintTrash(string message)
         {
 
             string print = "[DEBUG] " + message;
-            if (Settings.logLevel >= LogLevel.notrash)
+            if (logLevel >= FastConsoleLogLevel.notrash)
             {
                 Console.WriteLine(print);
-                File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " DEBUG] " + message + "\r\n");
+                //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " DEBUG] " + message + "\r\n");
             }
         }
 
@@ -36,7 +36,7 @@ namespace EasyCraft.Core
             string print = "[INFO] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
-            File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
+            //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
         }
 
         public static void PrintWarning(string message)
@@ -46,7 +46,7 @@ namespace EasyCraft.Core
             string print = "[WARN] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
-            File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " WARN] " + message + "\r\n");
+            //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " WARN] " + message + "\r\n");
         }
 
         public static void PrintError(string message)
@@ -56,7 +56,7 @@ namespace EasyCraft.Core
             string print = "[ERROR] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
-            File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " ERROR] " + message + "\r\n");
+            //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " ERROR] " + message + "\r\n");
         }
 
 
@@ -68,10 +68,19 @@ namespace EasyCraft.Core
             string print = "[FATAL] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
-            File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " FATAL] " + message + "\r\n");
+            //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " FATAL] " + message + "\r\n");
         }
+        public static FastConsoleLogLevel logLevel;
     }
 
+
+    enum FastConsoleLogLevel
+    {
+        no,//只输出Fatal和Error
+        noserver,//不输出服务器内的日志
+        notrash,
+        all//所有
+    }
 
     class Language
     {

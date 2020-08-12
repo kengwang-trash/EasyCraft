@@ -21,7 +21,7 @@ namespace EasyCraft
  ============== Copyright Kengwang ===============
 ");
             int argc = args.Length;
-            Settings.logLevel = LogLevel.all;
+            FastConsole.logLevel = FastConsoleLogLevel.all;
             for (int i = 0; i < argc; i++)
             {
                 if (args[i] == "--loglevel")
@@ -30,19 +30,19 @@ namespace EasyCraft
                     switch (l)
                     {
                         case "all":
-                            Settings.logLevel = LogLevel.all;
+                            FastConsole.logLevel = FastConsoleLogLevel.all;
                             break;
                         case "noserver":
-                            Settings.logLevel = LogLevel.noserver;
+                            FastConsole.logLevel = FastConsoleLogLevel.noserver;
                             break;
                         case "no":
-                            Settings.logLevel = LogLevel.no;
+                            FastConsole.logLevel = FastConsoleLogLevel.no;
                             break;
                         case "notrash":
-                            Settings.logLevel = LogLevel.notrash;
+                            FastConsole.logLevel = FastConsoleLogLevel.notrash;
                             break;
                         default:
-                            Settings.logLevel = LogLevel.all;
+                            FastConsole.logLevel = FastConsoleLogLevel.all;
                             break;
                     }
                 }
@@ -58,6 +58,11 @@ namespace EasyCraft
             Database.Connect();
             FastConsole.PrintInfo(Language.t("Loading Servers"));
             ServerManager.LoadServers();
+            FastConsole.PrintInfo(Language.t("Initialize Theme"));
+            ThemeController.InitComp();
+            ThemeController.InitPage();
+            FastConsole.PrintInfo(Language.t("Loading Passive WebSocket Server"));
+            WebSocketListener.StartListen();
             FastConsole.PrintInfo(Language.t("Starting HTTP Server"));
             HTTPServer.StartListen();
             string c = "";

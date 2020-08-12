@@ -12,26 +12,31 @@ namespace EasyCraft.Web
     class ThemeController
     {
         static Dictionary<string, string> component = new Dictionary<string, string>();
+        static Dictionary<string, string> page = new Dictionary<string, string>();
         static Dictionary<string, string> themeConfig = new Dictionary<string, string>();
         public static string themeName = "MDefault";
-        HttpListenerRequest request;
 
 
-        public static void LoadComponent()
+        public static void InitComp()
         {
             component.Clear();
-            string[] files = Directory.GetFiles("panel/themes/" + themeName + "/components/", "*.html");
+            string[] files = Directory.GetFiles("theme/" + themeName + "/component/", "*.html");
             foreach (string file in files)
             {
                 component[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
             }
         }
 
-        public ThemeController(HttpListenerRequest request)
+        public static void InitPage()
         {
-            this.request = request;
-
+            component.Clear();
+            string[] files = Directory.GetFiles("theme/" + themeName + "/page/", "*.html");
+            foreach (string file in files)
+            {
+                page[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
+            }
         }
+
 
         public static void LoadThemeConfig()
         {
@@ -45,21 +50,23 @@ namespace EasyCraft.Web
 
         public static string LoadPage(string name, WebPanelPhraser wp)
         {
-            string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/page/" + name + ".html");
+            //string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/page/" + name + ".html");
+            string pagetext = page[name];
             return PhraseStatment(pagetext, new Dictionary<string, string>(), wp, "page." + name);
         }
 
-        public static string PhraseComponent(string component, Dictionary<string, string> postvars, WebPanelPhraser wp)
+        public static string PhraseComponent(string comname, Dictionary<string, string> postvars, WebPanelPhraser wp)
         {
-            if (CheckComponentPath(component))
+            if (CheckComponentPath(comname))
             {
-                string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/component/" + component + ".html");
-                return PhraseStatment(pagetext, postvars, wp, "comp." + component);
+                //string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/component/" + component + ".html");
+                string pagetext = component[comname];
+                return PhraseStatment(pagetext, postvars, wp, "comp." + comname);
 
             }
             else
             {
-                return "Theme Error: Component " + component + " Not Found";
+                return "Theme Error: Component " + comname + " Not Found";
             }
         }
 
@@ -225,6 +232,7 @@ namespace EasyCraft.Web
 
         private static bool CheckComponentPath(string page)
         {
+            /*
             if (page.Contains('.') || page.Contains('~') || page.Contains('\'') || page.Contains('\"') || page.Contains('\"'))
             {
                 return false;
@@ -236,7 +244,26 @@ namespace EasyCraft.Web
             else
             {
                 return false;
+            }*/
+            return component.ContainsKey(page);
+        }
+
+        public static bool CheckPagePath(string pagename)
+        {
+            /*
+            if (page.Contains('.') || page.Contains('~') || page.Contains('\'') || page.Contains('\"') || page.Contains('\"'))
+            {
+                return false;
             }
+            if (File.Exists("theme/" + ThemeController.themeName + "/page/" + page + ".html"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }*/
+            return page.ContainsKey(pagename);
         }
     }
 
