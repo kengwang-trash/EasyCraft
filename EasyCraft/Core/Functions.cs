@@ -83,6 +83,32 @@ namespace EasyCraft.Core
             }
             return pwd;
         }
+
+        public static void CopyDirectory(string sourceDirPath, string SaveDirPath)
+        {
+            //如果指定的存储路径不存在，则创建该存储路径
+            if (!Directory.Exists(SaveDirPath))
+            {
+                //创建
+                Directory.CreateDirectory(SaveDirPath);
+            }
+            //获取源路径文件的名称
+            string[] files = Directory.GetFiles(sourceDirPath);
+            //遍历子文件夹的所有文件
+            foreach (string file in files)
+            {
+                string pFilePath = SaveDirPath + "\\" + Path.GetFileName(file);
+                if (File.Exists(pFilePath))
+                    continue;
+                File.Copy(file, pFilePath, true);
+            }
+            string[] dirs = Directory.GetDirectories(sourceDirPath);
+            //递归，遍历文件夹
+            foreach (string dir in dirs)
+            {
+                CopyDirectory(dir, SaveDirPath + "\\" + Path.GetFileName(dir));
+            }
+        }
     }
     public class VersionCallback
     {

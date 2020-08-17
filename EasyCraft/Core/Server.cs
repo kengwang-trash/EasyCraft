@@ -4,6 +4,7 @@ using System.Text;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace EasyCraft.Core
 {
@@ -24,13 +25,35 @@ namespace EasyCraft.Core
         DateTime expiretime = DateTime.MaxValue;
 
         Process process = null;
-        string log;
+        string lastcore = "";
+        string serverdir = "";
+
+
+        Dictionary<long, ServerLog> log = new Dictionary<long, ServerLog>();
 
         Core c;
         public Server(int id)
         {
             this.id = id;
             RefreshServerConfig();
+        }
+
+        public void SaveServerConfig()
+        {
+            SQLiteCommand c = Database.DB.CreateCommand();
+            c.CommandText = "UPDATE `server` SET name = $name , owner = $owner , port = $port , core = $core , maxplayer = $maxplayer , ram = $ram , world = $world , expiretime = $expiretime , autostart = $autostart , lastcore = $lastcore WHERE id = $id ";
+            c.Parameters.AddWithValue("$id", id);
+            c.Parameters.AddWithValue("$name", name);
+            c.Parameters.AddWithValue("$owner", owner);
+            c.Parameters.AddWithValue("$port", port);
+            c.Parameters.AddWithValue("$core", core);
+            c.Parameters.AddWithValue("$maxplayer", maxplayer);
+            c.Parameters.AddWithValue("$ram", ram);
+            c.Parameters.AddWithValue("$world", world);
+            c.Parameters.AddWithValue("$expiretime", expiretime);
+            c.Parameters.AddWithValue("$autostart", autostart);
+            c.Parameters.AddWithValue("$lastcore", lastcore);
+            c.ExecuteNonQuery();
         }
 
         public void RefreshServerConfig()
@@ -51,26 +74,51 @@ namespace EasyCraft.Core
                 world = render.GetString(7);
                 expiretime = render.GetDateTime(8);
                 autostart = render.GetBoolean(9);
+                lastcore = render.GetString(10);
             }
             else
             {
                 FastConsole.PrintWarning(string.Format(Language.t("Server {0} Load Failed."), id));
             }
 
+            serverdir = Environment.CurrentDirectory + "/server/server" + id.ToString() + "/";
+
+            System.IO.Directory.CreateDirectory(serverdir);
         }
 
         private void PrintLog(string message)
         {
-            log += message;
+            ServerLog l = new ServerLog();
+            l.iserror = false;
+            l.message = message;
+            l.time = DateTime.Now;
+            log.Add(l.id, l);
             if (FastConsole.logLevel == FastConsoleLogLevel.all)
                 FastConsole.PrintInfo("[server" + id + "] " + message);
         }
 
         private void PrintError(string message)
         {
-            log += message;
+            ServerLog l = new ServerLog();
+            l.iserror = true;
+            l.message = message;
+            l.time = DateTime.Now;
+            log.Add(l.id, l);
             if (FastConsole.logLevel == FastConsoleLogLevel.all)
                 FastConsole.PrintWarning("[server" + id + "] " + message);
+        }
+
+        private string PhraseServerCommand(string cmd)
+        {
+            if (cmd == null) return "";
+            cmd=cmd.Replace("{SERVER_DIR}", serverdir);
+            return cmd;
+        }
+
+        public void Stop()
+        {
+            if (process == null || process.HasExited == true) return;
+            process.StandardInput.Write("stop\r\n");
         }
 
         public void Start()
@@ -86,10 +134,23 @@ namespace EasyCraft.Core
                 return;
             }
 
+            if (core != lastcore)
+            {//新核心需要初始化
+                if (c.initcopy)
+                {
+                    PrintLog("Copying Core Required Files");
+                    Functions.CopyDirectory("core/" + core + "/files/", serverdir);
+                }
+                lastcore = core;
+                SaveServerConfig();
+            }
+
             process = new Process();
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.ErrorDialog = false;
             process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardInput = true;  // 重定向输入
             process.ErrorDataReceived += Process_ErrorDataReceived;
             process.OutputDataReceived += Process_OutputDataReceived;
             process.StartInfo.CreateNoWindow = true;
@@ -102,13 +163,22 @@ namespace EasyCraft.Core
             }
             else
             {
-                process.StartInfo.FileName = c.path;
-                process.StartInfo.Arguments = c.argument;
+                process.StartInfo.FileName = PhraseServerCommand(c.path);
+                process.StartInfo.Arguments = PhraseServerCommand(c.argument);
             }
 
             try
             {
                 process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                if (c.multicommand)
+                {
+                    foreach (string com in c.commands)
+                    {
+                        process.StandardInput.WriteLineAsync(PhraseServerCommand(com));
+                    }
+                }
             }
             catch (Exception e)
             {

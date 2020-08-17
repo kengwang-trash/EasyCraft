@@ -1,6 +1,8 @@
-﻿using System;
+﻿using EasyCraft.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection.Emit;
 using System.Runtime.Serialization.Formatters;
@@ -74,8 +76,18 @@ namespace EasyCraft.Web
         {
             string rettext = "";
             string[] lines = text.Split("\r\n");
+            //If需要参数
             bool canprint = true;
             bool inifcond = false;
+            //For循环必要参数
+            bool inforcond = false;
+            int forline = 0;
+            int foridx = 0;
+            string forvarname = "";
+            bool noobjtofor = false;//For中没有元素
+            List<object> forlist = null;
+            int foritemid = -1;
+
             for (int lid = 0; lid < lines.Length; lid++)
             {
                 rettext += "\r\n";
@@ -89,13 +101,13 @@ namespace EasyCraft.Web
                     phraseidx = line.IndexOf("{", lastphraseidx);
                     if (phraseidx == -1)
                     {//这行不需要编译
-                        if (inifcond && !canprint) continue; //在if中不允许输出
+                        if ((inifcond && !canprint) || (inforcond && noobjtofor)) continue; //在if中不允许输出
                         rettext += line.Substring(lastphraseidx);
                     }
                     else
                     {
                         string phrasecod = line.Substring(phraseidx, 4);
-                        if ((inifcond && !canprint) && (phrasecod != "{end" && phrasecod != "{els"))
+                        if (((inifcond && !canprint) || (inforcond && noobjtofor)) && (phrasecod != "{end" && phrasecod != "{els" && phrasecod != "{bre"))
                         {//假如说if不允许就真滴不允许了,后面放心大胆写
                             lastphraseidx = line.IndexOf('}', phraseidx);
                             goto linephrase;
@@ -210,6 +222,59 @@ namespace EasyCraft.Web
                         }
                         //////////////////////  SET 定义变量结束   /////////////////////////
 
+
+                        //////////////////////  FOREACH 循环开始   ////////////////////////
+                        if (phrasecod == "{for")
+                        {
+                            int forlidx = line.IndexOf("}", phraseidx) + 1;
+                            forvarname = line.Substring(phraseidx + 9, forlidx - phraseidx - 10);
+                            inforcond = true;
+                            forline = lid;
+                            foridx = forlidx;
+                            forlist = PhraseVarName.ForList(forvarname, wp);
+                            if (forlist == null || forlist.Count <= 0)
+                            {
+                                noobjtofor = true;
+                            }
+                            else
+                            {
+                                if (forvarname == "var.servers")
+                                {
+                                    wp.vars.server = (Server)forlist[++foritemid];
+                                }
+                            }
+
+                            lastphraseidx = forlidx;
+                            goto linephrase;
+                        }
+
+                        if (phrasecod == "{bre")
+                        {//if结束,允许print
+                            if (forlist == null || forlist.Count <= foritemid + 1)
+                            {
+                                //跳出For循环
+                                forlist = null;
+                                inforcond = false;
+                                noobjtofor = false;
+                                foritemid = -1;
+                                lastphraseidx = phraseidx + 7;
+                                goto linephrase;
+                            }
+                            else
+                            {
+                                if (forvarname == "var.servers")
+                                {
+                                    wp.vars.server = (Server)forlist[++foritemid];
+                                }
+                                inforcond = true;
+                                lid = forline;
+                                line = lines[lid];
+                                lastphraseidx = foridx;
+                                goto linephrase;
+                            }
+
+                        }
+
                         if (true)
                         {//啥都不是
                             rettext += "{";
@@ -305,6 +370,18 @@ namespace EasyCraft.Web
                         return wp.vars.user.uid.ToString();
                     case "var.user.qq":
                         return wp.vars.user.qq;
+                    case "var.server.id":
+                        return wp.vars.server.id.ToString();
+                    case "var.server.name":
+                        return wp.vars.server.name;
+                    case "var.server.owner":
+                        return wp.vars.server.owner.ToString();
+                    case "var.server.port":
+                        return wp.vars.server.port.ToString();
+                    case "var.server.maxplayer":
+                        return wp.vars.server.maxplayer.ToString();
+                    case "var.server.ram":
+                        return wp.vars.server.ram.ToString();
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {
@@ -321,6 +398,17 @@ namespace EasyCraft.Web
                 return "null";
             }
 
+        }
+
+
+        public static List<object> ForList(string varname, WebPanelPhraser wp)
+        {
+            switch (varname)
+            {
+                case "var.servers":
+                    return ServerManager.servers.Values.ToList<object>();
+            }
+            return null;
         }
     }
 }

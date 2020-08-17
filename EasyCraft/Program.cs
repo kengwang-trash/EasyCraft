@@ -21,7 +21,7 @@ namespace EasyCraft
  ============== Copyright Kengwang ===============
 ");
             int argc = args.Length;
-            FastConsole.logLevel = FastConsoleLogLevel.notrash;
+            FastConsole.logLevel = FastConsoleLogLevel.all;
             for (int i = 0; i < argc; i++)
             {
                 if (args[i] == "--loglevel")
@@ -68,8 +68,10 @@ namespace EasyCraft
             string c = "";
             while ((c = Console.ReadLine()) != "exit")
             {
-                FastConsole.PrintTrash("You Inputed " + c);
+                CommandPhrase.PhraseCommand(c);
+                
             }
+            FastConsole.PrintInfo("Exiting EasyCraft, Bye");
         }
     }
 }

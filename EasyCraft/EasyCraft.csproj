@@ -34,7 +34,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.Data.SQLite" Version="1.0.113.1" />
-    <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using YamlDotNet.Serialization;
 
 namespace EasyCraft.Core
 {
@@ -19,21 +18,27 @@ namespace EasyCraft.Core
         public List<string> commands;
         public string path;
         public string argument;
+        public bool initcopy;
 
         public Core(string id)
         {
             this.id = id;
-            coreconfig = File.ReadAllText("core/" + id + "/manifest.yaml");
-            Deserializer des = new Deserializer();
-            TextReader input = new StringReader(coreconfig);
-            corestruct = des.Deserialize<CoreStruct>(input);
+            coreconfig = File.ReadAllText("core/" + id + "/manifest.json");
+            corestruct = System.Text.Json.JsonSerializer.Deserialize<CoreStruct>(coreconfig);
             name = corestruct.name;
-            os = corestruct.os;
+            os = corestruct.startconfig.os;
             usecmd = corestruct.startconfig.usecmd;
             multicommand = corestruct.startconfig.multicommand;
-            commands = corestruct.startconfig.commands;
-            path = corestruct.startconfig.path;
-            argument = corestruct.startconfig.argument;
+            initcopy = corestruct.init.copyfiles;
+            if (multicommand)
+            {
+                commands = corestruct.startconfig.commands;
+            }
+            else
+            {
+                path = corestruct.startconfig.path;
+                argument = corestruct.startconfig.argument;
+            }
         }
     }
 
