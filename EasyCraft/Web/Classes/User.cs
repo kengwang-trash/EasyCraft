@@ -69,7 +69,7 @@ namespace EasyCraft.Web.Classes
                 co.CommandText = "UPDATE user SET auth = $auth WHERE uid = $uid ";
                 co.Parameters.AddWithValue("$auth", auth);
                 co.Parameters.AddWithValue("$uid", uid);
-                co.ExecuteNonQuery();
+                co.ExecuteNonQueryAsync();
                 FastConsole.PrintSuccess(string.Format(Language.t("User {0} Login Successful."), username));
 
             }

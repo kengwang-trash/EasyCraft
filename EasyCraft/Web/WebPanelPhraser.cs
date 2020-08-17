@@ -28,6 +28,7 @@ namespace EasyCraft.Web
         {
             request = req;
             response = res;
+            response.ContentType = "charset=utf-8;";
             foreach (Cookie cookie in request.Cookies)
             {
                 if (!cookie.Expired)
@@ -59,7 +60,7 @@ namespace EasyCraft.Web
                 cookies["SESSDATA"] = sesscookie.Value;
                 session = new Dictionary<string, string>();
             }
-            if (request.HttpMethod == "POST" && request.ContentType == "application/x-www-form-urlencoded")
+            if (request.HttpMethod == "POST" && request.ContentType.Contains("application/x-www-form-urlencoded"))
             {
                 StreamReader sr = new StreamReader(request.InputStream);
                 string postraw = sr.ReadToEnd();
@@ -78,11 +79,13 @@ namespace EasyCraft.Web
             if (uri.AbsolutePath.StartsWith("/api/"))
             {
                 string absolutepage = uri.AbsolutePath.Substring(5);
+                response.ContentType = "application/json";
                 Api.PhraseAPI(absolutepage, this);
 
             }
             else if (uri.AbsolutePath.StartsWith("/page/"))
             {
+                response.ContentType = "text/html;charset=utf-8;";
                 if (vars.user.islogin || uri.AbsolutePath == "/page/login")
                 {
                     string absolutepage = uri.AbsolutePath.Substring(6);
@@ -113,6 +116,14 @@ namespace EasyCraft.Web
                 if (CheckAssetsPath(absolutepage))
                 {
                     response.Headers.Add("Cache-Control:max-age=259200");//设置为三天的缓存
+                    if (absolutepage.EndsWith("js"))
+                    {
+                        response.ContentType = "text/javascript";
+                    }
+                    else if (absolutepage.EndsWith("css"))
+                    {
+                        response.ContentType = "text/css";
+                    }
                     PrintWeb(File.ReadAllBytes("theme/" + ThemeController.themeName + "/assets/" + absolutepage));
                 }
                 else
