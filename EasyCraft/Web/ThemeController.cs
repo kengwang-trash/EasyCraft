@@ -106,7 +106,16 @@ namespace EasyCraft.Web
                     }
                     else
                     {
-                        string phrasecod = line.Substring(phraseidx, 4);
+                        string phrasecod = "";
+                        if (line.Length <= phraseidx + 4)
+                        {
+                            phrasecod = "none";
+                        }
+                        else
+                        {
+                            phrasecod = line.Substring(phraseidx, 4);
+                        }
+                        
                         if (((inifcond && !canprint) || (inforcond && noobjtofor)) && (phrasecod != "{end" && phrasecod != "{els" && phrasecod != "{bre"))
                         {//假如说if不允许就真滴不允许了,后面放心大胆写
                             lastphraseidx = line.IndexOf('}', phraseidx);
@@ -240,7 +249,7 @@ namespace EasyCraft.Web
                             {
                                 if (forvarname == "var.servers")
                                 {
-                                    wp.vars.server = (Server)forlist[++foritemid];
+                                    wp.vars.for_server = (Server)forlist[++foritemid];
                                 }
                             }
 
@@ -264,7 +273,7 @@ namespace EasyCraft.Web
                             {
                                 if (forvarname == "var.servers")
                                 {
-                                    wp.vars.server = (Server)forlist[++foritemid];
+                                    wp.vars.for_server = (Server)forlist[++foritemid];
                                 }
                                 inforcond = true;
                                 lid = forline;
@@ -370,18 +379,18 @@ namespace EasyCraft.Web
                         return wp.vars.user.uid.ToString();
                     case "var.user.qq":
                         return wp.vars.user.qq;
-                    case "var.server.id":
-                        return wp.vars.server.id.ToString();
-                    case "var.server.name":
-                        return wp.vars.server.name;
-                    case "var.server.owner":
-                        return wp.vars.server.owner.ToString();
-                    case "var.server.port":
-                        return wp.vars.server.port.ToString();
-                    case "var.server.maxplayer":
-                        return wp.vars.server.maxplayer.ToString();
-                    case "var.server.ram":
-                        return wp.vars.server.ram.ToString();
+                    case "var.for.server.id":
+                        return wp.vars.for_server.id.ToString();
+                    case "var.for.server.name":
+                        return wp.vars.for_server.name;
+                    case "var.for.server.owner":
+                        return wp.vars.for_server.owner.ToString();
+                    case "var.for.server.port":
+                        return wp.vars.for_server.port.ToString();
+                    case "var.for.server.maxplayer":
+                        return wp.vars.for_server.maxplayer.ToString();
+                    case "var.for.server.ram":
+                        return wp.vars.for_server.ram.ToString();
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {

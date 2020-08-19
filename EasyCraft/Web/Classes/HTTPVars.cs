@@ -8,7 +8,7 @@ namespace EasyCraft.Web.Classes
     class HTTPVars
     {
         public User user=new User("rawobj");
+        public Server for_server = null;
         public Server server = null;
-        public Server currectserver = null;
     }
 }
