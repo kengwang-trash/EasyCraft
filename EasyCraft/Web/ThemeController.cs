@@ -183,10 +183,6 @@ namespace EasyCraft.Web
 
                         if (phrasecod == "{if:")
                         {
-                            if (inifcond != 0)
-                            {
-                                FastConsole.PrintWarning("The current support for nested if statements is only for testing");
-                            }
                             inifcond++;
                             int iflidx = line.IndexOf("}", phraseidx);
                             string varname = line.Substring(phraseidx + 4, iflidx - 4 - phraseidx);
@@ -421,6 +417,10 @@ namespace EasyCraft.Web
                         return wp.vars.for_server.maxplayer.ToString();
                     case "var.for.server.ram":
                         return wp.vars.for_server.ram.ToString();
+                    case "var.for.server.expired":
+                        return ((wp.vars.for_server.expiretime - DateTime.Now).Days < 0) ? "true" : "false";
+                    case "var.for.server.expiretime":
+                        return wp.vars.for_server.expiretime.ToString();
                     case "var.servers.count":
                         return wp.vars.servers.Count.ToString();
                     case "var.servers.running.count":
