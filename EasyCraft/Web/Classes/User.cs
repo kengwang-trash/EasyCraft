@@ -103,4 +103,13 @@ namespace EasyCraft.Web.Classes
             return r.HasRows;
         }
     }
+
+    enum UserType
+    {
+        none,
+        registered,
+        customer,
+        seller,
+        admin
+    }
 }

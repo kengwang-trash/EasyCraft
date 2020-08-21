@@ -18,11 +18,19 @@ namespace EasyCraft.Core
 
         public int maxplayer;
         public int ram;
+        public bool running
+        {
+            get
+            {
+                if (process == null) return false;
+                return !process.HasExited;
+            }
+        }
 
         public bool autostart = false;
 
         public string world = "world";
-        DateTime expiretime = DateTime.MaxValue;
+        public DateTime expiretime = DateTime.MaxValue;
 
         Process process = null;
         string lastcore = "";
@@ -36,6 +44,11 @@ namespace EasyCraft.Core
         {
             this.id = id;
             RefreshServerConfig();
+        }
+
+        public Server()
+        {
+
         }
 
         public void SaveServerConfig()
@@ -111,7 +124,7 @@ namespace EasyCraft.Core
         private string PhraseServerCommand(string cmd)
         {
             if (cmd == null) return "";
-            cmd=cmd.Replace("{SERVER_DIR}", serverdir);
+            cmd = cmd.Replace("{SERVER_DIR}", serverdir);
             return cmd;
         }
 
@@ -123,6 +136,11 @@ namespace EasyCraft.Core
 
         public void Start()
         {
+            if ((expiretime - DateTime.Now).TotalSeconds < 0)
+            {
+                PrintError(string.Format(Language.t("Server Expired at {0}, Cannot strat server"), expiretime.ToString()));
+                return;
+            }
             try
             {
                 c = new Core(core);

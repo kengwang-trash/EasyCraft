@@ -1,7 +1,9 @@
 ﻿using EasyCraft.Core;
+using EasyCraft.Web.Classes;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Reflection.Emit;
@@ -52,8 +54,8 @@ namespace EasyCraft.Web
 
         public static string LoadPage(string name, WebPanelPhraser wp)
         {
-            //string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/page/" + name + ".html");
-            string pagetext = page[name];
+            string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/page/" + name + ".html");
+            //string pagetext = page[name];
             return PhraseStatment(pagetext, new Dictionary<string, string>(), wp, "page." + name);
         }
 
@@ -61,8 +63,8 @@ namespace EasyCraft.Web
         {
             if (CheckComponentPath(comname))
             {
-                //string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/component/" + component + ".html");
-                string pagetext = component[comname];
+                string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/component/" + comname + ".html");
+                //string pagetext = component[comname];
                 return PhraseStatment(pagetext, postvars, wp, "comp." + comname);
 
             }
@@ -77,8 +79,8 @@ namespace EasyCraft.Web
             string rettext = "";
             string[] lines = text.Split("\r\n");
             //If需要参数
-            bool canprint = true;
-            bool inifcond = false;
+            Dictionary<int, bool> canprint = new Dictionary<int, bool>();
+            int inifcond = 0;
             //For循环必要参数
             bool inforcond = false;
             int forline = 0;
@@ -101,7 +103,7 @@ namespace EasyCraft.Web
                     phraseidx = line.IndexOf("{", lastphraseidx);
                     if (phraseidx == -1)
                     {//这行不需要编译
-                        if ((inifcond && !canprint) || (inforcond && noobjtofor)) continue; //在if中不允许输出
+                        if ((inifcond != 0 && !canprint[inifcond]) || (inforcond && noobjtofor)) continue; //在if中不允许输出
                         rettext += line.Substring(lastphraseidx);
                     }
                     else
@@ -115,28 +117,27 @@ namespace EasyCraft.Web
                         {
                             phrasecod = line.Substring(phraseidx, 4);
                         }
-                        
-                        if (((inifcond && !canprint) || (inforcond && noobjtofor)) && (phrasecod != "{end" && phrasecod != "{els" && phrasecod != "{bre"))
+
+                        if (((inifcond != 0 && !canprint[inifcond]) || (inforcond && noobjtofor)) && (phrasecod != "{end" && phrasecod != "{els" && phrasecod != "{bre"))
                         {//假如说if不允许就真滴不允许了,后面放心大胆写
                             lastphraseidx = line.IndexOf('}', phraseidx);
                             goto linephrase;
                         }
 
-                        if (!(inifcond && !canprint))
+                        if (!(inifcond != 0 && !canprint[inifcond]))
                         {
                             rettext += line.Substring(lastphraseidx, phraseidx - lastphraseidx);
                         }
                         if (phrasecod == "{end")
                         {//if结束,允许print
-                            inifcond = false;
-                            canprint = true;
+                            inifcond--;
                             lastphraseidx = phraseidx + 7;
                             goto linephrase;
                         }
                         if (phrasecod == "{els")
                         {
-                            if (!inifcond) throw new Exception("Unexpected endif without if statement start");
-                            canprint = !canprint;
+                            if (inifcond == 0) throw new Exception("Unexpected endif without if statement start");
+                            canprint[inifcond] = !canprint[inifcond];
                             lastphraseidx = phraseidx + 6;
                             goto linephrase;
                         }
@@ -182,17 +183,20 @@ namespace EasyCraft.Web
 
                         if (phrasecod == "{if:")
                         {
-                            if (inifcond) throw new Exception("Currently does not support nested IF statements");
-                            inifcond = true;
+                            if (inifcond != 0)
+                            {
+                                FastConsole.PrintWarning("The current support for nested if statements is only for testing");
+                            }
+                            inifcond++;
                             int iflidx = line.IndexOf("}", phraseidx);
                             string varname = line.Substring(phraseidx + 4, iflidx - 4 - phraseidx);
                             if (PhraseVarName.isBool(varname, wp, postvars))
                             {
-                                canprint = true;
+                                canprint[inifcond] = true;
                             }
                             else
                             {
-                                canprint = false;
+                                canprint[inifcond] = false;
                             }
                             lastphraseidx = iflidx + 1;
                             goto linephrase;
@@ -284,6 +288,29 @@ namespace EasyCraft.Web
 
                         }
 
+                        //////////////////////  INIT 内置变量加载   ////////////////////////
+
+                        if (phrasecod == "{ini")
+                        {
+                            int inilidx = line.IndexOf("}", phraseidx) + 1;
+                            string initname = line.Substring(phraseidx + 6, inilidx - phraseidx - 7);
+                            if (initname == "servers")
+                            {
+                                if (wp.vars.user.type >= (int)UserType.customer)//可以查看全部服务器
+                                {
+                                    wp.vars.servers = ServerManager.servers.Values.ToList();
+                                }
+                                else
+                                {
+                                    wp.vars.servers = ServerManager.servers.Values.ToList().Where(s => s.owner == wp.vars.user.uid).ToList();
+
+                                }
+                            }
+                            lastphraseidx = inilidx;
+                            goto linephrase;
+                        }
+
+
                         if (true)
                         {//啥都不是
                             rettext += "{";
@@ -354,7 +381,8 @@ namespace EasyCraft.Web
             }
             try
             {
-                result = VarString(varname, wp, postvar) == "true";
+                string varval = VarString(varname, wp, postvar);
+                result = !(varval == "false" || varval == "0");
                 return reverse ? !result : result;
             }
             catch (Exception)
@@ -381,6 +409,8 @@ namespace EasyCraft.Web
                         return wp.vars.user.qq;
                     case "var.for.server.id":
                         return wp.vars.for_server.id.ToString();
+                    case "var.for.server.running":
+                        return wp.vars.for_server.running ? "true" : "false";
                     case "var.for.server.name":
                         return wp.vars.for_server.name;
                     case "var.for.server.owner":
@@ -391,6 +421,14 @@ namespace EasyCraft.Web
                         return wp.vars.for_server.maxplayer.ToString();
                     case "var.for.server.ram":
                         return wp.vars.for_server.ram.ToString();
+                    case "var.servers.count":
+                        return wp.vars.servers.Count.ToString();
+                    case "var.servers.running.count":
+                        return wp.vars.servers.Where(s => s.running).ToList().Count.ToString();
+                    case "var.servers.willexpire.count":
+                        return wp.vars.servers.Where(s => (s.expiretime - DateTime.Now).Days <= 3 && (s.expiretime - DateTime.Now).Days >= 0).ToList().Count.ToString();
+                    case "var.servers.expired.count":
+                        return wp.vars.servers.Where(s => (s.expiretime - DateTime.Now).Days < 0).ToList().Count.ToString();
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {
@@ -415,7 +453,7 @@ namespace EasyCraft.Web
             switch (varname)
             {
                 case "var.servers":
-                    return ServerManager.servers.Values.ToList<object>();
+                    return wp.vars.servers.ConvertAll(s => (object)s);
             }
             return null;
         }
