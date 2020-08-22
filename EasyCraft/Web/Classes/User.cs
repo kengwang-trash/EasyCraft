@@ -14,7 +14,7 @@ namespace EasyCraft.Web.Classes
         public readonly string name;
         public readonly string auth;
         public readonly string email;
-        public readonly int type;
+        public readonly int type = 0;
         public readonly string qq;
         public User(string auth)
         {
@@ -75,7 +75,7 @@ namespace EasyCraft.Web.Classes
             }
         }
 
-        public static User Register(string username, string password, string email,string qq)
+        public static User Register(string username, string password, string email, string qq)
         {
             SQLiteCommand c = Database.DB.CreateCommand();
             c.CommandText = "INSERT INTO `user` (username, password, email, `type` , `qq` ) VALUES ( $username , $password , $email , 1 , $qq)";

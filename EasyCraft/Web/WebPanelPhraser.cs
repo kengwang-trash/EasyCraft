@@ -137,7 +137,7 @@ namespace EasyCraft.Web
                     MultiSessions[cookies["SESSDATA"]] = session;
                 response.Close();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //潜在BUG,可能某些情况不会写session
             }

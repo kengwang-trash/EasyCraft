@@ -72,7 +72,7 @@ namespace EasyCraft
                     System.IO.File.Create(Environment.CurrentDirectory + "/db/db.db");
                 if (DB != null)
                     DB.Close();
-                File.WriteAllBytes(Environment.CurrentDirectory + "/db/db.db", Resource1.db);
+                throw new Exception("No Database File Founded");
                 var connectionString = new SQLiteConnectionStringBuilder()
                 {
                     DataSource = Environment.CurrentDirectory + "/db/db.db"

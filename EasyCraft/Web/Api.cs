@@ -102,6 +102,15 @@ namespace EasyCraft.Web
                         wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
                     }
                     break;
+                case "new_server":
+                    if (wp.vars.user.type >= 3)
+                    {
+                        if (wp.POST.ContainsKey("owner"))
+                        {
+
+                        }
+                    }
+                    break;
             }
         }
     }
