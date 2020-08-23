@@ -377,9 +377,38 @@ namespace EasyCraft.Web
             }
             try
             {
-                string varval = VarString(varname, wp, postvar);
-                result = !(varval == "false" || varval == "0");
-                return reverse ? !result : result;
+                if (varname.Contains("="))
+                {
+                    string[] arr = varname.Split('=');
+                    string comparestr = "";
+                    string originstr = "";
+                    if (arr[1].StartsWith("\""))
+                    {
+                        comparestr = arr[1].Trim('"');
+                    }
+                    else
+                    {
+                        comparestr = VarString(arr[1], wp, postvar);
+                    }
+
+                    if (arr[0].StartsWith("\""))
+                    {
+                        originstr = arr[0].Trim('"');
+                    }
+                    else
+                    {
+                        originstr = VarString(arr[0], wp, postvar);
+                    }
+
+                    bool res = originstr == comparestr;
+                    return reverse ? !res : res;
+                }
+                else
+                {
+                    string varval = VarString(varname, wp, postvar);
+                    result = !(varval == "false" || varval == "0");
+                    return reverse ? !result : result;
+                }
             }
             catch (Exception)
             {

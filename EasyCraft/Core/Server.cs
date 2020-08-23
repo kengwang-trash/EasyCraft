@@ -16,8 +16,8 @@ namespace EasyCraft.Core
         public int port;
         public string core;
 
-        public int maxplayer;
-        public int ram;
+        public int maxplayer = 10;
+        public int ram = 1024;
         public bool running
         {
             get
@@ -46,9 +46,20 @@ namespace EasyCraft.Core
             RefreshServerConfig();
         }
 
-        public Server()
+        public static int CreateServer()
         {
-
+            SQLiteCommand c = Database.DB.CreateCommand();
+            c.CommandText = "INSERT INTO `server` (`name`,`expiretime`) VALUES ('EasyCraft Server', $1 );select last_insert_rowid();";
+            c.Parameters.AddWithValue("$1", DateTime.Now);
+            SQLiteDataReader r =c.ExecuteReader();    
+            if (r.Read())
+            {
+                return r.GetInt32(0);
+            }
+            else
+            {
+                throw new Exception("Failed to create");
+            }
         }
 
         public void SaveServerConfig()

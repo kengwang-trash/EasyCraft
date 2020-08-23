@@ -60,7 +60,7 @@ namespace EasyCraft.Web
                 cookies["SESSDATA"] = sesscookie.Value;
                 session = new Dictionary<string, string>();
             }
-            if (request.HttpMethod == "POST" && request.ContentType.Contains("application/x-www-form-urlencoded"))
+            if (request.HttpMethod == "POST" && request.ContentType != null && request.ContentType.Contains("application/x-www-form-urlencoded"))
             {
                 StreamReader sr = new StreamReader(request.InputStream);
                 string postraw = sr.ReadToEnd();

@@ -18,8 +18,16 @@ namespace EasyCraft.Core
             SQLiteDataReader render = c.ExecuteReader();
             while (render.Read())
             {
-                Server s = new Server(render.GetInt32(0));
-                servers[render.GetInt32(0)] = s;
+                int id = render.GetInt32(0);
+                try
+                {
+                    Server s = new Server(id);
+                    servers[render.GetInt32(0)] = s;
+                }
+                catch (Exception e)
+                {
+                    FastConsole.PrintWarning(string.Format(Language.t("Load Server {0} Error: {1}"), id.ToString(), e.Message));
+                }                
             }
         }
     }
