@@ -251,6 +251,10 @@ namespace EasyCraft.Web
                                 {
                                     wp.vars.for_server = (Server)forlist[++foritemid];
                                 }
+                                if (forvarname == "var.cores")
+                                {
+                                    wp.vars.for_core = (Core.Core)forlist[++foritemid];
+                                }
                             }
 
                             lastphraseidx = forlidx;
@@ -274,6 +278,10 @@ namespace EasyCraft.Web
                                 if (forvarname == "var.servers")
                                 {
                                     wp.vars.for_server = (Server)forlist[++foritemid];
+                                }
+                                if (forvarname == "var.cores")
+                                {
+                                    wp.vars.for_core = (Core.Core)forlist[++foritemid];
                                 }
                                 inforcond = true;
                                 lid = forline;
@@ -299,12 +307,30 @@ namespace EasyCraft.Web
                                 else
                                 {
                                     wp.vars.servers = ServerManager.servers.Values.ToList().Where(s => s.owner == wp.vars.user.uid).ToList();
-
                                 }
+                            }
+                            if (initname == "server")
+                            {
+                                int sid = 0;
+                                if (int.TryParse(wp.urllist[3], out sid))
+                                {
+                                    if (ServerManager.servers.ContainsKey(sid))
+                                        wp.vars.server = ServerManager.servers[sid];
+                                }
+                            }
+
+                            if (initname == "cores")
+                            {
+                                DirectoryInfo[] root = new DirectoryInfo("core/").GetDirectories();
+                                foreach (DirectoryInfo di in root)
+                                {
+                                    wp.vars.cores.Add(new Core.Core(di.Name));
+                                }                                
                             }
                             lastphraseidx = inilidx;
                             goto linephrase;
                         }
+                        //////////////////////  INIT 内置变量结束   ////////////////////////
 
 
                         if (true)
@@ -382,6 +408,24 @@ namespace EasyCraft.Web
                     string[] arr = varname.Split('=');
                     string comparestr = "";
                     string originstr = "";
+
+                    bool isbigorsmall = false;
+                    bool big = false;
+
+                    if (arr[0].EndsWith('>'))
+                    {
+                        arr[0] = arr[0].TrimEnd('>');
+                        isbigorsmall = true;
+                        big = true;
+                    }
+
+                    if (arr[0].EndsWith('<'))
+                    {
+                        arr[0] = arr[0].TrimEnd('<');
+                        isbigorsmall = true;
+                        big = false;
+                    }
+
                     if (arr[1].StartsWith("\""))
                     {
                         comparestr = arr[1].Trim('"');
@@ -389,7 +433,9 @@ namespace EasyCraft.Web
                     else
                     {
                         comparestr = VarString(arr[1], wp, postvar);
+                        if (isbigorsmall && comparestr == "null") comparestr = "0";
                     }
+
 
                     if (arr[0].StartsWith("\""))
                     {
@@ -398,10 +444,43 @@ namespace EasyCraft.Web
                     else
                     {
                         originstr = VarString(arr[0], wp, postvar);
+                        if (isbigorsmall && originstr == "null") originstr = "0";
                     }
 
-                    bool res = originstr == comparestr;
-                    return reverse ? !res : res;
+                    if (!isbigorsmall)
+                    {
+                        bool res = originstr == comparestr;
+                        return reverse ? !res : res;
+                    }
+                    else
+                    {
+                        int origint = 0, comint = 0;
+                        int.TryParse(originstr, out origint);
+                        int.TryParse(comparestr, out comint);
+                        if (origint <= comint)
+                        {
+                            if (big)
+                            {
+                                return reverse ? true : false;
+                            }
+                            else
+                            {
+                                return reverse ? false : true;
+                            }
+                        }
+                        else
+                        {
+                            if (!big)
+                            {
+                                return reverse ? true : false;
+                            }
+                            else
+                            {
+                                return reverse ? false : true;
+                            }
+                        }
+                    }
+
                 }
                 else
                 {
@@ -432,6 +511,8 @@ namespace EasyCraft.Web
                         return wp.vars.user.uid.ToString();
                     case "var.user.qq":
                         return wp.vars.user.qq;
+                    case "var.user.type":
+                        return wp.vars.user.type.ToString();
                     case "var.for.server.id":
                         return wp.vars.for_server.id.ToString();
                     case "var.for.server.running":
@@ -450,6 +531,33 @@ namespace EasyCraft.Web
                         return ((wp.vars.for_server.expiretime - DateTime.Now).Days < 0) ? "true" : "false";
                     case "var.for.server.expiretime":
                         return wp.vars.for_server.expiretime.ToString();
+                    case "var.for.server.core":
+                        return wp.vars.for_server.core;
+                        
+                    case "var.server.id":
+                        return wp.vars.server.id.ToString();
+                    case "var.server.running":
+                        return wp.vars.server.running ? "true" : "false";
+                    case "var.server.name":
+                        return wp.vars.server.name;
+                    case "var.server.owner":
+                        return wp.vars.server.owner.ToString();
+                    case "var.server.port":
+                        return wp.vars.server.port.ToString();
+                    case "var.server.maxplayer":
+                        return wp.vars.server.maxplayer.ToString();
+                    case "var.server.ram":
+                        return wp.vars.server.ram.ToString();
+                    case "var.server.expired":
+                        return ((wp.vars.server.expiretime - DateTime.Now).Days < 0) ? "true" : "false";
+                    case "var.server.expiretime":
+                        return wp.vars.server.expiretime.ToString();
+                    case "var.server.core":
+                        return wp.vars.server.core;
+                    case "var.for.core.id":
+                        return wp.vars.for_core.id;
+                    case "var.for.core.name":
+                        return wp.vars.for_core.name;
                     case "var.servers.count":
                         return wp.vars.servers.Count.ToString();
                     case "var.servers.running.count":
@@ -483,6 +591,8 @@ namespace EasyCraft.Web
             {
                 case "var.servers":
                     return wp.vars.servers.ConvertAll(s => (object)s);
+                case "var.cores":
+                    return wp.vars.cores.ConvertAll(s => (object)s);
             }
             return null;
         }

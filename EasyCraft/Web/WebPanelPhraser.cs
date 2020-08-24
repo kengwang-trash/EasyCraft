@@ -4,6 +4,7 @@ using EasyCraft.Web.JSONCallback;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Policy;
 using System.Text;
@@ -23,6 +24,7 @@ namespace EasyCraft.Web
         public Uri uri = null;
         public Dictionary<string, string> GET = new Dictionary<string, string>();
         public Dictionary<string, string> POST = new Dictionary<string, string>();
+        public List<string> urllist = new List<string>();
 
         public void PhraseWeb(HttpListenerRequest req, HttpListenerResponse res)
         {
@@ -69,6 +71,7 @@ namespace EasyCraft.Web
             }
 
             uri = request.Url;
+            urllist = uri.AbsolutePath.Split('/').ToList();
             FastConsole.PrintTrash("[" + request.HttpMethod + "]:" + uri.AbsolutePath);
 
             if (session.ContainsKey("auth"))
@@ -88,10 +91,13 @@ namespace EasyCraft.Web
                 response.ContentType = "text/html;charset=utf-8;";
                 if (vars.user.islogin || uri.AbsolutePath == "/page/login")
                 {
-                    string absolutepage = uri.AbsolutePath.Substring(6);
-                    if (ThemeController.CheckPagePath(absolutepage))
+                    if (urllist.Count < 2)
                     {
-                        PrintWeb(ThemeController.LoadPage(absolutepage, this));
+                        Print404();
+                    }
+                    if (ThemeController.CheckPagePath(urllist[2]))
+                    {
+                        PrintWeb(ThemeController.LoadPage(urllist[2], this));
                     }
                     else
                     {

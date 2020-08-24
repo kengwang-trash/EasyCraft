@@ -11,5 +11,7 @@ namespace EasyCraft.Web.Classes
         public Server for_server = null;
         public Server server = null;
         public List<Server> servers = new List<Server>();
+        public List<Core.Core> cores = new List<Core.Core>();
+        public Core.Core for_core = null;
     }
 }

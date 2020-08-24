@@ -224,6 +224,14 @@ namespace EasyCraft.Web
                     }
                     if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
+                        if (ServerManager.servers[int.Parse(wp.POST["sid"])].expiretime < DateTime.Now)
+                        {
+                            Callback callback = new Callback();
+                            callback.code = -3;
+                            callback.message = Language.t("Server Expired");
+                            wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                            return;
+                        }
                         try
                         {
                             ServerManager.servers[int.Parse(wp.POST["sid"])].Start();
