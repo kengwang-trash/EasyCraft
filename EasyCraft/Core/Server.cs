@@ -37,7 +37,7 @@ namespace EasyCraft.Core
         string serverdir = "";
 
 
-        Dictionary<long, ServerLog> log = new Dictionary<long, ServerLog>();
+        public Dictionary<long, ServerLog> log = new Dictionary<long, ServerLog>();
 
         Core c;
         public Server(int id)
@@ -51,7 +51,7 @@ namespace EasyCraft.Core
             SQLiteCommand c = Database.DB.CreateCommand();
             c.CommandText = "INSERT INTO `server` (`name`,`expiretime`) VALUES ('EasyCraft Server', $1 );select last_insert_rowid();";
             c.Parameters.AddWithValue("$1", DateTime.Now);
-            SQLiteDataReader r =c.ExecuteReader();    
+            SQLiteDataReader r = c.ExecuteReader();
             if (r.Read())
             {
                 return r.GetInt32(0);
@@ -143,6 +143,12 @@ namespace EasyCraft.Core
         {
             if (process == null || process.HasExited == true) return;
             process.StandardInput.Write("stop\r\n");
+        }
+
+        public void Send(string cmd)
+        {
+            if (process == null || process.HasExited == true) return;
+            process.StandardInput.Write(cmd);
         }
 
         public void Start()

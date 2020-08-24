@@ -6,15 +6,25 @@ namespace EasyCraft.Core
 {
     class ServerLog
     {
-        public static long lastid = DateTime.Now.Ticks;
-        public long id;
-        public bool iserror = false;
-        public string message = "";
-        public DateTime time;
+        private static int _lastid = 0;
+        public static int lastid
+        {
+            get
+            {
+                return _lastid++;
+            }
+        }
+        public long id { get; set; }
+        public bool iserror { get; set; }
+        public string message { get; set; }
+        public DateTime time { get; set; }
 
         public ServerLog()
         {
-            this.id = lastid++;
+            iserror = false;
+            message = "";
+            time = DateTime.Now;
+            this.id = lastid;
         }
     }
 }

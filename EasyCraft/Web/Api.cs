@@ -3,6 +3,7 @@ using EasyCraft.Web.Classes;
 using EasyCraft.Web.JSONCallback;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace EasyCraft.Web
@@ -288,6 +289,93 @@ namespace EasyCraft.Web
                     else
                     {
                         NewServer callback = new NewServer();
+                        callback.code = -3;
+                        callback.message = Language.t("Permission Denied");
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                    }
+                    break;
+                case "log":
+                    if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -1;
+                        callback.message = Language.t("Server Not Found");
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                        return;
+                    }
+                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                    {
+                        Server s = ServerManager.servers[int.Parse(wp.POST["sid"])];
+                        List<ServerLog> logs = null;
+                        if (wp.POST.ContainsKey("lastlogid") && wp.POST["lastlogid"] != "0")
+                        {
+                            logs = s.log.Values.Where(log => log.id > int.Parse(wp.POST["lastlogid"])).ToList();
+                        }
+                        else
+                        {
+                            int n = 0;
+                            logs = s.log.Values.Where(log => ++n <= 100).ToList();
+                        }
+                        LogBack callback = new LogBack();
+                        callback.code = 9000;
+                        callback.message = Language.t("Success");
+                        callback.data = new LogBackData();
+                        callback.data.logs = logs;
+                        if (logs.Count != 0)
+                        {
+                            callback.data.lastlogid = logs.Last().id;
+                        }
+                        else
+                        {
+                            if (wp.POST.ContainsKey("lastlogid") && wp.POST["lastlogid"] != "0")
+                            {
+                                callback.data.lastlogid = int.Parse(wp.POST["lastlogid"]);
+                            }
+                            else
+                            {
+                                callback.data.lastlogid = 0;
+                            }
+                        }
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                    }
+                    else
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -3;
+                        callback.message = Language.t("Permission Denied");
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                    }
+                    break;
+                case "cmd":
+                    if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -1;
+                        callback.message = Language.t("Server Not Found");
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                        return;
+                    }
+                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                    {
+                        if (wp.POST.ContainsKey("cmd"))
+                        {
+                            ServerManager.servers[int.Parse(wp.POST["sid"])].Send(wp.POST["cmd"] + "\r\n");
+                            Callback callback = new Callback();
+                            callback.code = 9000;
+                            callback.message = Language.t("Success");
+                            wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                        }
+                        else
+                        {
+                            Callback callback = new Callback();
+                            callback.code = -2;
+                            callback.message = Language.t("Param not completed");
+                            wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                        }
+                    }
+                    else
+                    {
+                        Callback callback = new Callback();
                         callback.code = -3;
                         callback.message = Language.t("Permission Denied");
                         wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
