@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.IO;
+using EasyCraft.Web.JSONCallback;
 
 namespace EasyCraft.Core
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EasyCraft.Core
+namespace EasyCraft.Web.JSONCallback
 {
     class ServerLog
     {
