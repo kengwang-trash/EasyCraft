@@ -381,6 +381,31 @@ namespace EasyCraft.Web
                         wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
                     }
                     break;
+                case "clear_log":
+                    if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -1;
+                        callback.message = Language.t("Server Not Found");
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                        return;
+                    }
+                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                    {
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].ClearLog();
+                        Callback callback = new Callback();
+                        callback.code = 9000;
+                        callback.message = Language.t("Successfully to clear logs on server");
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                    }
+                    else
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -3;
+                        callback.message = Language.t("Permission Denied");
+                        wp.PrintWeb(System.Text.Json.JsonSerializer.Serialize(callback));
+                    }
+                    break;
             }
         }
     }

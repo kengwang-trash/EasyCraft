@@ -110,8 +110,15 @@ namespace EasyCraft.Core
             System.IO.Directory.CreateDirectory(serverdir);
         }
 
+        public void ClearLog()
+        {
+            log.Clear();
+            PrintLog(Language.t("Successfully to clear logs on server"));
+        }
+
         private void PrintLog(string message)
         {
+            if (message == null) return;
             ServerLog l = new ServerLog();
             l.iserror = false;
             l.message = message;
@@ -123,6 +130,7 @@ namespace EasyCraft.Core
 
         private void PrintError(string message)
         {
+            if (message == null) return;
             ServerLog l = new ServerLog();
             l.iserror = true;
             l.message = message;
@@ -143,6 +151,12 @@ namespace EasyCraft.Core
         {
             if (process == null || process.HasExited == true) return;
             process.StandardInput.Write("stop\r\n");
+        }
+
+        public void Kill()
+        {
+            if (process == null || process.HasExited == true) return;
+            process.Kill();
         }
 
         public void Send(string cmd)

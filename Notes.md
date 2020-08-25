@@ -10,3 +10,11 @@
 | 3    | 销售     | 可以创建服务器   |
 | 4    | 版主     | 可以使用所有权限 |
 
+各版本的区别
+
+| 功能       | Personal   | Team      | Enterprise |
+| ---------- | ---------- | --------- | ---------- |
+| 开启服务器 | Unlimited  | Unlimited | Unlimited  |
+| 最大玩家数 | Unlimited  | Unlimited | Unlimited  |
+| 用户数     | 1          | Unlimited(全为管理员) | Unlimited |
+| 安全性     | `不分用户` |  `不分用户` | 分用户服务器 |
