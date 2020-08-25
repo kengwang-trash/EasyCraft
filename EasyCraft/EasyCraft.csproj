@@ -14,11 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Default.rd.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ApplicationDefinition Include="Default.rd.xml" />
+    <RdXmlFile Include="rd.xml" />
   </ItemGroup>
 
   <ItemGroup>
