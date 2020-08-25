@@ -56,7 +56,7 @@ namespace EasyCraft.Core
         {
             WebClient w = new WebClient();
             string bak = w.DownloadString("https://api.easycraft.top/version.php");
-            VersionCallback b = System.Text.Json.JsonSerializer.Deserialize<VersionCallback>(bak);
+            VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(bak);
             if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
             {
                 FastConsole.PrintWarning(string.Format(Language.t("The Newst Version Of EasyCraft is {0}"), b.version));

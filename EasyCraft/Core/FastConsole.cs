@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 
 namespace EasyCraft.Core
 {
@@ -91,7 +89,7 @@ namespace EasyCraft.Core
             try
             {
                 string fi = File.ReadAllText("lang.json");
-                dic = JsonSerializer.Deserialize<Dictionary<string, string>>(fi);
+                dic = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(fi);
             }
             catch (Exception)
             {

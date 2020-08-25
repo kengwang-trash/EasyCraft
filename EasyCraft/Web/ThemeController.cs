@@ -9,7 +9,6 @@ using System.Net;
 using System.Reflection.Emit;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
-using System.Text.Json.Serialization;
 
 namespace EasyCraft.Web
 {
@@ -44,12 +43,12 @@ namespace EasyCraft.Web
 
         public static void LoadThemeConfig()
         {
-            themeConfig = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText("panel/themes/" + themeName + "/config/config.json"));
+            themeConfig = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText("panel/themes/" + themeName + "/config/config.json"));
         }
 
         public static void SaveThemeConfig()
         {
-            File.WriteAllText("panel/themes/" + themeName + "/config/config.json", System.Text.Json.JsonSerializer.Serialize(themeConfig));
+            File.WriteAllText("panel/themes/" + themeName + "/config/config.json", Newtonsoft.Json.JsonConvert.SerializeObject(themeConfig));
         }
 
         public static string LoadPage(string name, WebPanelPhraser wp)

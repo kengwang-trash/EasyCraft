@@ -24,7 +24,7 @@ namespace EasyCraft.Core
         {
             this.id = id;
             coreconfig = File.ReadAllText("core/" + id + "/manifest.json");
-            corestruct = System.Text.Json.JsonSerializer.Deserialize<CoreStruct>(coreconfig);
+            corestruct = Newtonsoft.Json.JsonConvert.DeserializeObject<CoreStruct>(coreconfig);
             name = corestruct.name;
             os = corestruct.startconfig.os;
             usecmd = corestruct.startconfig.usecmd;

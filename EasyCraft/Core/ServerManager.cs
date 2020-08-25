@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Text;
-using System.Text.Json;
 
 namespace EasyCraft.Core
 {
