@@ -204,6 +204,7 @@ namespace EasyCraft.Core
             process.ErrorDataReceived += Process_ErrorDataReceived;
             process.OutputDataReceived += Process_OutputDataReceived;
             process.StartInfo.CreateNoWindow = true;
+            process.Exited += Process_Exited;
 
 
             if (c.usecmd || c.multicommand)
@@ -234,6 +235,11 @@ namespace EasyCraft.Core
             {
                 PrintError(string.Format(Language.t("Cannot Start Server: {0}"), e.Message));
             }
+        }
+
+        private void Process_Exited(object sender, EventArgs e)
+        {
+            PrintLog("Server Stopped");
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)

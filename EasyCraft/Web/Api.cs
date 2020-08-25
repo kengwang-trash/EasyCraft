@@ -8,20 +8,22 @@ using System.Linq;
 namespace EasyCraft.Web
 {
     class Api
-    { 
+    {
         public static void PhraseAPI(string path, WebPanelPhraser wp)
         {
             switch (path)
             {
                 case "login":
-                    if (wp.session.ContainsKey("loginfail") && int.Parse(wp.session["loginfail"]) >= 5 && wp.session["lastloginfailday"] == DateTime.Today.ToString())
+                    if (wp.session.ContainsKey("loginfail"))
                     {
-                        UserLogin callback = new UserLogin();
-                        wp.session["loginfail"] += 1;
-                        callback.message = Language.t("Login failed, too many attempts!");
-                        callback.code = -2;
-                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
-                        return;
+                        if (int.Parse(wp.session["loginfail"]) >= 5 && wp.session["lastloginfailday"] == DateTime.Today.ToString())
+                        {
+                            UserLogin callback = new UserLogin();
+                            callback.message = Language.t("Login failed, too many attempts!");
+                            callback.code = -2;
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                            return;
+                        }
                     }
                     if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password"))
                     {
@@ -319,6 +321,7 @@ namespace EasyCraft.Web
                         callback.code = 9000;
                         callback.message = Language.t("Success");
                         callback.data = new LogBackData();
+                        callback.data.starting = s.running;
                         callback.data.logs = logs;
                         if (logs.Count != 0)
                         {

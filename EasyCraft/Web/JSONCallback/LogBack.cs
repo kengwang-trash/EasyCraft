@@ -12,6 +12,7 @@ namespace EasyCraft.Web.JSONCallback
 
     class LogBackData
     {
+        public bool starting { get; set; }
         public long lastlogid { get; set; }
         public List<ServerLog> logs { get; set; }
     }

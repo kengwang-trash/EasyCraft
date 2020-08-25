@@ -55,16 +55,27 @@ namespace EasyCraft.Core
         public static void CheckUpdate()
         {
             WebClient w = new WebClient();
-            string bak = w.DownloadString("https://api.easycraft.top/version.php");
-            VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(bak);
-            if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
+            try
             {
-                FastConsole.PrintWarning(string.Format(Language.t("The Newst Version Of EasyCraft is {0}"), b.version));
-                FastConsole.PrintInfo(string.Format(Language.t("Update Log: {0}"), b.log));
-                FastConsole.PrintInfo(string.Format(Language.t("You can go to https://www.easycraft.top to update")));
-                FastConsole.PrintWarning(string.Format(Language.t("Press [Enter] to continue which is NOT RECOMMENDED")));
-                Console.ReadKey();
+                string bak = w.DownloadString("https://api.easycraft.top/version.php");
+                VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(bak);
+                if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
+                {
+                    FastConsole.PrintWarning(string.Format(Language.t("The Newst Version Of EasyCraft is {0}"), b.version));
+                    FastConsole.PrintInfo(string.Format(Language.t("Update Log: {0}"), b.log));
+                    FastConsole.PrintInfo(string.Format(Language.t("You can go to https://www.easycraft.top to update")));
+                    FastConsole.PrintWarning(string.Format(Language.t("Press [Enter] to continue which is NOT RECOMMENDED")));
+                    Console.ReadKey();
+                }
+
             }
+            catch (Exception)
+            {
+                FastConsole.PrintFatal(Language.t("Version Check Fatal! Press [Enter] to exit"));
+                Console.ReadKey();
+                Environment.Exit(-25);
+            }
+
         }
 
         public static string MD5(string str)
