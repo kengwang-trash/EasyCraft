@@ -381,9 +381,9 @@ namespace SharpFtpServer
                     }
                     else
                     {
-                        FastConsole.PrintTrash("[FTP Send] " + response);
                         _controlWriter.WriteLine(response);
                         _controlWriter.Flush();
+                        FastConsole.PrintTrash("[FTP Send] " + response);
 
                         if (response.StartsWith("221"))
                         {
@@ -675,9 +675,12 @@ namespace SharpFtpServer
         {
             _dataConnectionType = DataConnectionType.Passive;
 
-            IPAddress localIp = ((IPEndPoint)_controlClient.Client.LocalEndPoint).Address;
+            //IPAddress ipAddress = ((IPEndPoint)_controlClient.Client.LocalEndPoint).Address;
+            //IPHostEntry hostInfo = Dns.GetHostEntry("192.168.0.102");
+            //IPAddress ipAddress = hostInfo.AddressList[0];
+            IPAddress ipAddress = IPAddress.Parse("139.155.227.156");
 
-            _passiveListener = new TcpListener(localIp, 0);
+            _passiveListener = new TcpListener(ipAddress, 0);
             _passiveListener.Start();
 
             IPEndPoint passiveListenerEndpoint = (IPEndPoint)_passiveListener.LocalEndpoint;
@@ -1039,9 +1042,12 @@ namespace SharpFtpServer
 
             _dataClient.Close();
             _dataClient = null;
+            if (_controlWriter.BaseStream.CanWrite)
+            {
+                _controlWriter.WriteLine(response);
+                _controlWriter.Flush();
+            }
 
-            _controlWriter.WriteLine(response);
-            _controlWriter.Flush();
         }
 
         private string RetrieveOperation(NetworkStream dataStream, string pathname)
