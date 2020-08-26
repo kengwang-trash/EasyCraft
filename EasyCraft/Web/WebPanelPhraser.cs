@@ -57,7 +57,9 @@ namespace EasyCraft.Web
                     Name = "SESSDATA",
                     Value = Functions.GetRandomString(20),
                     HttpOnly = true,
-                    Expires = DateTime.Now.AddDays(3)
+                    Expires = DateTime.Now.AddDays(3),
+                    Path = "/",
+                    Expired=false
                 };
                 response.AppendCookie(sesscookie);
                 cookies["SESSDATA"] = sesscookie.Value;
