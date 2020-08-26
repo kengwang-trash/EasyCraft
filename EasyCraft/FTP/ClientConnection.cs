@@ -524,7 +524,15 @@ namespace SharpFtpServer
             {
                 if (_currentUser.type >= 2 || ServerManager.servers[_sid].owner == _currentUser.uid)
                 {
-                    _root = (Environment.CurrentDirectory + "\\server\\server" + _sid.ToString() + "\\");
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        _root = (Environment.CurrentDirectory + "\\server\\server" + _sid.ToString() + "\\");
+                    }
+                    else
+                    {
+                        _root = (Environment.CurrentDirectory + "/server/server" + _sid.ToString() + "/");
+                    }
+
                     _currentDirectory = _root;
                     return "230 User logged in";
 
