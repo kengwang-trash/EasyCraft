@@ -413,12 +413,17 @@ namespace SharpFtpServer
             catch (Exception ex)
             {
                 FastConsole.PrintError("[FTP ERROR] " + ex.Message);
-                if (_controlStream.CanWrite)
+                try
                 {
-                    string response = "502 Command not implemented";
-                    _controlWriter.WriteLine(response);
-                    _controlWriter.Flush();
+                    if (_controlStream.CanWrite)
+                    {
+                        string response = "502 Command not implemented";
+                        _controlWriter.WriteLine(response);
+                        _controlWriter.Flush();
+                    }
                 }
+                catch (Exception) { }
+
             }
 
             Dispose();
