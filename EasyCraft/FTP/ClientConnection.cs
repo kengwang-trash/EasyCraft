@@ -561,12 +561,27 @@ namespace SharpFtpServer
 
                 if (pathname.StartsWith("/"))
                 {
-                    pathname = pathname.Substring(1).Replace('/', '\\');
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        pathname = pathname.Substring(1).Replace('/', '\\');
+                    }
+                    else
+                    {
+                        pathname = pathname.Substring(1).Replace('\\', '/');
+                    }
+
                     newDir = Path.Combine(_root, pathname);
                 }
                 else
                 {
-                    pathname = pathname.Replace('/', '\\');
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        pathname = pathname.Replace('/', '\\');
+                    }
+                    else
+                    {
+                        pathname = pathname.Replace('\\', '/');
+                    }
                     newDir = Path.Combine(_currentDirectory, pathname);
                 }
 
@@ -863,7 +878,6 @@ namespace SharpFtpServer
         private string PrintWorkingDirectory()
         {
             string current = _currentDirectory.Replace(_root, string.Empty).Replace('\\', '/');
-
             if (current.Length == 0)
             {
                 current = "/";
