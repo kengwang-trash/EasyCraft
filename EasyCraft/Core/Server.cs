@@ -23,8 +23,15 @@ namespace EasyCraft.Core
         {
             get
             {
-                if (process == null) return false;
-                return !process.HasExited;
+                try
+                {
+                    if (process == null) return false;
+                    return !process.HasExited;
+                }catch(Exception)
+                {
+                    return false;
+                }
+
             }
         }
 
