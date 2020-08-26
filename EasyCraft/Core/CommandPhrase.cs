@@ -31,7 +31,7 @@ namespace EasyCraft.Core
             }
             else if (command[0] == "ftpclean")
             {
-                FtpServer.CleanClient();
+                //FtpServer.CleanClient();
             }
             else
             {

@@ -1,5 +1,6 @@
 ﻿using EasyCraft.Core;
 using EasyCraft.Web;
+using SharpFtpServer;
 using System;
 using System.Linq;
 
@@ -64,7 +65,8 @@ namespace EasyCraft
             //FastConsole.PrintInfo(Language.t("Loading Passive WebSocket Server"));
             //WebSocketListener.StartListen(); //No more WebSocket
             FastConsole.PrintInfo(Language.t("Starting FTP Server"));
-            FtpServer.StartListen();
+            FtpServer.server = new SharpFtpServer.FtpServer();
+            FtpServer.server.Start();
             FastConsole.PrintInfo(Language.t("Starting HTTP Server"));
             HTTPServer.StartListen();
             string c = "";
