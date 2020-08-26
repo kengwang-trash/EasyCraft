@@ -109,7 +109,7 @@ namespace EasyCraft.Core
             //遍历子文件夹的所有文件
             foreach (string file in files)
             {
-                string pFilePath = SaveDirPath + "\\" + Path.GetFileName(file);
+                string pFilePath = SaveDirPath + "/" + Path.GetFileName(file);
                 if (File.Exists(pFilePath))
                     continue;
                 File.Copy(file, pFilePath, true);
@@ -118,7 +118,7 @@ namespace EasyCraft.Core
             //递归，遍历文件夹
             foreach (string dir in dirs)
             {
-                CopyDirectory(dir, SaveDirPath + "\\" + Path.GetFileName(dir));
+                CopyDirectory(dir, SaveDirPath + "/" + Path.GetFileName(dir));
             }
         }
     }

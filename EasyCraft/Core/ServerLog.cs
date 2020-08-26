@@ -6,7 +6,7 @@ namespace EasyCraft.Web.JSONCallback
 {
     class ServerLog
     {
-        private static int _lastid = 0;
+        private static int _lastid = 1;
         public static int lastid
         {
             get
