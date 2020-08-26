@@ -434,7 +434,7 @@ namespace SharpFtpServer
             {
                 return _root;
             }
-            else if (path.StartsWith("/"))
+            else if (path.StartsWith("/") && Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
                 path = new FileInfo(Path.Combine(_root, path.Substring(1))).FullName;
             }
