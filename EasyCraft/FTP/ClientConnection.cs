@@ -680,12 +680,12 @@ namespace SharpFtpServer
             //IPAddress ipAddress = hostInfo.AddressList[0];
             IPAddress ipAddress = IPAddress.Parse("139.155.227.156");
 
-            _passiveListener = new TcpListener(ipAddress, 0);
+            _passiveListener = new TcpListener(IPAddress.Any, 0);
             _passiveListener.Start();
 
             IPEndPoint passiveListenerEndpoint = (IPEndPoint)_passiveListener.LocalEndpoint;
 
-            byte[] address = passiveListenerEndpoint.Address.GetAddressBytes();
+            byte[] address = ipAddress.GetAddressBytes();
             short port = (short)passiveListenerEndpoint.Port;
 
             byte[] portArray = BitConverter.GetBytes(port);
