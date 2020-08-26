@@ -508,16 +508,16 @@ namespace SharpFtpServer
                 {
                     _username = tmpusername;
                     _sid = tmpserver;
-                    return "331 Username ok, need password";
+                    return "331 Username ok need password";
                 }
                 else
                 {
-                    return "530 Username Error, Retype";
+                    return "530 Username Error Retype";
                 }
             }
             catch (Exception)
             {
-                return "530 Username Error, Retype";
+                return "530 Username Error Retype";
             }
         }
 
