@@ -119,7 +119,7 @@ namespace SharpFtpServer
 
         private TransferType _connectionType = TransferType.Ascii;
         private FormatControlType _formatControlType = FormatControlType.NonPrint;
-        private DataConnectionType _dataConnectionType = DataConnectionType.Active;
+        private DataConnectionType _dataConnectionType = DataConnectionType.Passive;
         private FileStructureType _fileStructureType = FileStructureType.File;
 
         private string _username;
@@ -678,10 +678,12 @@ namespace SharpFtpServer
             //IPAddress ipAddress = ((IPEndPoint)_controlClient.Client.LocalEndPoint).Address;
             //IPHostEntry hostInfo = Dns.GetHostEntry("192.168.0.102");
             //IPAddress ipAddress = hostInfo.AddressList[0];
-            IPAddress ipAddress = IPAddress.Parse("139.155.227.156");
-
-            _passiveListener = new TcpListener(IPAddress.Any, 0);
-            _passiveListener.Start();
+            IPAddress ipAddress = IPAddress.Parse("139.155.227.156");//TODO
+            if (_passiveListener == null)
+            {
+                _passiveListener = new TcpListener(IPAddress.Any, 0);
+                _passiveListener.Start();
+            }
 
             IPEndPoint passiveListenerEndpoint = (IPEndPoint)_passiveListener.LocalEndpoint;
 
