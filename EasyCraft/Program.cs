@@ -61,15 +61,25 @@ namespace EasyCraft
             FastConsole.PrintInfo(Language.t("Initialize Theme"));
             ThemeController.InitComp();
             ThemeController.InitPage();
-            FastConsole.PrintInfo(Language.t("Loading Passive WebSocket Server"));
-            WebSocketListener.StartListen();
+            //FastConsole.PrintInfo(Language.t("Loading Passive WebSocket Server"));
+            //WebSocketListener.StartListen(); //No more WebSocket
+            FastConsole.PrintInfo(Language.t("Starting FTP Server"));
+            FtpServer.StartListen();
             FastConsole.PrintInfo(Language.t("Starting HTTP Server"));
             HTTPServer.StartListen();
             string c = "";
             while ((c = Console.ReadLine()) != "exit")
             {
-                CommandPhrase.PhraseCommand(c);
-                
+                try
+                {
+                    CommandPhrase.PhraseCommand(c);
+
+                }catch (Exception e)
+                {
+                    FastConsole.PrintError("Command Error: " + e.Message);
+                }
+
+
             }
             FastConsole.PrintInfo("Exiting EasyCraft, Bye");
         }

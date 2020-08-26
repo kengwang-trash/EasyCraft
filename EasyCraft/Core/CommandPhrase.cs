@@ -29,6 +29,10 @@ namespace EasyCraft.Core
                     ThemeController.InitPage();
                 }
             }
+            else if (command[0] == "ftpclean")
+            {
+                FtpServer.CleanClient();
+            }
             else
             {
                 FastConsole.PrintTrash("Unsupported Command: " + commandstr);

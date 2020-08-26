@@ -30,6 +30,7 @@ namespace EasyCraft.Web
                         wp.vars.user = new User(wp.POST["username"], wp.POST["password"]);
                         if (wp.vars.user.islogin)
                         {
+                            wp.vars.user.UpdateAuth();
                             wp.session["auth"] = wp.vars.user.auth;
                             UserLogin callback = new UserLogin();
                             callback.code = 9000;
@@ -398,6 +399,41 @@ namespace EasyCraft.Web
                         Callback callback = new Callback();
                         callback.code = 9000;
                         callback.message = Language.t("Successfully to clear logs on server");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                    }
+                    else
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -3;
+                        callback.message = Language.t("Permission Denied");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                    }
+                    break;
+                case "server":
+                    if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -1;
+                        callback.message = Language.t("Server Not Found");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                        return;
+                    }
+                    Server s_info = ServerManager.servers[int.Parse(wp.POST["sid"])];
+                    if (wp.vars.user.type >= 2 || s_info.owner == wp.vars.user.uid)
+                    {
+                        
+                        ServerInfo callback = new ServerInfo();
+                        callback.code = 9000;
+                        callback.message = Language.t("See Data");
+                        callback.data = new ServerInfoData();
+                        callback.data.id = s_info.id;
+                        callback.data.name = s_info.name;
+                        callback.data.port = s_info.port;
+                        callback.data.maxplayer = s_info.maxplayer;
+                        callback.data.ram = s_info.ram;
+                        callback.data.running = s_info.running;
+                        callback.data.expiretime = s_info.expiretime.ToString();
+                        callback.data.core = s_info.core;
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     else

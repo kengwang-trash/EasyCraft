@@ -80,6 +80,7 @@ namespace EasyCraft.Core
 
         public static string MD5(string str)
         {
+            if (str == null) str = "";
             string pwd = "";
             MD5 md5 = System.Security.Cryptography.MD5.Create();//实例化一个md5对像
             // 加密后是一个字节类型的数组，这里要注意编码UTF8/Unicode等的选择　

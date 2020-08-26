@@ -64,15 +64,19 @@ namespace EasyCraft.Web.Classes
                 email = r.GetString(3);
                 auth = Functions.MD5(Functions.GetRandomString(15) + pwmd5);
                 type = r.GetInt32(5);
-                qq = r.GetString(6);
-                SQLiteCommand co = Database.DB.CreateCommand();
-                co.CommandText = "UPDATE user SET auth = $auth WHERE uid = $uid ";
-                co.Parameters.AddWithValue("$auth", auth);
-                co.Parameters.AddWithValue("$uid", uid);
-                co.ExecuteNonQueryAsync();
+                qq = r.GetString(6);                
                 FastConsole.PrintSuccess(string.Format(Language.t("User {0} Login Successful."), username));
 
             }
+        }
+
+        public void UpdateAuth()
+        {
+            SQLiteCommand co = Database.DB.CreateCommand();
+            co.CommandText = "UPDATE user SET auth = $auth WHERE uid = $uid ";
+            co.Parameters.AddWithValue("$auth", auth);
+            co.Parameters.AddWithValue("$uid", uid);
+            co.ExecuteNonQueryAsync();
         }
 
         public static User Register(string username, string password, string email, string qq)
@@ -97,7 +101,7 @@ namespace EasyCraft.Web.Classes
         public static bool Exist(string username)
         {
             SQLiteCommand c = Database.DB.CreateCommand();
-            c.CommandText = "SELECT * FROM user WHERE username = $username ";
+            c.CommandText = "SELECT * FROM `user` WHERE `username` = $username ";
             c.Parameters.AddWithValue("$username", username);
             SQLiteDataReader r = c.ExecuteReader();
             return r.HasRows;
