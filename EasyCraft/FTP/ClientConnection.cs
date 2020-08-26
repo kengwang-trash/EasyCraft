@@ -162,11 +162,11 @@ namespace SharpFtpServer
             _clientIP = _remoteEndPoint.Address.ToString();
 
             _controlStream = _controlClient.GetStream();
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            _controlReader = new StreamReader(_controlStream, Encoding.GetEncoding(936));
+            _controlWriter = new StreamWriter(_controlStream, Encoding.GetEncoding(936));
 
-            _controlReader = new StreamReader(_controlStream);
-            _controlWriter = new StreamWriter(_controlStream);
-
-            _controlWriter.WriteLine("220 EasyCraft 1.0.0 FTP Server");
+            _controlWriter.WriteLine("220 EasyCraft 易开服 1.0.0 FTP Server");
             _controlWriter.Flush();
 
             _validCommands.AddRange(new string[] { "AUTH", "USER", "PASS", "QUIT", "HELP", "NOOP" });
@@ -413,6 +413,12 @@ namespace SharpFtpServer
             catch (Exception ex)
             {
                 FastConsole.PrintError("[FTP ERROR] " + ex.Message);
+                if (_controlStream.CanWrite)
+                {
+                    string response = "502 Command not implemented";
+                    _controlWriter.WriteLine(response);
+                    _controlWriter.Flush();
+                }
             }
 
             Dispose();
@@ -458,7 +464,19 @@ namespace SharpFtpServer
 
         private string Options(string arguments)
         {
-            return "200 Looks good to me...";
+            if (arguments == "UTF8 ON")
+            {
+                _controlReader = new StreamReader(_controlStream, Encoding.UTF8);
+                _controlWriter = new StreamWriter(_controlStream, Encoding.UTF8);
+                return "200 Changed to UTF-8";
+            }
+            else
+            {
+                _controlReader = new StreamReader(_controlStream, Encoding.ASCII);
+                _controlWriter = new StreamWriter(_controlStream, Encoding.ASCII);
+                return "200 Changed to ASCII";
+            }
+
         }
 
         private string Auth(string authMode)
@@ -690,6 +708,8 @@ namespace SharpFtpServer
             {
                 case "A":
                     _connectionType = TransferType.Ascii;
+                    _controlReader = new StreamReader(_controlStream, Encoding.GetEncoding(936));
+                    _controlWriter = new StreamWriter(_controlStream, Encoding.GetEncoding(936));
                     break;
                 case "I":
                     _connectionType = TransferType.Image;
@@ -888,6 +908,14 @@ namespace SharpFtpServer
 
         private string List(string pathname)
         {
+            if (pathname.StartsWith("-"))
+            {
+                int sidx = pathname.IndexOf(" ");
+                if (sidx != -1)
+                    pathname = pathname.Substring(sidx);
+                else
+                    pathname = "/";
+            }
             pathname = NormalizeFilename(pathname);
 
             if (pathname != null)
@@ -1073,7 +1101,7 @@ namespace SharpFtpServer
 
         private string ListOperation(NetworkStream dataStream, string pathname)
         {
-            StreamWriter dataWriter = new StreamWriter(dataStream, Encoding.ASCII);
+            StreamWriter dataWriter = new StreamWriter(dataStream, _controlWriter.Encoding);
 
             IEnumerable<string> directories = Directory.EnumerateDirectories(pathname);
 
@@ -1084,8 +1112,15 @@ namespace SharpFtpServer
                 string date = d.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
                     d.LastWriteTime.ToString("MM dd  yyyy") :
                     d.LastWriteTime.ToString("MM dd HH:mm");
-
-                string line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, d.Name);
+                string line = "";
+                if (_controlWriter.Encoding == Encoding.GetEncoding(936))
+                {
+                    line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, d.Name);
+                }
+                else
+                {
+                    line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, Encoding.UTF8.GetString(Encoding.Convert(Encoding.GetEncoding(936), Encoding.UTF8, Encoding.GetEncoding(936).GetBytes(d.Name))));
+                }
 
                 dataWriter.WriteLine(line);
                 dataWriter.Flush();
@@ -1100,8 +1135,15 @@ namespace SharpFtpServer
                 string date = f.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
                     f.LastWriteTime.ToString("MM dd  yyyy") :
                     f.LastWriteTime.ToString("MM dd HH:mm");
-
-                string line = string.Format("-rw-r--r--    2 2003     2003     {0,8} {1} {2}", f.Length, date, f.Name);
+                string line = "";
+                if (_controlWriter.Encoding == Encoding.GetEncoding(936))
+                {
+                    line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, f.Name);
+                }
+                else
+                {
+                    line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, Encoding.UTF8.GetString(Encoding.Convert(Encoding.GetEncoding(936), Encoding.UTF8, Encoding.GetEncoding(936).GetBytes(f.Name))));
+                }
 
                 dataWriter.WriteLine(line);
                 dataWriter.Flush();
