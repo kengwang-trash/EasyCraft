@@ -43,9 +43,9 @@ namespace SharpFtpServer
             int count = 0;
             long total = 0;
 
-            using (StreamReader rdr = new StreamReader(input, Encoding.ASCII))
+            using (StreamReader rdr = new StreamReader(input, Encoding.GetEncoding(936)))
             {
-                using (StreamWriter wtr = new StreamWriter(output, Encoding.ASCII))
+                using (StreamWriter wtr = new StreamWriter(output, Encoding.GetEncoding(936)))
                 {
                     while ((count = rdr.Read(buffer, 0, buffer.Length)) > 0)
                     {
@@ -477,8 +477,8 @@ namespace SharpFtpServer
             }
             else
             {
-                _controlReader = new StreamReader(_controlStream, Encoding.ASCII);
-                _controlWriter = new StreamWriter(_controlStream, Encoding.ASCII);
+                _controlReader = new StreamReader(_controlStream, Encoding.GetEncoding(936));
+                _controlWriter = new StreamWriter(_controlStream, Encoding.GetEncoding(936));
                 return "200 Changed to ASCII";
             }
 
