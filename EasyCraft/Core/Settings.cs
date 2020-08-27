@@ -32,5 +32,8 @@ namespace EasyCraft.Core
             }
         }
 
-    }
+        public static string remoteip="192.168.0.102";
+        
+
+        }
 }

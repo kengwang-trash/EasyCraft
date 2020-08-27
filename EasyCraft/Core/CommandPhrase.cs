@@ -33,6 +33,10 @@ namespace EasyCraft.Core
             {
                 //FtpServer.CleanClient();
             }
+            else if (command[0] == "setip")
+            {
+                Settings.remoteip = command[1];
+            }
             else
             {
                 FastConsole.PrintTrash("Unsupported Command: " + commandstr);

@@ -678,7 +678,7 @@ namespace SharpFtpServer
             //IPAddress ipAddress = ((IPEndPoint)_controlClient.Client.LocalEndPoint).Address;
             //IPHostEntry hostInfo = Dns.GetHostEntry("192.168.0.102");
             //IPAddress ipAddress = hostInfo.AddressList[0];
-            IPAddress ipAddress = IPAddress.Parse("139.155.94.14");//TODO
+            IPAddress ipAddress = IPAddress.Parse(Settings.remoteip);//TODO
             if (_passiveListener == null)
             {
                 _passiveListener = new TcpListener(IPAddress.Any, 0);
