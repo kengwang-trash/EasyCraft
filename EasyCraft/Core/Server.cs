@@ -27,7 +27,8 @@ namespace EasyCraft.Core
                 {
                     if (process == null) return false;
                     return !process.HasExited;
-                }catch(Exception)
+                }
+                catch (Exception)
                 {
                     return false;
                 }
@@ -218,6 +219,70 @@ namespace EasyCraft.Core
             {
                 process.StartInfo.FileName = Environment.OSVersion.Platform == PlatformID.Win32NT ? "cmd.exe" : "bash";
                 process.StartInfo.RedirectStandardInput = true;
+                if (c.multicommand)
+                {
+
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
+                        File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
+
+                    }
+                    else
+                    {
+                        if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
+
+                        File.AppendAllText(serverdir + "start.bash", "#!/bin/bash\r\n");
+                    }
+
+                    foreach (string com in c.commands)
+                    {
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                        {
+                            File.AppendAllText(serverdir + "start.bat", PhraseServerCommand(com) + "\r\n");
+
+                        }
+                        else
+                        {
+                            File.AppendAllText(serverdir + "start.sh", PhraseServerCommand(com) + "\r\n");
+                        }
+
+                    }
+                }
+                else
+                {
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
+                        File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
+
+                    }
+                    else
+                    {
+                        if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
+
+                        File.AppendAllText(serverdir + "start.sh", "#!/bin/bash\r\n");
+                    }
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        File.AppendAllText(serverdir + "start.bat", PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+
+                    }
+                    else
+                    {
+                        File.AppendAllText(serverdir + "start.sh", PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                    }
+                }
+
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    process.StartInfo.FileName = serverdir + "start.bat";
+                }
+                else
+                {
+                    process.StartInfo.FileName = serverdir + "bash";
+                    process.StartInfo.Arguments = serverdir + "start.sh";
+                }
             }
             else
             {
@@ -230,13 +295,7 @@ namespace EasyCraft.Core
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                if (c.multicommand)
-                {
-                    foreach (string com in c.commands)
-                    {
-                        process.StandardInput.WriteLineAsync(PhraseServerCommand(com));
-                    }
-                }
+
             }
             catch (Exception e)
             {
