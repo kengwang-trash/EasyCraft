@@ -22,7 +22,7 @@ namespace SharpFtpServer
         private IPEndPoint _localEndPoint;
 
         public FtpServer()
-            : this(IPAddress.Any, 21)
+            : this(IPAddress.Any, Settings.ftpport)
         {
         }
 

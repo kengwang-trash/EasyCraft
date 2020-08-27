@@ -50,6 +50,8 @@ namespace EasyCraft
             }
             FastConsole.PrintInfo("Loading Language Pack");
             Language.LoadLanguagePack();
+            FastConsole.PrintInfo(Language.t("Loading Config File"));
+            Settings.LoadConfig();
             FastConsole.PrintInfo(Language.t("Checking Update"));
             Functions.CheckUpdate();
             FastConsole.PrintWarning(Language.t("You are running the alpha version of EasyCraft, it's not stable"));

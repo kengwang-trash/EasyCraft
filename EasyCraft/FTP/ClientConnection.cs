@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -138,6 +138,10 @@ namespace SharpFtpServer
 
         private List<string> _validCommands;
 
+        private Encoding _writerEncoding = Encoding.ASCII;
+        private Encoding _readerEncoding = Encoding.ASCII;
+
+
         public ClientConnection(TcpClient client)
         {
             _controlClient = client;
@@ -162,9 +166,16 @@ namespace SharpFtpServer
             _clientIP = _remoteEndPoint.Address.ToString();
 
             _controlStream = _controlClient.GetStream();
+
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-            _controlReader = new StreamReader(_controlStream, Encoding.GetEncoding(936));
-            _controlWriter = new StreamWriter(_controlStream, Encoding.GetEncoding(936));
+            //设置成UTF8无BOM
+            _readerEncoding = new UTF8Encoding(false);
+            _writerEncoding = new UTF8Encoding(false);
+
+            _controlReader = new StreamReader(_controlStream, _readerEncoding);
+            _controlWriter = new StreamWriter(_controlStream, _writerEncoding);
+
+            FastConsole.PrintTrash("[FTP Connect] " + _clientIP + " using " + _writerEncoding.EncodingName);
 
             _controlWriter.WriteLine("220 EasyCraft 易开服 1.0.0 FTP Server");
             _controlWriter.Flush();
@@ -183,11 +194,20 @@ namespace SharpFtpServer
                 {
                     FastConsole.PrintTrash("[FTP Recieved] " + line);
                     string response = null;
+                    string cmd, arguments;
+                    int spaceidx = line.IndexOf(" ");
+                    if (spaceidx != -1)
+                    {
+                        cmd = line.Substring(0, spaceidx).ToUpperInvariant();
+                        arguments = line.Substring(spaceidx + 1);
+                    }
+                    else
+                    {
+                        cmd = line.ToUpperInvariant();
+                        arguments = null;
+                    }
 
-                    string[] command = line.Split(' ');
 
-                    string cmd = command[0].ToUpperInvariant();
-                    string arguments = command.Length > 1 ? line.Substring(command[0].Length + 1) : null;
 
                     if (arguments != null && arguments.Trim().Length == 0)
                     {
@@ -248,6 +268,7 @@ namespace SharpFtpServer
                                 logEntry.SPort = ((IPEndPoint)_passiveListener.LocalEndpoint).Port.ToString();
                                 break;
                             case "TYPE":
+                                string[] command = line.Split(' ');
                                 response = Type(command[1], command.Length == 3 ? command[2] : null);
                                 logEntry.CSUriStem = command[1];
                                 break;
@@ -274,6 +295,7 @@ namespace SharpFtpServer
                                 response = CreateDir(arguments);
                                 break;
                             case "PWD":
+                            case "XPWD":
                                 response = PrintWorkingDirectory();
                                 break;
                             case "RETR":
@@ -471,14 +493,20 @@ namespace SharpFtpServer
         {
             if (arguments == "UTF8 ON")
             {
-                _controlReader = new StreamReader(_controlStream, Encoding.UTF8);
-                _controlWriter = new StreamWriter(_controlStream, Encoding.UTF8);
+                //设置成UTF8无BOM
+                _readerEncoding = new UTF8Encoding(false);
+                _writerEncoding = new UTF8Encoding(false);
+                _controlReader = new StreamReader(_controlStream, _readerEncoding);
+                _controlWriter = new StreamWriter(_controlStream, _writerEncoding);
                 return "200 Changed to UTF-8";
             }
             else
             {
-                _controlReader = new StreamReader(_controlStream, Encoding.GetEncoding(936));
-                _controlWriter = new StreamWriter(_controlStream, Encoding.GetEncoding(936));
+                //设置成UTF8无BOM
+                _readerEncoding = Encoding.GetEncoding(936);
+                _writerEncoding = Encoding.GetEncoding(936);
+                _controlReader = new StreamReader(_controlStream, _readerEncoding);
+                _controlWriter = new StreamWriter(_controlStream, _writerEncoding);
                 return "200 Changed to ASCII";
             }
 
@@ -718,8 +746,12 @@ namespace SharpFtpServer
             {
                 case "A":
                     _connectionType = TransferType.Ascii;
-                    _controlReader = new StreamReader(_controlStream, Encoding.GetEncoding(936));
-                    _controlWriter = new StreamWriter(_controlStream, Encoding.GetEncoding(936));
+                    /*
+                    _readerEncoding = Encoding.GetEncoding(936);
+                    _writerEncoding = Encoding.GetEncoding(936);
+                    _controlReader = new StreamReader(_controlStream, _readerEncoding);
+                    _controlWriter = new StreamWriter(_controlStream, _writerEncoding);
+                    */
                     break;
                 case "I":
                     _connectionType = TransferType.Image;
@@ -1132,13 +1164,14 @@ namespace SharpFtpServer
                     d.LastWriteTime.ToString("MM dd  yyyy") :
                     d.LastWriteTime.ToString("MM dd HH:mm");
                 string line = "";
-                if (_controlWriter.Encoding == Encoding.GetEncoding(936))
-                {
+                if (_controlWriter.Encoding.CodePage == 936)
+                {//本来就是GBK,不用转换
                     line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, d.Name);
                 }
                 else
                 {
-                    line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, Encoding.UTF8.GetString(Encoding.Convert(Encoding.GetEncoding(936), Encoding.UTF8, Encoding.GetEncoding(936).GetBytes(d.Name))));
+                    string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(d.Name)));
+                    line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, filenameconv);
                 }
 
                 dataWriter.WriteLine(line);
@@ -1155,13 +1188,14 @@ namespace SharpFtpServer
                     f.LastWriteTime.ToString("MM dd  yyyy") :
                     f.LastWriteTime.ToString("MM dd HH:mm");
                 string line = "";
-                if (_controlWriter.Encoding == Encoding.GetEncoding(936))
+                if (_controlWriter.Encoding.CodePage == 936)
                 {
                     line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, f.Name);
                 }
                 else
                 {
-                    line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, Encoding.UTF8.GetString(Encoding.Convert(Encoding.GetEncoding(936), Encoding.UTF8, Encoding.GetEncoding(936).GetBytes(f.Name))));
+                    string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(f.Name)));
+                    line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, filenameconv);
                 }
 
                 dataWriter.WriteLine(line);

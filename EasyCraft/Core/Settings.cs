@@ -7,33 +7,82 @@ namespace EasyCraft.Core
 {
     class Settings
     {
-        public static int httpport  {
+        static SettinsFile sf = new SettinsFile();
+        public static int httpport
+        {
             get
             {
-                /*
-                if (File.Exists("port.conf"))
+                if (sf.HTTP != null && sf.HTTP.port != null && sf.HTTP.port != 0)
                 {
-                    return int.Parse(File.ReadAllText("port.conf"));
-                }
-                FastConsole.PrintInfo("Please Input the port you want to listen: ");
-                string p = Console.ReadLine();
-                if (int.Parse(p)!=0)
-                {
-                    File.WriteAllText("port.conf", p);
-                    return int.Parse(p);
+                    return sf.HTTP.port;
                 }
                 else
                 {
-                    FastConsole.PrintInfo("Please Input a valid number: ");
-                    return httpport;
+                    return 80;
                 }
-                */
-                return 80;
             }
         }
 
-        public static string remoteip="192.168.0.102";
-        
-
+        public static int ftpport
+        {
+            get
+            {
+                if (sf.FTP != null && sf.FTP.port != null && sf.FTP.port != 0)
+                {
+                    return sf.FTP.port;
+                }
+                else
+                {
+                    return 80;
+                }
+            }
         }
+
+        public static string remoteip
+        {
+            get
+            {
+                if (sf.FTP != null && !string.IsNullOrEmpty(sf.FTP.remote_addr))
+                {
+                    return sf.FTP.remote_addr;
+                }
+                else
+                {
+                    FastConsole.PrintWarning(Language.t("FTP Remote Address not set! FTP Passive might be error!"));
+                    return "0.0.0.0";
+                }
+            }
+        }
+
+        public static void LoadConfig()
+        {
+            try
+            {
+                sf = Newtonsoft.Json.JsonConvert.DeserializeObject<SettinsFile>(File.ReadAllText("easycraft.conf"));
+
+            }
+            catch (Exception e)
+            {
+                FastConsole.PrintError(string.Format(Language.t("Config Load Failed: {0}"), e.Message));
+            }
+        }
+    }
+
+    class SettinsFile
+    {
+        public HTTPConf HTTP { get; set; }
+        public FTPConf FTP { get; set; }
+    }
+
+    class HTTPConf
+    {
+        public int port { get; set; }
+        public bool https { get; set; }//Not Support yet
+    }
+
+    class FTPConf
+    {
+        public int port { get; set; }
+        public string remote_addr { get; set; }
+    }
 }

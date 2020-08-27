@@ -20,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="easycraft.conf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\lang.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
