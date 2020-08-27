@@ -208,6 +208,7 @@ namespace EasyCraft.Core
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.ErrorDialog = false;
             process.StartInfo.UseShellExecute = false;
+            process.StartInfo.WorkingDirectory = serverdir;
             process.StartInfo.RedirectStandardInput = true;  // 重定向输入
             process.ErrorDataReceived += Process_ErrorDataReceived;
             process.OutputDataReceived += Process_OutputDataReceived;
@@ -280,7 +281,7 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    process.StartInfo.FileName = serverdir + "bash";
+                    process.StartInfo.FileName = serverdir + "/bin/bash";
                     process.StartInfo.Arguments = serverdir + "start.sh";
                 }
             }
