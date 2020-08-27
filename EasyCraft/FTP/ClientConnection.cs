@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -951,13 +952,18 @@ namespace SharpFtpServer
         private string List(string pathname)
         {
             if (pathname.StartsWith("-"))
-            {
-                int sidx = pathname.IndexOf(" ");
-                if (sidx != -1)
-                    pathname = pathname.Substring(sidx);
+            {//垃圾ES还tm带参数 要不是有人说想要ES来管理我直接tm就给你抛500
+                string[] cmds = pathname.Split(' ');
+                if (cmds.Length == 1 || cmds[1] == ".")
+                {//当前目录
+                    pathname = "./";
+                }
                 else
+                {
                     pathname = "/";
+                }
             }
+
             pathname = NormalizeFilename(pathname);
 
             if (pathname != null)
@@ -1152,6 +1158,7 @@ namespace SharpFtpServer
 
         private string ListOperation(NetworkStream dataStream, string pathname)
         {
+              
             StreamWriter dataWriter = new StreamWriter(dataStream, _controlWriter.Encoding);
 
             IEnumerable<string> directories = Directory.EnumerateDirectories(pathname);
@@ -1161,8 +1168,8 @@ namespace SharpFtpServer
                 DirectoryInfo d = new DirectoryInfo(dir);
 
                 string date = d.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
-                    d.LastWriteTime.ToString("MM dd  yyyy") :
-                    d.LastWriteTime.ToString("MM dd HH:mm");
+                    d.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US")) :
+                    d.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
                 string line = "";
                 if (_controlWriter.Encoding.CodePage == 936)
                 {//本来就是GBK,不用转换
@@ -1173,7 +1180,7 @@ namespace SharpFtpServer
                     string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(d.Name)));
                     line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, filenameconv);
                 }
-
+                FastConsole.PrintTrash("[FTP Passive Send] " + line);
                 dataWriter.WriteLine(line);
                 dataWriter.Flush();
             }
@@ -1183,10 +1190,9 @@ namespace SharpFtpServer
             foreach (string file in files)
             {
                 FileInfo f = new FileInfo(file);
-
                 string date = f.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
-                    f.LastWriteTime.ToString("MM dd  yyyy") :
-                    f.LastWriteTime.ToString("MM dd HH:mm");
+                    f.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US")) :
+                    f.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
                 string line = "";
                 if (_controlWriter.Encoding.CodePage == 936)
                 {
@@ -1197,6 +1203,7 @@ namespace SharpFtpServer
                     string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(f.Name)));
                     line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, filenameconv);
                 }
+                FastConsole.PrintTrash("[FTP Passive Send] " + line);
 
                 dataWriter.WriteLine(line);
                 dataWriter.Flush();
