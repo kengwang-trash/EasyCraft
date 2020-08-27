@@ -54,7 +54,7 @@ namespace EasyCraft
             Settings.LoadConfig();
             FastConsole.PrintInfo(Language.t("Checking Update"));
             Functions.CheckUpdate();
-            FastConsole.PrintWarning(Language.t("You are running the alpha version of EasyCraft, it's not stable"));
+            FastConsole.PrintWarning(Language.t("You are running the Alpha version of EasyCraft, which is unstable"));
             FastConsole.PrintInfo(Language.t("Initialize Directories"));
             Functions.InitDirectory();
             FastConsole.PrintInfo(Language.t("Loading Database"));

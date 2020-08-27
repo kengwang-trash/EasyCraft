@@ -48,7 +48,7 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    FastConsole.PrintWarning(Language.t("FTP Remote Address not set! FTP Passive might be error!"));
+                    FastConsole.PrintWarning(Language.t("FTP Remote Address is NOT SET! FTP Passive Mode May not be Executed!"));
                     return "0.0.0.0";
                 }
             }
@@ -65,11 +65,11 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    FastConsole.PrintWarning(Language.t("Config File Not Found, Start Install"));
+                    FastConsole.PrintWarning(Language.t("Could not Find the Configuration File, Start the Installation"));
                     FastConsole.PrintWarning(Language.t("Initialize Install... Please Wait"));
                     sf.FTP = new FTPConf();
                     sf.HTTP = new HTTPConf();
-                    Console.WriteLine(Language.t("Please input the following forms"));
+                    Console.WriteLine(Language.t("Please fill in the following information"));
                     while (true)
                     {
                         Console.WriteLine(Language.t("HTTP Listen Port [80]:"));
@@ -118,7 +118,7 @@ namespace EasyCraft.Core
                         }
                     }
 
-                    FastConsole.PrintSuccess("Install Successfully, Saving Config File");
+                    FastConsole.PrintSuccess(Language.t("Installation is successful, Saving the configuration file"));
                     File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
                     LoadConfig();
                 }
@@ -126,7 +126,7 @@ namespace EasyCraft.Core
             }
             catch (Exception e)
             {
-                FastConsole.PrintError(string.Format(Language.t("Config Load Failed: {0}"), e.Message));
+                FastConsole.PrintError(string.Format(Language.t("Configuration loading failed: {0}"), e.Message));
             }
         }
     }

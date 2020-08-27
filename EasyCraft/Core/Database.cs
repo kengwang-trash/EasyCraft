@@ -31,7 +31,7 @@ namespace EasyCraft
                 FastConsole.PrintError(string.Format(Language.t("Database Connect Error: {0}"), e.Message));
                 if (0 != -2147481601)
                 {
-                    FastConsole.PrintInfo(Language.t("Try Create new database"));
+                    FastConsole.PrintInfo(Language.t("Try Create a new database"));
                     CreateNew();
                 }
 
@@ -83,7 +83,7 @@ namespace EasyCraft
             catch (Exception e)
             {
                 FastConsole.PrintFatal(string.Format(Language.t("Database Create Error: {0}"), e.Message));
-                FastConsole.PrintFatal(Language.t("EasyCraft Cannot Run anymore, Press [Enter] to exit"));
+                FastConsole.PrintFatal(Language.t("EasyCraft Can No Longer Run, Press [Enter] to Exit"));
                 Console.ReadKey();
                 Environment.Exit(-5);
             }

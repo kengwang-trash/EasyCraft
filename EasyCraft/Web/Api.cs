@@ -34,7 +34,7 @@ namespace EasyCraft.Web
                             wp.session["auth"] = wp.vars.user.auth;
                             UserLogin callback = new UserLogin();
                             callback.code = 9000;
-                            callback.message = Language.t("Login Successful");
+                            callback.message = Language.t("Successful Login");
                             callback.data = new LoginUserInfo();
                             callback.data.username = wp.vars.user.name;
                             callback.data.uid = wp.vars.user.uid;
@@ -100,7 +100,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -3;
-                        callback.message = Language.t("Registration failed with incomplete parameters");
+                        callback.message = Language.t("Registration failed, parameters are incomplete");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -128,7 +128,7 @@ namespace EasyCraft.Web
                                 ServerManager.servers.Add(s.id, s);
                                 NewServer callback = new NewServer();
                                 callback.code = 9000;
-                                callback.message = Language.t("Server Successfully Create");
+                                callback.message = Language.t("Server Created Successfully");
                                 callback.data = s.id;
                                 wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             }
@@ -195,7 +195,7 @@ namespace EasyCraft.Web
 
                             Callback callback = new Callback();
                             callback.code = 9000;
-                            callback.message = Language.t("Server Edited");
+                            callback.message = Language.t("Server information has been saved");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             return;
                         }
@@ -203,7 +203,7 @@ namespace EasyCraft.Web
                         {
                             NewServer callback = new NewServer();
                             callback.code = -2;
-                            callback.message = Language.t("Edit Server Config Failed");
+                            callback.message = Language.t("Failed to Edit Server Configuration");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
 
@@ -248,7 +248,7 @@ namespace EasyCraft.Web
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
-                            callback.message = Language.t("Failed to Start Server");
+                            callback.message = Language.t("Unable to Start Server");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                     }
@@ -372,7 +372,7 @@ namespace EasyCraft.Web
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
-                            callback.message = Language.t("Param not completed");
+                            callback.message = Language.t("Incomplete Parameters");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                     }
@@ -398,7 +398,7 @@ namespace EasyCraft.Web
                         ServerManager.servers[int.Parse(wp.POST["sid"])].ClearLog();
                         Callback callback = new Callback();
                         callback.code = 9000;
-                        callback.message = Language.t("Successfully to clear logs on server");
+                        callback.message = Language.t("Successfully cleared the logs on the server");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     else

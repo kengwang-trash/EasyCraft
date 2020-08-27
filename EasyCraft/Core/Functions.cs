@@ -54,14 +54,14 @@ namespace EasyCraft.Core
 
         public static void CheckUpdate()
         {
-            WebClient w = new WebClient();
+            WebClient w = new WebClient();            
             try
             {
                 string bak = w.DownloadString("https://api.easycraft.top/version.php");
                 VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(bak);
                 if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
                 {
-                    FastConsole.PrintWarning(string.Format(Language.t("The Newst Version Of EasyCraft is {0}"), b.version));
+                    FastConsole.PrintWarning(string.Format(Language.t("The Newest Version of EasyCraft is {0}"), b.version));
                     FastConsole.PrintInfo(string.Format(Language.t("Update Log: {0}"), b.log));
                     FastConsole.PrintInfo(string.Format(Language.t("You can go to https://www.easycraft.top to update")));
                     FastConsole.PrintWarning(string.Format(Language.t("Press [Enter] to continue which is NOT RECOMMENDED")));
@@ -71,7 +71,7 @@ namespace EasyCraft.Core
             }
             catch (Exception)
             {
-                FastConsole.PrintFatal(Language.t("Version Check Fatal! Press [Enter] to exit"));
+                FastConsole.PrintFatal(Language.t("Version Check Failed! Press [Enter] to exit"));
                 Console.ReadKey();
                 Environment.Exit(-25);
             }

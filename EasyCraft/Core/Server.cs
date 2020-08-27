@@ -178,7 +178,7 @@ namespace EasyCraft.Core
         {
             if ((expiretime - DateTime.Now).TotalSeconds < 0)
             {
-                PrintError(string.Format(Language.t("Server Expired at {0}, Cannot strat server"), expiretime.ToString()));
+                PrintError(string.Format(Language.t("Server Expired at {0}, Unable to Start Server"), expiretime.ToString()));
                 return;
             }
             try
