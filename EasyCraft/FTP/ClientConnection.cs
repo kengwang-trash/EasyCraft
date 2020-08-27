@@ -678,7 +678,7 @@ namespace SharpFtpServer
             //IPAddress ipAddress = ((IPEndPoint)_controlClient.Client.LocalEndPoint).Address;
             //IPHostEntry hostInfo = Dns.GetHostEntry("192.168.0.102");
             //IPAddress ipAddress = hostInfo.AddressList[0];
-            IPAddress ipAddress = IPAddress.Parse("139.155.227.156");//TODO
+            IPAddress ipAddress = IPAddress.Parse("139.155.94.14");//TODO
             if (_passiveListener == null)
             {
                 _passiveListener = new TcpListener(IPAddress.Any, 0);
@@ -1025,13 +1025,18 @@ namespace SharpFtpServer
             }
             else
             {
+                FastConsole.PrintTrash("[FTP Passive Start] Begin Accept Passive Client at " + ((IPEndPoint)_passiveListener.LocalEndpoint).Address + ":" + ((IPEndPoint)_passiveListener.LocalEndpoint).Port);
                 _passiveListener.BeginAcceptTcpClient(DoDataConnectionOperation, state);
             }
         }
 
         private void DoDataConnectionOperation(IAsyncResult result)
         {
+
             HandleAsyncResult(result);
+
+            FastConsole.PrintTrash("[FTP Passive Connect] " + ((IPEndPoint)_dataClient.Client.RemoteEndPoint).Address);
+
 
             DataConnectionOperation op = result.AsyncState as DataConnectionOperation;
 
@@ -1048,6 +1053,7 @@ namespace SharpFtpServer
             {
                 _controlWriter.WriteLine(response);
                 _controlWriter.Flush();
+                FastConsole.PrintTrash("[FTP Passive Send] " + response);
             }
 
         }
