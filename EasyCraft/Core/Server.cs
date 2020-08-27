@@ -277,12 +277,12 @@ namespace EasyCraft.Core
 
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
-                    process.StartInfo.FileName = serverdir + "start.bat";
+                    process.StartInfo.FileName = serverdir + "/start.bat";
                 }
                 else
                 {
-                    process.StartInfo.FileName = serverdir + "/bin/bash";
-                    process.StartInfo.Arguments = serverdir + "start.sh";
+                    process.StartInfo.FileName = "/bin/bash";
+                    process.StartInfo.Arguments = serverdir + "/start.sh";
                 }
             }
             else
