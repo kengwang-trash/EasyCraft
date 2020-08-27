@@ -6,7 +6,9 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Numerics;
+using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Text;
 using EasyCraft.Core;
 using EasyCraft.Web.Classes;
@@ -1158,7 +1160,7 @@ namespace SharpFtpServer
 
         private string ListOperation(NetworkStream dataStream, string pathname)
         {
-              
+
             StreamWriter dataWriter = new StreamWriter(dataStream, _controlWriter.Encoding);
 
             IEnumerable<string> directories = Directory.EnumerateDirectories(pathname);
@@ -1166,19 +1168,21 @@ namespace SharpFtpServer
             foreach (string dir in directories)
             {
                 DirectoryInfo d = new DirectoryInfo(dir);
-
+                string owner = "unknown";
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    owner = ((NTAccount)d.GetAccessControl().GetOwner(typeof(NTAccount))).Value.Split('\\')[1];
                 string date = d.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
                     d.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US")) :
                     d.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
-                string line = "";
+                string line;
                 if (_controlWriter.Encoding.CodePage == 936)
                 {//本来就是GBK,不用转换
-                    line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, d.Name);
+                    line = string.Format("drwxr-xr-x    2 {3}     {3}     {0,8}  {1} {2}", "4096", date, d.Name, owner);
                 }
                 else
                 {
                     string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(d.Name)));
-                    line = string.Format("drwxr-xr-x    2 2003     2003     {0,8}  {1} {2}", "4096", date, filenameconv);
+                    line = string.Format("drwxr-xr-x    2 {3}     {3}     {0,8}  {1} {2}", "4096", date, filenameconv, owner);
                 }
                 FastConsole.PrintTrash("[FTP Passive Send] " + line);
                 dataWriter.WriteLine(line);
@@ -1190,18 +1194,21 @@ namespace SharpFtpServer
             foreach (string file in files)
             {
                 FileInfo f = new FileInfo(file);
+                string owner = "unknown";
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    owner = ((NTAccount)f.GetAccessControl().GetOwner(typeof(NTAccount))).Value.Split('\\')[1];
                 string date = f.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
                     f.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US")) :
                     f.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
-                string line = "";
+                string line;
                 if (_controlWriter.Encoding.CodePage == 936)
                 {
-                    line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, f.Name);
+                    line = string.Format("-rw-r--r--    2 {3}     {3}     {0,8}  {1} {2}", f.Length, date, f.Name, owner);
                 }
                 else
                 {
                     string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(f.Name)));
-                    line = string.Format("-rw-r--r--    2 2003     2003     {0,8}  {1} {2}", f.Length, date, filenameconv);
+                    line = string.Format("-rw-r--r--    2 {3}     {3}     {0,8}  {1} {2}", f.Length, date, filenameconv, owner);
                 }
                 FastConsole.PrintTrash("[FTP Passive Send] " + line);
 
