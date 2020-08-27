@@ -63,15 +63,21 @@ namespace SharpFtpServer
 
         private long CopyStream(Stream input, Stream output)
         {
-            Stream limitedStream = output; // new RateLimitingStream(output, 131072, 0.5);
+            try
+            {
+                Stream limitedStream = output; // new RateLimitingStream(output, 131072, 0.5);
 
-            if (_connectionType == TransferType.Image)
-            {
-                return CopyStream(input, limitedStream, 4096);
+                if (_connectionType == TransferType.Image)
+                {
+                    return CopyStream(input, limitedStream, 4096);
+                }
+                else
+                {
+                    return CopyStreamAscii(input, limitedStream, 4096);
+                }
             }
-            else
-            {
-                return CopyStreamAscii(input, limitedStream, 4096);
+            catch (Exception) {
+                return 0;
             }
         }
 

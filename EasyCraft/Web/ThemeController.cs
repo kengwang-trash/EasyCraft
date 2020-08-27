@@ -325,7 +325,7 @@ namespace EasyCraft.Web
                                 foreach (DirectoryInfo di in root)
                                 {
                                     wp.vars.cores.Add(new Core.Core(di.Name));
-                                }                                
+                                }
                             }
                             lastphraseidx = inilidx;
                             goto linephrase;
@@ -533,7 +533,7 @@ namespace EasyCraft.Web
                         return wp.vars.for_server.expiretime.ToString();
                     case "var.for.server.core":
                         return wp.vars.for_server.core;
-                        
+
                     case "var.server.id":
                         return wp.vars.server.id.ToString();
                     case "var.server.running":
@@ -566,6 +566,10 @@ namespace EasyCraft.Web
                         return wp.vars.servers.Where(s => (s.expiretime - DateTime.Now).Days <= 3 && (s.expiretime - DateTime.Now).Days >= 0).ToList().Count.ToString();
                     case "var.servers.expired.count":
                         return wp.vars.servers.Where(s => (s.expiretime - DateTime.Now).Days < 0).ToList().Count.ToString();
+                    case "var.easycraft.ftpaddr":
+                        return Settings.remoteip;
+                    case "var.easycraft.ftpport":
+                        return Settings.ftpport.ToString();
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {
