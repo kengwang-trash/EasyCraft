@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.IO;
 using System.Net;
+using System.Net.Security;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace EasyCraft.Core
@@ -54,11 +58,65 @@ namespace EasyCraft.Core
 
         public static void CheckUpdate()
         {
-            WebClient w = new WebClient();            
+
             try
             {
-                string bak = w.DownloadString("https://api.easycraft.top/version.php");
-                VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(bak);
+                if (Settings.release == "Personal") Settings.key = "none";
+                Uri u = new Uri("https://api.easycraft.top/version.php");
+                HttpWebRequest req = HttpWebRequest.Create(u) as HttpWebRequest;
+                req.ServerCertificateValidationCallback += CertificateValidation;
+                req.Method = "POST";
+                req.ContentType = "application/x-www-form-urlencoded";
+                File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, System.Reflection.Assembly.GetExecutingAssembly().Location + ".bak", true);//拷贝一份防止占用
+                string filemd5 = GetMD5HashFromFile(System.Reflection.Assembly.GetExecutingAssembly().Location + ".bak");
+                File.Delete(System.Reflection.Assembly.GetExecutingAssembly().Location + ".bak");
+                string type = "exe";
+                if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    type = "lin";
+                }
+                else
+                {
+                    type = System.Reflection.Assembly.GetExecutingAssembly().Location.EndsWith(".dll") ? "dll" : "exe";
+
+                }
+                int salt = new Random().Next(111111, 999999);
+                string poststring = "version=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version +
+                    "&checksum=" + filemd5 +
+                    "&type=" + type +
+                    "&branch="+Settings.release+
+                    "&key=" + MD5(filemd5 + salt + Settings.key) +
+                    "&salt=" + salt.ToString();
+                byte[] post = Encoding.UTF8.GetBytes(poststring);
+                req.ContentLength = post.Length;
+                Stream reqStream = req.GetRequestStream();
+                reqStream.Write(post, 0, post.Length);
+                reqStream.Close();
+                WebResponse wr = req.GetResponse();
+                System.IO.Stream respStream = wr.GetResponseStream();
+                System.IO.StreamReader reader = new System.IO.StreamReader(respStream,Encoding.UTF8);
+                string t = reader.ReadToEnd();
+                VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(t);
+
+
+                while (b == null || b.runkey == null || b.runkey != MD5(Settings.release + filemd5 + salt.ToString() + Settings.key + salt.ToString() + "VeriflcationChrcked"))
+                {
+                    FastConsole.PrintFatal(Language.t("Licence Checked Error, Press [Enter] To Exit"));
+                    if (b != null && b.log != null)
+                    {
+                        FastConsole.PrintWarning(b.log);
+                    }
+                    int i = -1;
+                    while (true)
+                    {
+                        while (true)
+                        {
+                            Environment.Exit(i--);
+                        }
+                    }
+                }
+                FastConsole.PrintSuccess(Language.t("Licence Checked Sucesssful"));
+
                 if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
                 {
                     FastConsole.PrintWarning(string.Format(Language.t("The Newest Version of EasyCraft is {0}"), b.version));
@@ -67,15 +125,26 @@ namespace EasyCraft.Core
                     FastConsole.PrintWarning(string.Format(Language.t("Press [Enter] to continue which is NOT RECOMMENDED")));
                     Console.ReadKey();
                 }
-
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                FastConsole.PrintFatal(Language.t("Version Check Failed! Press [Enter] to exit"));
-                Console.ReadKey();
-                Environment.Exit(-25);
+                if (e.HResult != -20240628)
+                {
+                    FastConsole.PrintFatal(Language.t("Version Check Failed! Press [Enter] to exit"));
+                    Console.ReadKey();
+                    Environment.Exit(-25);
+                }
+                else
+                {
+
+                }
             }
 
+        }
+
+        private static bool CertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return (sslPolicyErrors == SslPolicyErrors.None && certificate.Subject == "CN=api.easycraft.top" && chain.ChainElements[1].Certificate.Thumbprint == "E6A3B45B062D509B3382282D196EFE97D5956CCB");
         }
 
         public static string MD5(string str)
@@ -121,10 +190,39 @@ namespace EasyCraft.Core
                 CopyDirectory(dir, SaveDirPath + "/" + Path.GetFileName(dir));
             }
         }
+
+
+        /// <summary>
+        /// 获取文件MD5值
+        /// </summary>
+        /// <param name="fileName">文件绝对路径</param>
+        /// <returns>MD5值</returns>
+        public static string GetMD5HashFromFile(string fileName)
+        {
+            try
+            {
+                FileStream file = new FileStream(fileName, FileMode.Open);
+                System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                byte[] retVal = md5.ComputeHash(file);
+                file.Close();
+
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < retVal.Length; i++)
+                {
+                    sb.Append(retVal[i].ToString("x2"));
+                }
+                return sb.ToString();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("GetMD5HashFromFile() fail,error:" + ex.Message);
+            }
+        }
     }
     public class VersionCallback
     {
         public string version { get; set; }
         public string log { get; set; }
+        public string runkey { get; set; }
     }
 }

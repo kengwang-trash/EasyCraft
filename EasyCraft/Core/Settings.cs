@@ -8,6 +8,9 @@ namespace EasyCraft.Core
     class Settings
     {
         static SettinsFile sf = new SettinsFile();
+
+        public static string release = "Personal";
+
         public static int httpport
         {
             get
@@ -51,6 +54,26 @@ namespace EasyCraft.Core
                     FastConsole.PrintWarning(Language.t("FTP Remote Address is NOT SET! FTP Passive Mode May not be Executed!"));
                     return "0.0.0.0";
                 }
+            }
+        }
+
+        public static string key
+        {
+            get
+            {
+                if (sf != null && !string.IsNullOrEmpty(sf.key))
+                {
+                    return sf.key;
+                }
+                else
+                {
+                    return "No KEY";
+                }
+            }
+            set
+            {
+                sf.key = key;
+                File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
             }
         }
 
@@ -118,6 +141,21 @@ namespace EasyCraft.Core
                         }
                     }
 
+                    while (true)
+                    {
+                        Console.WriteLine(Language.t("Licence Key [empty for none]:"));
+                        string line = Console.ReadLine();
+                        if (string.IsNullOrEmpty(line))
+                        {
+                            sf.key = "none";
+                        }
+                        else
+                        {
+                            sf.key = line;
+                            break;
+                        }
+                    }
+
                     FastConsole.PrintSuccess(Language.t("Installation is successful, Saving the configuration file"));
                     File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
                     LoadConfig();
@@ -135,6 +173,7 @@ namespace EasyCraft.Core
     {
         public HTTPConf HTTP { get; set; }
         public FTPConf FTP { get; set; }
+        public string key { get; set; }
     }
 
     class HTTPConf

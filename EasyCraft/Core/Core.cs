@@ -41,8 +41,4 @@ namespace EasyCraft.Core
             }
         }
     }
-
-
-
-
 }
