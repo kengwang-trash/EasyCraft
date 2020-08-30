@@ -148,6 +148,7 @@ namespace EasyCraft.Core
                         if (string.IsNullOrEmpty(line))
                         {
                             sf.key = "none";
+                            break;
                         }
                         else
                         {

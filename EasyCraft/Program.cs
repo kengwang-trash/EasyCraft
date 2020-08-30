@@ -64,6 +64,9 @@ namespace EasyCraft
             FastConsole.PrintInfo(Language.t("加载主题中"));
             ThemeController.InitComp();
             ThemeController.InitPage();
+            FastConsole.PrintInfo(Language.t("正在加载定时任务"));
+            Schedule.LoadSchedule();
+            Schedule.StartTrigger();
             //FastConsole.PrintInfo(Language.t("正在开启 WebSocket 服务器"));
             //WebSocketListener.StartListen(); //No more WebSocket
             FastConsole.PrintInfo(Language.t("正在开启 FTP 服务器"));

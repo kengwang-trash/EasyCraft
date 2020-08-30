@@ -73,4 +73,7 @@
     "按下 [Enter] 忽略此错误": "Press [ENTER] to ignore this error!",
     "成功在 {0} 端口开启WebSocket 服务器": "WebSocket server successfully started on port {0}.",
     "在 {0} 端口开启 WebSocket 失败: {1}": "Failed to open WebSocket on port {0}: {1}",
+    "正在加载定时任务":"Loading Timed Tasks",
+    "成功启动计划任务计时器":"Successfully launch the planned task timer",
+    "加载权限中":"Loading permissions"
 }
