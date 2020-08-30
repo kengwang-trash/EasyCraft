@@ -24,14 +24,14 @@ namespace EasyCraft.Core
             {
                 if (command[1] == "refresh")
                 {
-                    FastConsole.PrintInfo(Language.t("Initialize Theme"));
+                    FastConsole.PrintInfo(Language.t("重载主题中..."));
                     ThemeController.InitComp();
                     ThemeController.InitPage();
                 }
             }
             else
             {
-                FastConsole.PrintTrash("Unsupported Command: " + commandstr);
+                FastConsole.PrintTrash("不支持的指令: " + commandstr);
             }
         }
     }

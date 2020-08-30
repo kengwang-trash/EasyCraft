@@ -25,7 +25,7 @@ namespace EasyCraft.Core
                 }
                 catch (Exception e)
                 {
-                    FastConsole.PrintWarning(string.Format(Language.t("Load Server {0} Error: {1}"), id.ToString(), e.Message));
+                    FastConsole.PrintWarning(string.Format(Language.t("服务器 {0} 加载错误: {1}"), id.ToString(), e.Message));
                 }                
             }
         }

@@ -50,26 +50,26 @@ namespace EasyCraft
             }
             FastConsole.PrintInfo("Loading Language Pack");
             Language.LoadLanguagePack();
-            FastConsole.PrintInfo(Language.t("Loading Config File"));
+            FastConsole.PrintInfo(Language.t("加载配置表中"));
             Settings.LoadConfig();
-            FastConsole.PrintInfo(Language.t("Checking Update"));
+            FastConsole.PrintInfo(Language.t("检查更新中"));
             Functions.CheckUpdate();
-            FastConsole.PrintWarning(Language.t("You are running the Alpha version of EasyCraft, which is unstable"));
-            FastConsole.PrintInfo(Language.t("Initialize Directories"));
+            FastConsole.PrintWarning(Language.t("您正在使用 EasyCraft 的 Alpha 版本,可能会不稳定"));
+            FastConsole.PrintInfo(Language.t("加载权限中"));
             Functions.InitDirectory();
-            FastConsole.PrintInfo(Language.t("Loading Database"));
+            FastConsole.PrintInfo(Language.t("加载数据库中"));
             Database.Connect();
-            FastConsole.PrintInfo(Language.t("Loading Servers"));
+            FastConsole.PrintInfo(Language.t("加载服务器中"));
             ServerManager.LoadServers();
-            FastConsole.PrintInfo(Language.t("Initialize Theme"));
+            FastConsole.PrintInfo(Language.t("加载主题中"));
             ThemeController.InitComp();
             ThemeController.InitPage();
-            //FastConsole.PrintInfo(Language.t("Loading Passive WebSocket Server"));
+            //FastConsole.PrintInfo(Language.t("正在开启 WebSocket 服务器"));
             //WebSocketListener.StartListen(); //No more WebSocket
-            FastConsole.PrintInfo(Language.t("Starting FTP Server"));
+            FastConsole.PrintInfo(Language.t("正在开启 FTP 服务器"));
             FtpServer.server = new SharpFtpServer.FtpServer();
             FtpServer.server.Start();
-            FastConsole.PrintInfo(Language.t("Starting HTTP Server"));
+            FastConsole.PrintInfo(Language.t("正在开启 HTTP 服务器"));
             HTTPServer.StartListen();
             string c = "";
             while ((c = Console.ReadLine()) != "exit")
@@ -85,7 +85,9 @@ namespace EasyCraft
 
 
             }
-            FastConsole.PrintInfo("Exiting EasyCraft, Bye");
+            FastConsole.PrintInfo("关闭 EasyCraft 中");
+            HTTPServer.StopListen();
+            FtpServer.server.Stop();
         }
     }
 }

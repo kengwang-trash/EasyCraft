@@ -28,18 +28,19 @@ namespace EasyCraft.Web
                     listener.Prefixes.Add("http://+:" + port.ToString() + "/");
                     listener.Start();
                     listener.BeginGetContext(WebSocketRequestHandlerAsync, null);
-                    FastConsole.PrintSuccess(string.Format(Language.t("Passive WebSocket Server Started at {0}"), port.ToString()));
+                    FastConsole.PrintSuccess(string.Format(Language.t("成功在 {0} 端口开启WebSocket 服务器"), port.ToString()));
                 }
-            }catch (Exception e)
+            }
+            catch (Exception e)
             {
-                FastConsole.PrintError(string.Format(Language.t("WebSocket Server Listen Failed: {0}"), e.Message));
+                FastConsole.PrintError(string.Format(Language.t("在 {0} 端口开启 WebSocket 失败: {1}"), port.ToString(), e.Message));
             }
 
         }
 
         private static void WebSocketRequestHandlerAsync(IAsyncResult ar)
         {
-            FastConsole.PrintSuccess("New WebSocket Connected!");
+            FastConsole.PrintSuccess("[WebSocket Connect] 新 WebSocket 客户端连接");
             try
             {
                 listener.BeginGetContext(WebSocketRequestHandlerAsync, null);
@@ -56,7 +57,7 @@ namespace EasyCraft.Web
                     }
                     else
                     {
-                        FastConsole.PrintTrash("A WebSocket Disconnected");
+                        FastConsole.PrintTrash("[WebSocket Disconnect] A Client Disconnect");
                         break;
                     }
                 }
@@ -65,7 +66,7 @@ namespace EasyCraft.Web
             {
                 if (e.HResult != -2146233088)
                 {//客户端的HTTP请求突然掉线,我还是不管吧
-                    FastConsole.PrintWarning("WebSocket ERROR: " + e.Message);
+                    FastConsole.PrintTrash("[WebSocket Error] " + e.Message);
                 }
 
             }

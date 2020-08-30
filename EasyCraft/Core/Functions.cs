@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -53,12 +54,20 @@ namespace EasyCraft.Core
             {
                 Directory.CreateDirectory(dir);
             }
+            InitPermisson();
+        }
 
+        public static void InitPermisson()
+        {
+            // 1 - 创建用户组
+            if (UserGroup.IsGroupExist("easycraft"))
+            {
+                FastConsole.PrintWarning(Language.t("没有找到用户组,正在创建"));
+            }
         }
 
         public static void CheckUpdate()
         {
-
             try
             {
                 if (Settings.release == "Personal") Settings.key = "none";
@@ -66,10 +75,10 @@ namespace EasyCraft.Core
                 HttpWebRequest req = HttpWebRequest.Create(u) as HttpWebRequest;
                 req.ServerCertificateValidationCallback += CertificateValidation;
                 req.Method = "POST";
-                req.ContentType = "application/x-www-form-urlencoded";
-                File.Copy(System.Reflection.Assembly.GetExecutingAssembly().Location, System.Reflection.Assembly.GetExecutingAssembly().Location + ".bak", true);//拷贝一份防止占用
-                string filemd5 = GetMD5HashFromFile(System.Reflection.Assembly.GetExecutingAssembly().Location + ".bak");
-                File.Delete(System.Reflection.Assembly.GetExecutingAssembly().Location + ".bak");
+                req.ContentType = "application/x-www-form-urlencoded";                
+                File.Copy(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".bak", true);//拷贝一份防止占用
+                string filemd5 = GetMD5HashFromFile(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".bak");
+                File.Delete(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".bak");
                 string type = "exe";
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
@@ -79,6 +88,10 @@ namespace EasyCraft.Core
                 {
                     type = System.Reflection.Assembly.GetExecutingAssembly().Location.EndsWith(".dll") ? "dll" : "exe";
 
+                }
+                if (Process.GetProcessesByName("ollydbg").Length != 0)
+                {
+                    throw new Exception("Please Exit Debugger");
                 }
                 int salt = new Random().Next(111111, 999999);
                 string poststring = "version=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version +
@@ -101,7 +114,7 @@ namespace EasyCraft.Core
 
                 while (b == null || b.runkey == null || b.runkey != MD5(Settings.release + filemd5 + salt.ToString() + Settings.key + salt.ToString() + "VeriflcationChrcked"))
                 {
-                    FastConsole.PrintFatal(Language.t("Licence Checked Error, Press [Enter] To Exit"));
+                    FastConsole.PrintFatal(Language.t("授权检测失败, 按 [Enter] 退出"));
                     if (b != null && b.log != null)
                     {
                         FastConsole.PrintWarning(b.log);
@@ -114,29 +127,40 @@ namespace EasyCraft.Core
                             Environment.Exit(i--);
                         }
                     }
+                    Exception e = new Exception("Licence Check Failed");
+                    e.HResult = -20240628;
+                    throw (e);
                 }
-                FastConsole.PrintSuccess(Language.t("Licence Checked Sucesssful"));
+                FastConsole.PrintSuccess(Language.t("授权检测通过,感谢支持!"));
 
                 if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
                 {
-                    FastConsole.PrintWarning(string.Format(Language.t("The Newest Version of EasyCraft is {0}"), b.version));
-                    FastConsole.PrintInfo(string.Format(Language.t("Update Log: {0}"), b.log));
-                    FastConsole.PrintInfo(string.Format(Language.t("You can go to https://www.easycraft.top to update")));
-                    FastConsole.PrintWarning(string.Format(Language.t("Press [Enter] to continue which is NOT RECOMMENDED")));
+                    FastConsole.PrintWarning(string.Format(Language.t("最新版本 {0} 已经发布"), b.version));
+                    FastConsole.PrintInfo(string.Format(Language.t("更新日志: {0}"), b.log));
+                    FastConsole.PrintInfo(string.Format(Language.t("你可以访问 https://www.easycraft.top 获取更新")));
+                    FastConsole.PrintWarning(string.Format(Language.t("按下 [Enter] 继续 (不推荐)")));
                     Console.ReadKey();
                 }
             }
             catch (Exception e)
             {
-                if (e.HResult != -20240628)
+                if (e.HResult == -20240628)
                 {
-                    FastConsole.PrintFatal(Language.t("Version Check Failed! Press [Enter] to exit"));
-                    Console.ReadKey();
-                    Environment.Exit(-25);
+                    FastConsole.PrintFatal(Language.t("授权检测失败!"));
+                    int i = -1;
+                    while (true)
+                    {
+                        while (true)
+                        {
+                            Environment.Exit(i--);
+                        }
+                    }
                 }
                 else
                 {
-
+                    FastConsole.PrintFatal(Language.t("版本检测失败! 按 [Enter] 退出"));
+                    Console.ReadKey();
+                    Environment.Exit(-25);
                 }
             }
 
@@ -163,6 +187,7 @@ namespace EasyCraft.Core
 
             }
             return pwd;
+            
         }
 
         public static void CopyDirectory(string sourceDirPath, string SaveDirPath)
@@ -215,7 +240,7 @@ namespace EasyCraft.Core
             }
             catch (Exception ex)
             {
-                throw new Exception("GetMD5HashFromFile() fail,error:" + ex.Message);
+                throw new Exception("Hash File Error:" + ex.Message);
             }
         }
     }

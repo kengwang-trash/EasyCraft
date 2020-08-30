@@ -19,7 +19,7 @@ namespace EasyCraft.Web
                         if (int.Parse(wp.session["loginfail"]) >= 5 && wp.session["lastloginfailday"] == DateTime.Today.ToString())
                         {
                             UserLogin callback = new UserLogin();
-                            callback.message = Language.t("Login failed, too many attempts!");
+                            callback.message = Language.t("登录失败,尝试次数过多!");
                             callback.code = -2;
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             return;
@@ -34,7 +34,7 @@ namespace EasyCraft.Web
                             wp.session["auth"] = wp.vars.user.auth;
                             UserLogin callback = new UserLogin();
                             callback.code = 9000;
-                            callback.message = Language.t("Successful Login");
+                            callback.message = Language.t("成功登录");
                             callback.data = new LoginUserInfo();
                             callback.data.username = wp.vars.user.name;
                             callback.data.uid = wp.vars.user.uid;
@@ -54,7 +54,7 @@ namespace EasyCraft.Web
                             }
 
                             wp.session["lastloginfailday"] = DateTime.Today.ToString();
-                            callback.message = Language.t("Login failed, account or password is wrong");
+                            callback.message = Language.t("登录失败,用户名或密码错误");
                             callback.code = -1;
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
@@ -62,7 +62,7 @@ namespace EasyCraft.Web
                     else
                     {
                         UserLogin callback = new UserLogin();
-                        callback.message = Language.t("Login failed, parameters are incomplete!");
+                        callback.message = Language.t("登录错误,参数不完整!");
                         callback.code = -3;
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
@@ -74,7 +74,7 @@ namespace EasyCraft.Web
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
-                            callback.message = Language.t("Registration failed, username already exists");
+                            callback.message = Language.t("注册失败,此用户名已存在");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                         else
@@ -84,14 +84,14 @@ namespace EasyCraft.Web
                             {
                                 Callback callback = new Callback();
                                 callback.code = -2;
-                                callback.message = Language.t("Registration failed");
+                                callback.message = Language.t("注册失败");
                                 wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             }
                             else
                             {
                                 Callback callback = new Callback();
                                 callback.code = 9000;
-                                callback.message = Language.t("Registration Success");
+                                callback.message = Language.t("注册成功");
                                 wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             }
                         }
@@ -100,7 +100,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -3;
-                        callback.message = Language.t("Registration failed, parameters are incomplete");
+                        callback.message = Language.t("注册失败,参数不完整");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -128,7 +128,7 @@ namespace EasyCraft.Web
                                 ServerManager.servers.Add(s.id, s);
                                 NewServer callback = new NewServer();
                                 callback.code = 9000;
-                                callback.message = Language.t("Server Created Successfully");
+                                callback.message = Language.t("服务器创建成功");
                                 callback.data = s.id;
                                 wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             }
@@ -136,7 +136,7 @@ namespace EasyCraft.Web
                             {
                                 NewServer callback = new NewServer();
                                 callback.code = -1;
-                                callback.message = Language.t("Failed to Create Server");
+                                callback.message = Language.t("创建服务器失败");
                                 wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             }
 
@@ -145,7 +145,7 @@ namespace EasyCraft.Web
                         {
                             NewServer callback = new NewServer();
                             callback.code = -2;
-                            callback.message = Language.t("Param not completed");
+                            callback.message = Language.t("参数不完整");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                     }
@@ -153,7 +153,7 @@ namespace EasyCraft.Web
                     {
                         NewServer callback = new NewServer();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -162,7 +162,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -1;
-                        callback.message = Language.t("Server Not Found");
+                        callback.message = Language.t("未找到此服务器");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
@@ -195,7 +195,7 @@ namespace EasyCraft.Web
 
                             Callback callback = new Callback();
                             callback.code = 9000;
-                            callback.message = Language.t("Server information has been saved");
+                            callback.message = Language.t("服务器信息已被保存");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             return;
                         }
@@ -203,7 +203,7 @@ namespace EasyCraft.Web
                         {
                             NewServer callback = new NewServer();
                             callback.code = -2;
-                            callback.message = Language.t("Failed to Edit Server Configuration");
+                            callback.message = Language.t("编辑服务器信息失败");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
 
@@ -212,7 +212,7 @@ namespace EasyCraft.Web
                     {
                         NewServer callback = new NewServer();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -221,7 +221,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -1;
-                        callback.message = Language.t("Server Not Found");
+                        callback.message = Language.t("未找到此服务器");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
@@ -231,7 +231,7 @@ namespace EasyCraft.Web
                         {
                             Callback callback = new Callback();
                             callback.code = -3;
-                            callback.message = Language.t("Server Expired");
+                            callback.message = Language.t("服务器已过期");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             return;
                         }
@@ -240,7 +240,7 @@ namespace EasyCraft.Web
                             ServerManager.servers[int.Parse(wp.POST["sid"])].Start();
                             Callback callback = new Callback();
                             callback.code = 9000;
-                            callback.message = Language.t("Server Started");
+                            callback.message = Language.t("服务器已开启");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             return;
                         }
@@ -248,7 +248,7 @@ namespace EasyCraft.Web
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
-                            callback.message = Language.t("Unable to Start Server");
+                            callback.message = Language.t("服务器开启失败");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                     }
@@ -256,7 +256,7 @@ namespace EasyCraft.Web
                     {
                         NewServer callback = new NewServer();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -265,7 +265,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -1;
-                        callback.message = Language.t("Server Not Found");
+                        callback.message = Language.t("未找到此服务器");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
@@ -276,7 +276,7 @@ namespace EasyCraft.Web
                             ServerManager.servers[int.Parse(wp.POST["sid"])].Stop();
                             Callback callback = new Callback();
                             callback.code = 9000;
-                            callback.message = Language.t("Server Stopped");
+                            callback.message = Language.t("服务器已关闭");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             return;
                         }
@@ -284,7 +284,7 @@ namespace EasyCraft.Web
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
-                            callback.message = Language.t("Failed to Stop Server");
+                            callback.message = Language.t("服务器关闭失败");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                     }
@@ -292,7 +292,7 @@ namespace EasyCraft.Web
                     {
                         NewServer callback = new NewServer();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -301,7 +301,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -1;
-                        callback.message = Language.t("Server Not Found");
+                        callback.message = Language.t("未找到此服务器");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
@@ -320,7 +320,7 @@ namespace EasyCraft.Web
                         }
                         LogBack callback = new LogBack();
                         callback.code = 9000;
-                        callback.message = Language.t("Success");
+                        callback.message = Language.t("成功");
                         callback.data = new LogBackData();
                         callback.data.starting = s.running;
                         callback.data.logs = logs;
@@ -345,7 +345,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -354,7 +354,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -1;
-                        callback.message = Language.t("Server Not Found");
+                        callback.message = Language.t("未找到此服务器");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
@@ -365,14 +365,14 @@ namespace EasyCraft.Web
                             ServerManager.servers[int.Parse(wp.POST["sid"])].Send(wp.POST["cmd"] + "\r\n");
                             Callback callback = new Callback();
                             callback.code = 9000;
-                            callback.message = Language.t("Success");
+                            callback.message = Language.t("成功");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                         else
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
-                            callback.message = Language.t("Incomplete Parameters");
+                            callback.message = Language.t("参数不全");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                     }
@@ -380,7 +380,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -389,7 +389,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -1;
-                        callback.message = Language.t("Server Not Found");
+                        callback.message = Language.t("未找到此服务器");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
@@ -398,14 +398,14 @@ namespace EasyCraft.Web
                         ServerManager.servers[int.Parse(wp.POST["sid"])].ClearLog();
                         Callback callback = new Callback();
                         callback.code = 9000;
-                        callback.message = Language.t("Successfully cleared the logs on the server");
+                        callback.message = Language.t("成功清理日志缓存");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     else
                     {
                         Callback callback = new Callback();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;
@@ -414,7 +414,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -1;
-                        callback.message = Language.t("Server Not Found");
+                        callback.message = Language.t("未找到此服务器");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
@@ -424,7 +424,7 @@ namespace EasyCraft.Web
                         
                         ServerInfo callback = new ServerInfo();
                         callback.code = 9000;
-                        callback.message = Language.t("See Data");
+                        callback.message = Language.t("见data");
                         callback.data = new ServerInfoData();
                         callback.data.id = s_info.id;
                         callback.data.name = s_info.name;
@@ -440,7 +440,7 @@ namespace EasyCraft.Web
                     {
                         Callback callback = new Callback();
                         callback.code = -3;
-                        callback.message = Language.t("Permission Denied");
+                        callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     break;

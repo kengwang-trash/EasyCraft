@@ -43,18 +43,18 @@ namespace SharpFtpServer
                 _activeConnections = new List<ClientConnection>();
 
                 _listener.BeginAcceptTcpClient(HandleAcceptTcpClient, _listener);
-                FastConsole.PrintSuccess(string.Format(Language.t("Successfully started the FTP server on {0}"), _localEndPoint.Port.ToString()));
+                FastConsole.PrintSuccess(string.Format(Language.t("成功在 {0} 端口开启 FTP 服务器"), _localEndPoint.Port.ToString()));
             }
             catch (Exception e)
             {
-                FastConsole.PrintFatal(string.Format(Language.t("Unable to start FTP server on {0}: {1}"), _localEndPoint.Port.ToString(), e.Message));
+                FastConsole.PrintFatal(string.Format(Language.t("未能在 {0} 端口开启服务器: {1}"), _localEndPoint.Port.ToString(), e.Message));
             }
 
         }
 
         public void Stop()
         {
-            FastConsole.PrintInfo("Stopping FtpServer");
+            FastConsole.PrintInfo("关闭 FTP 服务器");
 
             _listening = false;
             _listener.Stop();

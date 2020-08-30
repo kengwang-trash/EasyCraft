@@ -51,7 +51,7 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    FastConsole.PrintWarning(Language.t("FTP Remote Address is NOT SET! FTP Passive Mode May not be Executed!"));
+                    FastConsole.PrintWarning(Language.t("FTP 远端地址未设置! FTP 被动模式可能无法运行!"));
                     return "0.0.0.0";
                 }
             }
@@ -88,14 +88,14 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    FastConsole.PrintWarning(Language.t("Could not Find the Configuration File, Start the Installation"));
-                    FastConsole.PrintWarning(Language.t("Initialize Install... Please Wait"));
+                    FastConsole.PrintWarning(Language.t("未找到配置文件,正在启动安装进程"));
+                    FastConsole.PrintWarning(Language.t("正在准备安装... 请稍候"));
                     sf.FTP = new FTPConf();
                     sf.HTTP = new HTTPConf();
-                    Console.WriteLine(Language.t("Please fill in the following information"));
+                    Console.WriteLine(Language.t("请填写以下信息"));
                     while (true)
                     {
-                        Console.WriteLine(Language.t("HTTP Listen Port [80]:"));
+                        Console.WriteLine(Language.t("HTTP 监听端口 [80]:"));
                         string line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line)) line = "80";
                         int port = 0;
@@ -106,12 +106,12 @@ namespace EasyCraft.Core
                         }
                         else
                         {
-                            FastConsole.PrintWarning(Language.t("Input Error , Please Retype"));
+                            FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
                         }
                     }
                     while (true)
                     {
-                        Console.WriteLine(Language.t("FTP Listen Port [21]:"));
+                        Console.WriteLine(Language.t("FTP 监听端口 [21]:"));
                         string line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line)) line = "21";
                         int port = 0;
@@ -122,17 +122,17 @@ namespace EasyCraft.Core
                         }
                         else
                         {
-                            FastConsole.PrintWarning(Language.t("Input Error , Please Retype"));
+                            FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
                         }
                     }
 
                     while (true)
                     {
-                        Console.WriteLine(Language.t("Server Address <IP that other users can access this server>:"));
+                        Console.WriteLine(Language.t("服务器远端IP <用户可以通过此 IP 访问服务器>:"));
                         string line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line))
                         {
-                            FastConsole.PrintWarning(Language.t("Input Error , Please Retype"));
+                            FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
                         }
                         else
                         {
@@ -143,7 +143,7 @@ namespace EasyCraft.Core
 
                     while (true)
                     {
-                        Console.WriteLine(Language.t("Licence Key [empty for none]:"));
+                        Console.WriteLine(Language.t("授权密钥 [若无请留空]:"));
                         string line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line))
                         {
@@ -156,7 +156,7 @@ namespace EasyCraft.Core
                         }
                     }
 
-                    FastConsole.PrintSuccess(Language.t("Installation is successful, Saving the configuration file"));
+                    FastConsole.PrintSuccess(Language.t("安装完成,正在保存配置文件"));
                     File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
                     LoadConfig();
                 }
@@ -164,7 +164,7 @@ namespace EasyCraft.Core
             }
             catch (Exception e)
             {
-                FastConsole.PrintError(string.Format(Language.t("Configuration loading failed: {0}"), e.Message));
+                FastConsole.PrintError(string.Format(Language.t("配置文件加载错误: {0}"), e.Message));
             }
         }
     }

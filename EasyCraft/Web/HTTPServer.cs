@@ -20,15 +20,20 @@ namespace EasyCraft.Web
                 listener.Prefixes.Add("http://+:" + Settings.httpport.ToString() + "/");
                 listener.Start();
                 listener.BeginGetContext(RequestHandle, null);
-                FastConsole.PrintSuccess(string.Format(Language.t("Started HTTP Listen on {0}"), Settings.httpport.ToString()));
+                FastConsole.PrintSuccess(string.Format(Language.t("成功在 {0} 端口启动 HTTP 服务器"), Settings.httpport.ToString()));
             }
             catch (Exception e)
             {
-                FastConsole.PrintError(string.Format(Language.t("Cannot Start HTTP Listen on {0}:{1}"), Settings.httpport.ToString(), e.Message));
-                FastConsole.PrintError(Language.t("Press [Enter] to ignore this error which is NOT RECOMMENDED"));
+                FastConsole.PrintError(string.Format(Language.t("无法在 {0} 端口启动 HTTP 服务器: {1}"), Settings.httpport.ToString(), e.Message));
+                FastConsole.PrintError(Language.t("按下 [Enter] 忽略此错误"));
                 Console.ReadKey();
             }
 
+        }
+
+        public static void StopListen()
+        {
+            listener.Stop();
         }
 
         public static void RequestHandle(IAsyncResult res)

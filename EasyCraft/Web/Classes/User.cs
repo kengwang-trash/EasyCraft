@@ -52,7 +52,7 @@ namespace EasyCraft.Web.Classes
             if (!r.HasRows)
             {
                 islogin = false;
-                FastConsole.PrintWarning(string.Format(Language.t("Login failed for user {0}."), username));
+                FastConsole.PrintWarning(string.Format(Language.t("用户 {0} 登录失败."), username));
                 return;
             }
             else
@@ -65,7 +65,7 @@ namespace EasyCraft.Web.Classes
                 auth = Functions.MD5(Functions.GetRandomString(15) + pwmd5);
                 type = r.GetInt32(5);
                 qq = r.GetString(6);                
-                FastConsole.PrintSuccess(string.Format(Language.t("User {0} Successfully logged in."), username));
+                FastConsole.PrintSuccess(string.Format(Language.t("用户 {0} 成功登录."), username));
 
             }
         }

@@ -111,7 +111,7 @@ namespace EasyCraft.Core
             }
             else
             {
-                FastConsole.PrintWarning(string.Format(Language.t("Server {0} Load Failed."), id));
+                FastConsole.PrintWarning(string.Format(Language.t("服务器 {0} 加载失败."), id));
             }
 
             serverdir = Environment.CurrentDirectory + "/server/server" + id.ToString() + "/";
@@ -122,7 +122,7 @@ namespace EasyCraft.Core
         public void ClearLog()
         {
             log.Clear();
-            PrintLog(Language.t("Successfully to clear logs on server"));
+            PrintLog(Language.t("成功清理日志缓存"));
         }
 
         private void PrintLog(string message)
@@ -178,7 +178,7 @@ namespace EasyCraft.Core
         {
             if ((expiretime - DateTime.Now).TotalSeconds < 0)
             {
-                PrintError(string.Format(Language.t("Server Expired at {0}, Unable to Start Server"), expiretime.ToString()));
+                PrintError(string.Format(Language.t("服务器已于 {0} 过期, 无法开启服务器"), expiretime.ToString()));
                 return;
             }
             try
@@ -188,7 +188,7 @@ namespace EasyCraft.Core
             }
             catch (Exception e)
             {
-                PrintError(string.Format(Language.t("Core {0} Load Failed: {1}"), core, e.Message));
+                PrintError(string.Format(Language.t("核心 {0} 加载失败: {1}"), core, e.Message));
                 return;
             }
 
@@ -300,7 +300,7 @@ namespace EasyCraft.Core
             }
             catch (Exception e)
             {
-                PrintError(string.Format(Language.t("Cannot Start Server: {0}"), e.Message));
+                PrintError(string.Format(Language.t("无法启动服务器: {0}"), e.Message));
             }
         }
 
