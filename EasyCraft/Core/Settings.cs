@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Text;
 
@@ -168,6 +169,22 @@ namespace EasyCraft.Core
                 FastConsole.PrintError(string.Format(Language.t("配置文件加载错误: {0}"), e.Message));
             }
         }
+
+        public static void LoadDatabase()
+        {
+            SQLiteCommand c = Database.DB.CreateCommand();
+            c.CommandText = "SELECT * FROM settings";
+            SQLiteDataReader render = c.ExecuteReader();
+            while (render.Read())
+            {
+                SettingsDatabase.annoucement = render.GetString(0);
+            }
+        }
+    }
+
+    class SettingsDatabase
+    {
+        public static string annoucement = "";
     }
 
     class SettinsFile

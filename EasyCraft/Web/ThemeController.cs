@@ -314,7 +314,28 @@ namespace EasyCraft.Web
                                 if (int.TryParse(wp.urllist[3], out sid))
                                 {
                                     if (ServerManager.servers.ContainsKey(sid))
-                                        wp.vars.server = ServerManager.servers[sid];
+                                    {
+                                        if (wp.vars.user.type >= 2 || ServerManager.servers[sid].owner == wp.vars.user.uid)
+                                        {
+                                            wp.vars.server = ServerManager.servers[sid];
+                                        }
+                                        else
+                                        {
+                                            wp.Print404();
+                                            return "";
+                                        }
+                                    }
+                                    else
+                                    {
+                                        wp.Print404();
+                                        return "";
+                                    }
+                                    
+                                }
+                                else
+                                {
+                                    wp.Print404();
+                                    return "";
                                 }
                             }
 
@@ -530,7 +551,7 @@ namespace EasyCraft.Web
                     case "var.for.server.expired":
                         return ((wp.vars.for_server.expiretime - DateTime.Now).Days < 0) ? "true" : "false";
                     case "var.for.server.expiretime":
-                        return wp.vars.for_server.expiretime.ToString();
+                        return wp.vars.for_server.expiretime.ToString("yyyy-MM-dd");
                     case "var.for.server.core":
                         return wp.vars.for_server.core;
 
@@ -551,7 +572,7 @@ namespace EasyCraft.Web
                     case "var.server.expired":
                         return ((wp.vars.server.expiretime - DateTime.Now).Days < 0) ? "true" : "false";
                     case "var.server.expiretime":
-                        return wp.vars.server.expiretime.ToString();
+                        return wp.vars.server.expiretime.ToString("yyyy-MM-dd");
                     case "var.server.core":
                         return wp.vars.server.core;
                     case "var.for.core.id":
@@ -570,6 +591,8 @@ namespace EasyCraft.Web
                         return Settings.remoteip;
                     case "var.easycraft.ftpport":
                         return Settings.ftpport.ToString();
+                    case "var.easycraft.announcement":
+                        return SettingsDatabase.annoucement;
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {

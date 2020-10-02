@@ -59,7 +59,7 @@ namespace EasyCraft.Web
                     HttpOnly = true,
                     Expires = DateTime.Now.AddDays(3),
                     Path = "/",
-                    Expired=false
+                    Expired = false
                 };
                 response.AppendCookie(sesscookie);
                 cookies["SESSDATA"] = sesscookie.Value;
@@ -171,7 +171,7 @@ namespace EasyCraft.Web
             }
         }
 
-        private void Print404()
+        public void Print404()
         {
             response.StatusCode = 404;
             PrintWeb("<h1>404 Not Found</h1><hr />Path: " + uri.AbsoluteUri + "<br />Time:" + DateTime.Now.ToString() + "<br />Server: EasyCraft<br />");
@@ -179,8 +179,13 @@ namespace EasyCraft.Web
 
         public void PrintWeb(string echo)
         {
-            byte[] buff = Encoding.UTF8.GetBytes(echo);
-            response.OutputStream.Write(buff, 0, buff.Length);
+            try
+            {
+                byte[] buff = Encoding.UTF8.GetBytes(echo);
+                response.OutputStream.Write(buff, 0, buff.Length);
+            }
+            catch (Exception) { }
+
         }
 
         public void PrintWeb(byte[] echo)

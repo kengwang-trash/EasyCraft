@@ -55,16 +55,18 @@ namespace EasyCraft
             FastConsole.PrintInfo(Language.t("检查更新中"));
             Functions.CheckUpdate();
             FastConsole.PrintWarning(Language.t("您正在使用 EasyCraft 的 Alpha 版本,可能会不稳定"));
-            FastConsole.PrintInfo(Language.t("加载权限中"));
+            FastConsole.PrintInfo(Language.t("加载权限表中"));
             Functions.InitDirectory();
             FastConsole.PrintInfo(Language.t("加载数据库中"));
             Database.Connect();
+            FastConsole.PrintInfo(Language.t("加载设置项中"));
+            Settings.LoadDatabase();
             FastConsole.PrintInfo(Language.t("加载服务器中"));
             ServerManager.LoadServers();
             FastConsole.PrintInfo(Language.t("加载主题中"));
             ThemeController.InitComp();
             ThemeController.InitPage();
-            FastConsole.PrintInfo(Language.t("正在加载定时任务"));
+            FastConsole.PrintInfo(Language.t("加载任务中"));
             Schedule.LoadSchedule();
             Schedule.StartTrigger();
             //FastConsole.PrintInfo(Language.t("正在开启 WebSocket 服务器"));
@@ -74,23 +76,34 @@ namespace EasyCraft
             FtpServer.server.Start();
             FastConsole.PrintInfo(Language.t("正在开启 HTTP 服务器"));
             HTTPServer.StartListen();
+            Console.CancelKeyPress += ExitEasyCraft;
             string c = "";
             while ((c = Console.ReadLine()) != "exit")
             {
                 try
                 {
                     CommandPhrase.PhraseCommand(c);
-
-                }catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     FastConsole.PrintError("Command Error: " + e.Message);
                 }
-
-
             }
+            ExitEasyCraft(null, null);
+        }
+
+        private static void ExitEasyCraft(object sender, ConsoleCancelEventArgs e)
+        {
             FastConsole.PrintInfo("关闭 EasyCraft 中");
+            FastConsole.PrintTrash("关闭所有服务器中");
+            foreach (var server in ServerManager.servers)
+            {
+                server.Value.Stop();
+            }
+            FastConsole.PrintTrash("停止定时任务中");
             HTTPServer.StopListen();
             FtpServer.server.Stop();
+            Environment.Exit(0);
         }
     }
 }

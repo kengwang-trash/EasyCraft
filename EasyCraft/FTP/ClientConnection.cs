@@ -76,7 +76,8 @@ namespace SharpFtpServer
                     return CopyStreamAscii(input, limitedStream, 4096);
                 }
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 return 0;
             }
         }
@@ -537,20 +538,30 @@ namespace SharpFtpServer
         {
             try
             {
-                string[] arr = username.Split('.');
-                string tmpusername = arr[0];
-                int tmpserver = int.Parse(arr[1]);
-                bool res = checkUserName(tmpusername, tmpserver);
-                if (res)
+                int dotpos = username.LastIndexOf('.');      
+                if (dotpos != -1)
                 {
-                    _username = tmpusername;
-                    _sid = tmpserver;
-                    return "331 Username ok need password";
+                    string tmpusername = username.Substring(0, dotpos);
+                    int tmpserver = int.Parse(username.Substring(dotpos + 1));
+                    bool res = checkUserName(tmpusername, tmpserver);
+                    if (res)
+                    {
+                        _username = tmpusername;
+                        _sid = tmpserver;
+                        return "331 Username ok need password";
+                    }
+                    else
+                    {
+                        return "530 Username Error Retype";
+                    }
+
                 }
                 else
                 {
                     return "530 Username Error Retype";
                 }
+
+                
             }
             catch (Exception)
             {

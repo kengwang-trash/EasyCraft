@@ -165,7 +165,27 @@ namespace EasyCraft.Core
         public void Kill()
         {
             if (process == null || process.HasExited == true) return;
-            process.Kill();
+            process.Kill(true);
+        }
+
+        public void KillAll()
+        {
+            //这个不建议使用,我只是用着来玩玩哦~
+            //具体开不开放给普通用户我也不知道呢~
+            //这个功能是把所有服务器的进程全部结束
+            Process[] processes = Process.GetProcesses();
+            foreach (Process process in processes)
+            {
+                try
+                {
+                    if (process.MainModule.FileName.Replace('/', '\\').Contains(serverdir.Replace('/', '\\')))
+                    {
+                        process.Kill(true);
+                        PrintLog(string.Format(Language.t("成功结束进程 {0} (pid:{1})"), process.ProcessName, process.Id));
+                    }
+                }
+                catch (Exception) { continue; }
+            }
         }
 
         public void Send(string cmd)

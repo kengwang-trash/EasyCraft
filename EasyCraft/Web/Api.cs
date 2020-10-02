@@ -3,6 +3,7 @@ using EasyCraft.Web.Classes;
 using EasyCraft.Web.JSONCallback;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 
 namespace EasyCraft.Web
@@ -178,7 +179,7 @@ namespace EasyCraft.Web
                                 server.SaveServerConfig();
                                 ServerManager.servers[int.Parse(wp.POST["sid"])] = server;
                             }
-                            else
+                            if (wp.vars.user.type >= 2)
                             {
 
                                 if (wp.POST.ContainsKey("name")) server.name = wp.POST["name"];
@@ -188,7 +189,7 @@ namespace EasyCraft.Web
                                 if (wp.POST.ContainsKey("maxplayer")) server.maxplayer = int.Parse(wp.POST["maxplayer"]);
                                 if (wp.POST.ContainsKey("ram")) server.ram = int.Parse(wp.POST["ram"]);
                                 if (wp.POST.ContainsKey("world")) server.world = wp.POST["world"];
-                                if (wp.POST.ContainsKey("expiretime")) server.expiretime = DateTime.Parse(wp.POST["expiretime"]);
+                                if (wp.POST.ContainsKey("expiretime")) server.expiretime = Convert.ToDateTime(wp.POST["expiretime"]);
                                 server.SaveServerConfig();
                                 ServerManager.servers[int.Parse(wp.POST["sid"])] = server;
                             }
@@ -421,10 +422,9 @@ namespace EasyCraft.Web
                     Server s_info = ServerManager.servers[int.Parse(wp.POST["sid"])];
                     if (wp.vars.user.type >= 2 || s_info.owner == wp.vars.user.uid)
                     {
-                        
+
                         ServerInfo callback = new ServerInfo();
                         callback.code = 9000;
-                        callback.message = Language.t("见data");
                         callback.data = new ServerInfoData();
                         callback.data.id = s_info.id;
                         callback.data.name = s_info.name;
@@ -435,6 +435,35 @@ namespace EasyCraft.Web
                         callback.data.expiretime = s_info.expiretime.ToString();
                         callback.data.core = s_info.core;
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                    }
+                    else
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -3;
+                        callback.message = Language.t("权限不足");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                    }
+                    break;
+                case "edit_announcement":
+                    if (wp.vars.user.type >= (int)UserType.admin)
+                    {
+                        SQLiteCommand c = Database.DB.CreateCommand();
+                        c.CommandText = "UPDATE `settings` SET `announcement` = $announcement WHERE 1 = 1";
+                        c.Parameters.AddWithValue("$announcement", wp.POST["announcement"]);
+                        if (c.ExecuteNonQuery() == 0)
+                        {
+                            Callback callback = new Callback();
+                            callback.code = -1;
+                            callback.message = Language.t("公告编辑失败");
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                        }
+                        else
+                        {
+                            Callback callback = new Callback();
+                            callback.code = 9000;
+                            callback.message = Language.t("公告编辑成功");
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                        }
                     }
                     else
                     {

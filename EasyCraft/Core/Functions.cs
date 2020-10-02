@@ -68,6 +68,7 @@ namespace EasyCraft.Core
 
         public static void CheckUpdate()
         {
+#if !DEBUG
             try
             {
                 if (Settings.release == "Personal") Settings.key = "none";
@@ -163,7 +164,7 @@ namespace EasyCraft.Core
                     Environment.Exit(-25);
                 }
             }
-
+#endif
         }
 
         private static bool CertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
@@ -187,7 +188,7 @@ namespace EasyCraft.Core
 
             }
             return pwd;
-            
+
         }
 
         public static void CopyDirectory(string sourceDirPath, string SaveDirPath)

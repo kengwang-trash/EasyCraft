@@ -9,6 +9,10 @@ namespace EasyCraft.Core
     {
         public static void PhraseCommand(string commandstr)
         {
+            if (string.IsNullOrEmpty(commandstr))
+            {
+                return;
+            }
             string[] command = commandstr.Split(' ');
             if (command[0] == "start")
             {
@@ -28,6 +32,16 @@ namespace EasyCraft.Core
                     ThemeController.InitComp();
                     ThemeController.InitPage();
                 }
+            }
+            else if (command[0] == "kill")
+            {
+                Server s = ServerManager.servers[int.Parse(command[1])];
+                s.Kill();
+            }
+            else if (command[0] == "killall")
+            {
+                Server s = ServerManager.servers[int.Parse(command[1])];
+                s.KillAll();
             }
             else
             {
