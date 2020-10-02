@@ -171,7 +171,7 @@ namespace SharpFtpServer
 
         public void HandleClient(object obj)
         {
-            _remoteEndPoint = (IPEndPoint)_controlClient.Client.RemoteEndPoint;
+            _remoteEndPoint = (IPEndPoint) _controlClient.Client.RemoteEndPoint;
 
             _clientIP = _remoteEndPoint.Address.ToString();
 
@@ -190,7 +190,7 @@ namespace SharpFtpServer
             _controlWriter.WriteLine("220 EasyCraft 易开服 1.0.0 FTP Server");
             _controlWriter.Flush();
 
-            _validCommands.AddRange(new string[] { "AUTH", "USER", "PASS", "QUIT", "HELP", "NOOP" });
+            _validCommands.AddRange(new string[] {"AUTH", "USER", "PASS", "QUIT", "HELP", "NOOP"});
 
             string line;
 
@@ -216,7 +216,6 @@ namespace SharpFtpServer
                         cmd = line.ToUpperInvariant();
                         arguments = null;
                     }
-
 
 
                     if (arguments != null && arguments.Trim().Length == 0)
@@ -275,7 +274,7 @@ namespace SharpFtpServer
                                 break;
                             case "PASV":
                                 response = Passive();
-                                logEntry.SPort = ((IPEndPoint)_passiveListener.LocalEndpoint).Port.ToString();
+                                logEntry.SPort = ((IPEndPoint) _passiveListener.LocalEndpoint).Port.ToString();
                                 break;
                             case "TYPE":
                                 string[] command = line.Split(' ');
@@ -392,7 +391,7 @@ namespace SharpFtpServer
                                 break;
                             case "EPSV":
                                 response = EPassive();
-                                logEntry.SPort = ((IPEndPoint)_passiveListener.LocalEndpoint).Port.ToString();
+                                logEntry.SPort = ((IPEndPoint) _passiveListener.LocalEndpoint).Port.ToString();
                                 break;
 
                             default:
@@ -454,8 +453,9 @@ namespace SharpFtpServer
                         _controlWriter.Flush();
                     }
                 }
-                catch (Exception) { }
-
+                catch (Exception)
+                {
+                }
             }
 
             Dispose();
@@ -519,7 +519,6 @@ namespace SharpFtpServer
                 _controlWriter = new StreamWriter(_controlStream, _writerEncoding);
                 return "200 Changed to ASCII";
             }
-
         }
 
         private string Auth(string authMode)
@@ -538,7 +537,7 @@ namespace SharpFtpServer
         {
             try
             {
-                int dotpos = username.LastIndexOf('.');      
+                int dotpos = username.LastIndexOf('.');
                 if (dotpos != -1)
                 {
                     string tmpusername = username.Substring(0, dotpos);
@@ -554,14 +553,11 @@ namespace SharpFtpServer
                     {
                         return "530 Username Error Retype";
                     }
-
                 }
                 else
                 {
                     return "530 Username Error Retype";
                 }
-
-                
             }
             catch (Exception)
             {
@@ -571,7 +567,7 @@ namespace SharpFtpServer
 
         private static bool checkUserName(string username, int sid)
         {
-            if (EasyCraft.Web.Classes.User.Exist(username))
+            if (EasyCraft.Web.Classes.User.GetUid(username) != -1)
             {
                 if (ServerManager.servers.ContainsKey(sid))
                 {
@@ -606,7 +602,6 @@ namespace SharpFtpServer
 
                     _currentDirectory = _root;
                     return "230 User logged in";
-
                 }
                 else
                 {
@@ -653,6 +648,7 @@ namespace SharpFtpServer
                     {
                         pathname = pathname.Replace('\\', '/');
                     }
+
                     newDir = Path.Combine(_currentDirectory, pathname);
                 }
 
@@ -707,7 +703,7 @@ namespace SharpFtpServer
 
             char delimiter = hostPort[0];
 
-            string[] rawSplit = hostPort.Split(new char[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+            string[] rawSplit = hostPort.Split(new char[] {delimiter}, StringSplitOptions.RemoveEmptyEntries);
 
             char ipType = rawSplit[0][0];
 
@@ -726,36 +722,37 @@ namespace SharpFtpServer
             //IPAddress ipAddress = ((IPEndPoint)_controlClient.Client.LocalEndPoint).Address;
             //IPHostEntry hostInfo = Dns.GetHostEntry("192.168.0.102");
             //IPAddress ipAddress = hostInfo.AddressList[0];
-            IPAddress ipAddress = IPAddress.Parse(Settings.remoteip);//TODO
+            IPAddress ipAddress = IPAddress.Parse(Settings.remoteip); //TODO
             if (_passiveListener == null)
             {
                 _passiveListener = new TcpListener(IPAddress.Any, 0);
                 _passiveListener.Start();
             }
 
-            IPEndPoint passiveListenerEndpoint = (IPEndPoint)_passiveListener.LocalEndpoint;
+            IPEndPoint passiveListenerEndpoint = (IPEndPoint) _passiveListener.LocalEndpoint;
 
             byte[] address = ipAddress.GetAddressBytes();
-            short port = (short)passiveListenerEndpoint.Port;
+            short port = (short) passiveListenerEndpoint.Port;
 
             byte[] portArray = BitConverter.GetBytes(port);
 
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(portArray);
 
-            return string.Format("227 Entering Passive Mode ({0},{1},{2},{3},{4},{5})", address[0], address[1], address[2], address[3], portArray[0], portArray[1]);
+            return string.Format("227 Entering Passive Mode ({0},{1},{2},{3},{4},{5})", address[0], address[1],
+                address[2], address[3], portArray[0], portArray[1]);
         }
 
         private string EPassive()
         {
             _dataConnectionType = DataConnectionType.Passive;
 
-            IPAddress localIp = ((IPEndPoint)_controlClient.Client.LocalEndPoint).Address;
+            IPAddress localIp = ((IPEndPoint) _controlClient.Client.LocalEndPoint).Address;
 
             _passiveListener = new TcpListener(localIp, 0);
             _passiveListener.Start();
 
-            IPEndPoint passiveListenerEndpoint = (IPEndPoint)_passiveListener.LocalEndpoint;
+            IPEndPoint passiveListenerEndpoint = (IPEndPoint) _passiveListener.LocalEndpoint;
 
             return string.Format("229 Entering Extended Passive Mode (|||{0}|)", passiveListenerEndpoint.Port);
         }
@@ -903,7 +900,7 @@ namespace SharpFtpServer
             {
                 if (File.Exists(pathname))
                 {
-                    var state = new DataConnectionOperation { Arguments = pathname, Operation = RetrieveOperation };
+                    var state = new DataConnectionOperation {Arguments = pathname, Operation = RetrieveOperation};
 
                     SetupDataConnectionOperation(state);
 
@@ -920,7 +917,7 @@ namespace SharpFtpServer
 
             if (pathname != null)
             {
-                var state = new DataConnectionOperation { Arguments = pathname, Operation = StoreOperation };
+                var state = new DataConnectionOperation {Arguments = pathname, Operation = StoreOperation};
 
                 SetupDataConnectionOperation(state);
 
@@ -936,7 +933,7 @@ namespace SharpFtpServer
 
             if (pathname != null)
             {
-                var state = new DataConnectionOperation { Arguments = pathname, Operation = AppendOperation };
+                var state = new DataConnectionOperation {Arguments = pathname, Operation = AppendOperation};
 
                 SetupDataConnectionOperation(state);
 
@@ -950,7 +947,7 @@ namespace SharpFtpServer
         {
             string pathname = NormalizeFilename(new Guid().ToString());
 
-            var state = new DataConnectionOperation { Arguments = pathname, Operation = StoreOperation };
+            var state = new DataConnectionOperation {Arguments = pathname, Operation = StoreOperation};
 
             SetupDataConnectionOperation(state);
 
@@ -965,16 +962,19 @@ namespace SharpFtpServer
                 current = "/";
             }
 
-            return string.Format("257 \"{0}\" is current directory.", current); ;
+            return string.Format("257 \"{0}\" is current directory.", current);
+            ;
         }
 
         private string List(string pathname)
         {
             if (pathname.StartsWith("-"))
-            {//垃圾ES还tm带参数 要不是有人说想要ES来管理我直接tm就给你抛500
+            {
+                //垃圾ES还tm带参数 要不是有人说想要ES来管理我直接tm就给你抛500
                 string[] cmds = pathname.Split(' ');
                 if (cmds.Length == 1 || cmds[1] == ".")
-                {//当前目录
+                {
+                    //当前目录
                     pathname = "./";
                 }
                 else
@@ -987,7 +987,7 @@ namespace SharpFtpServer
 
             if (pathname != null)
             {
-                var state = new DataConnectionOperation { Arguments = pathname, Operation = ListOperation };
+                var state = new DataConnectionOperation {Arguments = pathname, Operation = ListOperation};
 
                 SetupDataConnectionOperation(state);
 
@@ -1082,17 +1082,18 @@ namespace SharpFtpServer
             }
             else
             {
-                FastConsole.PrintTrash("[FTP Passive Start] Begin Accept Passive Client at " + ((IPEndPoint)_passiveListener.LocalEndpoint).Address + ":" + ((IPEndPoint)_passiveListener.LocalEndpoint).Port);
+                FastConsole.PrintTrash("[FTP Passive Start] Begin Accept Passive Client at " +
+                                       ((IPEndPoint) _passiveListener.LocalEndpoint).Address + ":" +
+                                       ((IPEndPoint) _passiveListener.LocalEndpoint).Port);
                 _passiveListener.BeginAcceptTcpClient(DoDataConnectionOperation, state);
             }
         }
 
         private void DoDataConnectionOperation(IAsyncResult result)
         {
-
             HandleAsyncResult(result);
 
-            FastConsole.PrintTrash("[FTP Passive Connect] " + ((IPEndPoint)_dataClient.Client.RemoteEndPoint).Address);
+            FastConsole.PrintTrash("[FTP Passive Connect] " + ((IPEndPoint) _dataClient.Client.RemoteEndPoint).Address);
 
 
             DataConnectionOperation op = result.AsyncState as DataConnectionOperation;
@@ -1112,7 +1113,6 @@ namespace SharpFtpServer
                 _controlWriter.Flush();
                 FastConsole.PrintTrash("[FTP Passive Send] " + response);
             }
-
         }
 
         private string RetrieveOperation(NetworkStream dataStream, string pathname)
@@ -1131,7 +1131,8 @@ namespace SharpFtpServer
         {
             long bytes = 0;
 
-            using (FileStream fs = new FileStream(pathname, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, 4096, FileOptions.SequentialScan))
+            using (FileStream fs = new FileStream(pathname, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None,
+                4096, FileOptions.SequentialScan))
             {
                 bytes = CopyStream(dataStream, fs);
             }
@@ -1155,7 +1156,8 @@ namespace SharpFtpServer
         {
             long bytes = 0;
 
-            using (FileStream fs = new FileStream(pathname, FileMode.Append, FileAccess.Write, FileShare.None, 4096, FileOptions.SequentialScan))
+            using (FileStream fs = new FileStream(pathname, FileMode.Append, FileAccess.Write, FileShare.None, 4096,
+                FileOptions.SequentialScan))
             {
                 bytes = CopyStream(dataStream, fs);
             }
@@ -1177,7 +1179,6 @@ namespace SharpFtpServer
 
         private string ListOperation(NetworkStream dataStream, string pathname)
         {
-
             StreamWriter dataWriter = new StreamWriter(dataStream, _controlWriter.Encoding);
 
             IEnumerable<string> directories = Directory.EnumerateDirectories(pathname);
@@ -1187,20 +1188,24 @@ namespace SharpFtpServer
                 DirectoryInfo d = new DirectoryInfo(dir);
                 string owner = "unknown";
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    owner = ((NTAccount)d.GetAccessControl().GetOwner(typeof(NTAccount))).Value.Split('\\')[1];
-                string date = d.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
-                    d.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US")) :
-                    d.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
+                    owner = ((NTAccount) d.GetAccessControl().GetOwner(typeof(NTAccount))).Value.Split('\\')[1];
+                string date = d.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180)
+                    ? d.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US"))
+                    : d.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
                 string line;
                 if (_controlWriter.Encoding.CodePage == 936)
-                {//本来就是GBK,不用转换
+                {
+                    //本来就是GBK,不用转换
                     line = string.Format("drwxr-xr-x    2 {3}     {3}     {0,8}  {1} {2}", "4096", date, d.Name, owner);
                 }
                 else
                 {
-                    string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(d.Name)));
-                    line = string.Format("drwxr-xr-x    2 {3}     {3}     {0,8}  {1} {2}", "4096", date, filenameconv, owner);
+                    string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936),
+                        _writerEncoding, Encoding.GetEncoding(936).GetBytes(d.Name)));
+                    line = string.Format("drwxr-xr-x    2 {3}     {3}     {0,8}  {1} {2}", "4096", date, filenameconv,
+                        owner);
                 }
+
                 FastConsole.PrintTrash("[FTP Passive Send] " + line);
                 dataWriter.WriteLine(line);
                 dataWriter.Flush();
@@ -1213,20 +1218,24 @@ namespace SharpFtpServer
                 FileInfo f = new FileInfo(file);
                 string owner = "unknown";
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    owner = ((NTAccount)f.GetAccessControl().GetOwner(typeof(NTAccount))).Value.Split('\\')[1];
-                string date = f.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180) ?
-                    f.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US")) :
-                    f.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
+                    owner = ((NTAccount) f.GetAccessControl().GetOwner(typeof(NTAccount))).Value.Split('\\')[1];
+                string date = f.LastWriteTime < DateTime.Now - TimeSpan.FromDays(180)
+                    ? f.LastWriteTime.ToString("MMM dd  yyyy", CultureInfo.CreateSpecificCulture("en-US"))
+                    : f.LastWriteTime.ToString("MMM dd HH:mm", CultureInfo.CreateSpecificCulture("en-US"));
                 string line;
                 if (_controlWriter.Encoding.CodePage == 936)
                 {
-                    line = string.Format("-rw-r--r--    2 {3}     {3}     {0,8}  {1} {2}", f.Length, date, f.Name, owner);
+                    line = string.Format("-rw-r--r--    2 {3}     {3}     {0,8}  {1} {2}", f.Length, date, f.Name,
+                        owner);
                 }
                 else
                 {
-                    string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936), _writerEncoding, Encoding.GetEncoding(936).GetBytes(f.Name)));
-                    line = string.Format("-rw-r--r--    2 {3}     {3}     {0,8}  {1} {2}", f.Length, date, filenameconv, owner);
+                    string filenameconv = _writerEncoding.GetString(Encoding.Convert(Encoding.GetEncoding(936),
+                        _writerEncoding, Encoding.GetEncoding(936).GetBytes(f.Name)));
+                    line = string.Format("-rw-r--r--    2 {3}     {3}     {0,8}  {1} {2}", f.Length, date, filenameconv,
+                        owner);
                 }
+
                 FastConsole.PrintTrash("[FTP Passive Send] " + line);
 
                 dataWriter.WriteLine(line);

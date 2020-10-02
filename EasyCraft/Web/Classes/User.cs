@@ -98,13 +98,21 @@ namespace EasyCraft.Web.Classes
             }
         }
 
-        public static bool Exist(string username)
+        public static int GetUid(string username)
         {
             SQLiteCommand c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM `user` WHERE `username` = $username ";
             c.Parameters.AddWithValue("$username", username);
             SQLiteDataReader r = c.ExecuteReader();
-            return r.HasRows;
+            if (r.HasRows)
+            {
+                r.Read();
+                return r.GetInt32(0);
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 

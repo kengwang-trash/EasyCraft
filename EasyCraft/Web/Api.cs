@@ -17,7 +17,8 @@ namespace EasyCraft.Web
                 case "login":
                     if (wp.session.ContainsKey("loginfail"))
                     {
-                        if (int.Parse(wp.session["loginfail"]) >= 5 && wp.session["lastloginfailday"] == DateTime.Today.ToString())
+                        if (int.Parse(wp.session["loginfail"]) >= 5 &&
+                            wp.session["lastloginfailday"] == DateTime.Today.ToString())
                         {
                             UserLogin callback = new UserLogin();
                             callback.message = Language.t("登录失败,尝试次数过多!");
@@ -26,6 +27,7 @@ namespace EasyCraft.Web
                             return;
                         }
                     }
+
                     if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password"))
                     {
                         wp.vars.user = new User(wp.POST["username"], wp.POST["password"]);
@@ -67,11 +69,13 @@ namespace EasyCraft.Web
                         callback.code = -3;
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "register":
-                    if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password") && wp.POST.ContainsKey("email"))
+                    if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password") &&
+                        wp.POST.ContainsKey("email"))
                     {
-                        if (User.Exist(wp.POST["username"]))
+                        if (User.GetUid(wp.POST["username"]) != -1)
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
@@ -80,7 +84,8 @@ namespace EasyCraft.Web
                         }
                         else
                         {
-                            User user = User.Register(wp.POST["username"], wp.POST["password"], wp.POST["email"], wp.POST["qq"]);
+                            User user = User.Register(wp.POST["username"], wp.POST["password"], wp.POST["email"],
+                                wp.POST["qq"]);
                             if (user == null)
                             {
                                 Callback callback = new Callback();
@@ -104,43 +109,53 @@ namespace EasyCraft.Web
                         callback.message = Language.t("注册失败,参数不完整");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "new_server":
                     if (wp.vars.user.type >= 3)
                     {
                         if (wp.POST.ContainsKey("owner"))
                         {
-                            try
+                            if (User.GetUid(wp.POST["owner"]) != -1)
                             {
-                                int sid = Server.CreateServer();
-                                Server s = new Server(sid);
+                                try
+                                {
+                                    int sid = Server.CreateServer();
+                                    if (sid == 0) throw new Exception("服务器创建失败");
+                                    Server s = new Server(sid);
 
-                                if (s == null) throw new Exception("Create Failed");
-
-                                if (wp.POST.ContainsKey("name")) s.name = wp.POST["name"];
-                                if (wp.POST.ContainsKey("owner")) s.owner = int.Parse(wp.POST["owner"]);
-                                if (wp.POST.ContainsKey("port")) s.port = int.Parse(wp.POST["port"]);
-                                if (wp.POST.ContainsKey("core")) s.core = wp.POST["core"];
-                                if (wp.POST.ContainsKey("maxplayer")) s.maxplayer = int.Parse(wp.POST["maxplayer"]);
-                                if (wp.POST.ContainsKey("ram")) s.ram = int.Parse(wp.POST["ram"]);
-                                if (wp.POST.ContainsKey("world")) s.world = wp.POST["world"];
-                                if (wp.POST.ContainsKey("expiretime")) s.expiretime = DateTime.Parse(wp.POST["expiretime"]);
-                                s.SaveServerConfig();
-                                ServerManager.servers.Add(s.id, s);
+                                    if (wp.POST.ContainsKey("name")) s.name = wp.POST["name"];
+                                    if (wp.POST.ContainsKey("owner")) s.owner = User.GetUid(wp.POST["owner"]);
+                                    if (wp.POST.ContainsKey("port")) s.port = int.Parse(wp.POST["port"]);
+                                    if (wp.POST.ContainsKey("core")) s.core = wp.POST["core"];
+                                    if (wp.POST.ContainsKey("maxplayer")) s.maxplayer = int.Parse(wp.POST["maxplayer"]);
+                                    if (wp.POST.ContainsKey("ram")) s.ram = int.Parse(wp.POST["ram"]);
+                                    if (wp.POST.ContainsKey("world")) s.world = wp.POST["world"];
+                                    if (wp.POST.ContainsKey("expiretime"))
+                                        s.expiretime = DateTime.Parse(wp.POST["expiretime"]);
+                                    s.SaveServerConfig();
+                                    ServerManager.servers.Add(s.id, s);
+                                    NewServer callback = new NewServer();
+                                    callback.code = 9000;
+                                    callback.message = Language.t("服务器创建成功");
+                                    callback.data = s.id;
+                                    wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                                }
+                                catch (Exception)
+                                {
+                                    NewServer callback = new NewServer();
+                                    callback.code = -1;
+                                    callback.message = Language.t("创建服务器失败");
+                                    wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                                }
+                            }
+                            else
+                            {
                                 NewServer callback = new NewServer();
-                                callback.code = 9000;
-                                callback.message = Language.t("服务器创建成功");
-                                callback.data = s.id;
+                                callback.code = -2;
+                                callback.message = Language.t("用户不存在");
                                 wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             }
-                            catch (Exception)
-                            {
-                                NewServer callback = new NewServer();
-                                callback.code = -1;
-                                callback.message = Language.t("创建服务器失败");
-                                wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
-                            }
-
                         }
                         else
                         {
@@ -157,6 +172,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "edit_server":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
@@ -167,6 +183,7 @@ namespace EasyCraft.Web
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
+
                     Server server = ServerManager.servers[int.Parse(wp.POST["sid"])];
                     if (wp.vars.user.type >= 2 || server.owner == wp.vars.user.uid)
                     {
@@ -179,17 +196,19 @@ namespace EasyCraft.Web
                                 server.SaveServerConfig();
                                 ServerManager.servers[int.Parse(wp.POST["sid"])] = server;
                             }
+
                             if (wp.vars.user.type >= 2)
                             {
-
                                 if (wp.POST.ContainsKey("name")) server.name = wp.POST["name"];
                                 if (wp.POST.ContainsKey("owner")) server.owner = int.Parse(wp.POST["owner"]);
                                 if (wp.POST.ContainsKey("port")) server.port = int.Parse(wp.POST["port"]);
                                 if (wp.POST.ContainsKey("core")) server.core = wp.POST["core"];
-                                if (wp.POST.ContainsKey("maxplayer")) server.maxplayer = int.Parse(wp.POST["maxplayer"]);
+                                if (wp.POST.ContainsKey("maxplayer"))
+                                    server.maxplayer = int.Parse(wp.POST["maxplayer"]);
                                 if (wp.POST.ContainsKey("ram")) server.ram = int.Parse(wp.POST["ram"]);
                                 if (wp.POST.ContainsKey("world")) server.world = wp.POST["world"];
-                                if (wp.POST.ContainsKey("expiretime")) server.expiretime = Convert.ToDateTime(wp.POST["expiretime"]);
+                                if (wp.POST.ContainsKey("expiretime"))
+                                    server.expiretime = Convert.ToDateTime(wp.POST["expiretime"]);
                                 server.SaveServerConfig();
                                 ServerManager.servers[int.Parse(wp.POST["sid"])] = server;
                             }
@@ -207,7 +226,6 @@ namespace EasyCraft.Web
                             callback.message = Language.t("编辑服务器信息失败");
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
-
                     }
                     else
                     {
@@ -216,6 +234,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "start_server":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
@@ -226,7 +245,9 @@ namespace EasyCraft.Web
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
-                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+
+                    if (wp.vars.user.type >= 2 ||
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         if (ServerManager.servers[int.Parse(wp.POST["sid"])].expiretime < DateTime.Now)
                         {
@@ -236,6 +257,7 @@ namespace EasyCraft.Web
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                             return;
                         }
+
                         try
                         {
                             ServerManager.servers[int.Parse(wp.POST["sid"])].Start();
@@ -260,6 +282,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "stop_server":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
@@ -270,7 +293,9 @@ namespace EasyCraft.Web
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
-                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+
+                    if (wp.vars.user.type >= 2 ||
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         try
                         {
@@ -296,6 +321,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "log":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
@@ -306,7 +332,9 @@ namespace EasyCraft.Web
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
-                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+
+                    if (wp.vars.user.type >= 2 ||
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         Server s = ServerManager.servers[int.Parse(wp.POST["sid"])];
                         List<ServerLog> logs = null;
@@ -319,6 +347,7 @@ namespace EasyCraft.Web
                             int n = 0;
                             logs = s.log.Values.Where(log => ++n <= 100).ToList();
                         }
+
                         LogBack callback = new LogBack();
                         callback.code = 9000;
                         callback.message = Language.t("成功");
@@ -340,6 +369,7 @@ namespace EasyCraft.Web
                                 callback.data.lastlogid = 0;
                             }
                         }
+
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     else
@@ -349,6 +379,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "cmd":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
@@ -359,7 +390,9 @@ namespace EasyCraft.Web
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
-                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+
+                    if (wp.vars.user.type >= 2 ||
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         if (wp.POST.ContainsKey("cmd"))
                         {
@@ -384,6 +417,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "clear_log":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
@@ -394,7 +428,9 @@ namespace EasyCraft.Web
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
-                    if (wp.vars.user.type >= 2 || ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+
+                    if (wp.vars.user.type >= 2 ||
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         ServerManager.servers[int.Parse(wp.POST["sid"])].ClearLog();
                         Callback callback = new Callback();
@@ -409,6 +445,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "server":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
@@ -419,10 +456,10 @@ namespace EasyCraft.Web
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         return;
                     }
+
                     Server s_info = ServerManager.servers[int.Parse(wp.POST["sid"])];
                     if (wp.vars.user.type >= 2 || s_info.owner == wp.vars.user.uid)
                     {
-
                         ServerInfo callback = new ServerInfo();
                         callback.code = 9000;
                         callback.data = new ServerInfoData();
@@ -443,9 +480,10 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
                 case "edit_announcement":
-                    if (wp.vars.user.type >= (int)UserType.admin)
+                    if (wp.vars.user.type >= (int) UserType.admin)
                     {
                         SQLiteCommand c = Database.DB.CreateCommand();
                         c.CommandText = "UPDATE `settings` SET `announcement` = $announcement WHERE 1 = 1";
@@ -472,6 +510,7 @@ namespace EasyCraft.Web
                         callback.message = Language.t("权限不足");
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
+
                     break;
             }
         }

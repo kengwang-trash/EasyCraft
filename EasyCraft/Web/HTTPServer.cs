@@ -52,27 +52,44 @@ namespace EasyCraft.Web
             }
             catch (Exception e)
             {
-                string logid = Functions.GetRandomString(15, true, true, true, false, "");
-                FastConsole.PrintWarning("Web 500: " + e.Message);
-                Write500Log(logid, e);
-                responseString = "<h1>500 Internal Server Error</h1><hr />Log ID: " + logid + "<br />Time:" + DateTime.Now.ToString() + "<br />Server: EasyCraft<br />";
-                response.StatusCode = 500;
-                byte[] buff = Encoding.UTF8.GetBytes(responseString);
-                response.OutputStream.Write(buff, 0, buff.Length);
-                // 必须关闭输出流
                 try
                 {
-                    response.Close();
+                    string logid = Functions.GetRandomString(15, true, true, true, false, "");
+                    FastConsole.PrintWarning("Web 500: " + e.Message);
+                    Write500Log(logid, e);
+                    if (request.Headers["X-Requested-With"] != "XMLHttpRequest")
+                    {
+                        responseString = "<h1>500 Internal Server Error</h1><hr />Log ID: " + logid + "<br />Time:" +DateTime.Now.ToString() + "<br />Server: EasyCraft<br />";
+                        response.StatusCode = 500;
+                    }
+                    else
+                    {
+                        responseString = "{\"code\":-5000,\"message\":\"500 Internal Server Error\"}";
+                    }
+
+                    byte[] buff = Encoding.UTF8.GetBytes(responseString);
+                    response.OutputStream.Write(buff, 0, buff.Length);
+                    // 必须关闭输出流
+                    try
+                    {
+                        response.Close();
+                    }
+                    catch (Exception)
+                    {
+                        //ignore
+                    }
                 }
                 catch (Exception)
                 {
-                    //ignore
+                    //没救了
                 }
+
             }
         }
 
         static void Write500Log(string logid,Exception e)
         {
+            FastConsole.PrintError( "========= EasyCraft Error Log =========" + "\r\nError Message: " + e.Message + "\r\nTrance: \r\n" + e.StackTrace+"\r\n\r\n");
             File.AppendAllTextAsync(string.Format("log/weberr/{0}.log", logid), "========= EasyCraft Error Log =========" + "\r\nError Message: " + e.Message + "\r\nTrance: \r\n" + e.StackTrace+"\r\n\r\n");
             if (e.InnerException != null) Write500Log(logid, e.InnerException);
         }
