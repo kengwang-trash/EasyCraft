@@ -22,9 +22,9 @@
     </table>
     <table id="12" parent="2" name="user"/>
     <table id="13" parent="2" name="version"/>
-    <column id="14" parent="6" name="name">
+    <column id="14" parent="6" name="pid">
       <Position>1</Position>
-      <DataType>TEXT|0s</DataType>
+      <DataType>INTEGER|0s</DataType>
     </column>
     <column id="15" parent="6" name="usertype">
       <Position>2</Position>

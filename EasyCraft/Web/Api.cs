@@ -112,7 +112,7 @@ namespace EasyCraft.Web
 
                     break;
                 case "new_server":
-                    if (wp.vars.user.type >= 3)
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.CreateServer))
                     {
                         if (wp.POST.ContainsKey("owner"))
                         {
@@ -185,7 +185,7 @@ namespace EasyCraft.Web
                     }
 
                     Server server = ServerManager.servers[int.Parse(wp.POST["sid"])];
-                    if (wp.vars.user.type >= 2 || server.owner == wp.vars.user.uid)
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.EditServer) || server.owner == wp.vars.user.uid)
                     {
                         try
                         {
@@ -197,7 +197,7 @@ namespace EasyCraft.Web
                                 ServerManager.servers[int.Parse(wp.POST["sid"])] = server;
                             }
 
-                            if (wp.vars.user.type >= 2)
+                            if (wp.vars.user.CheckUserAbility((int)Permisson.EditServer))
                             {
                                 if (wp.POST.ContainsKey("name")) server.name = wp.POST["name"];
                                 if (wp.POST.ContainsKey("owner")) server.owner = int.Parse(wp.POST["owner"]);
@@ -246,7 +246,7 @@ namespace EasyCraft.Web
                         return;
                     }
 
-                    if (wp.vars.user.type >= 2 ||
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.StartServer) ||
                         ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         if (ServerManager.servers[int.Parse(wp.POST["sid"])].expiretime < DateTime.Now)
@@ -294,7 +294,7 @@ namespace EasyCraft.Web
                         return;
                     }
 
-                    if (wp.vars.user.type >= 2 ||
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.StopServer) ||
                         ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         try
@@ -333,7 +333,7 @@ namespace EasyCraft.Web
                         return;
                     }
 
-                    if (wp.vars.user.type >= 2 ||
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.QueryLog) ||
                         ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         Server s = ServerManager.servers[int.Parse(wp.POST["sid"])];
@@ -391,7 +391,7 @@ namespace EasyCraft.Web
                         return;
                     }
 
-                    if (wp.vars.user.type >= 2 ||
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.SendCmd) ||
                         ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         if (wp.POST.ContainsKey("cmd"))
@@ -429,7 +429,7 @@ namespace EasyCraft.Web
                         return;
                     }
 
-                    if (wp.vars.user.type >= 2 ||
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.CleanLog) ||
                         ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
                     {
                         ServerManager.servers[int.Parse(wp.POST["sid"])].ClearLog();
@@ -458,7 +458,7 @@ namespace EasyCraft.Web
                     }
 
                     Server s_info = ServerManager.servers[int.Parse(wp.POST["sid"])];
-                    if (wp.vars.user.type >= 2 || s_info.owner == wp.vars.user.uid)
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.SeeServer) || s_info.owner == wp.vars.user.uid)
                     {
                         ServerInfo callback = new ServerInfo();
                         callback.code = 9000;
@@ -483,7 +483,7 @@ namespace EasyCraft.Web
 
                     break;
                 case "edit_announcement":
-                    if (wp.vars.user.type >= (int) UserType.admin)
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.EditAnnouncement))
                     {
                         SQLiteCommand c = Database.DB.CreateCommand();
                         c.CommandText = "UPDATE `settings` SET `announcement` = $announcement WHERE 1 = 1";

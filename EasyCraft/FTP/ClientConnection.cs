@@ -589,7 +589,7 @@ namespace SharpFtpServer
             _currentUser = new User(_username, password);
             if (_currentUser.islogin)
             {
-                if (_currentUser.type >= 2 || ServerManager.servers[_sid].owner == _currentUser.uid)
+                if (_currentUser.CheckUserAbility((int)Permisson.UseAllFTP) || (ServerManager.servers[_sid].owner == _currentUser.uid && _currentUser.CheckUserAbility((int)Permisson.UseFTP)))
                 {
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {

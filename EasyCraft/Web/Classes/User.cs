@@ -16,6 +16,8 @@ namespace EasyCraft.Web.Classes
         public readonly string email;
         public readonly int type = 0;
         public readonly string qq;
+        private static Dictionary<int, int> PermissonTable = new Dictionary<int, int>();
+
         public User(string auth)
         {
             if (auth == "rawobj") return;
@@ -64,9 +66,8 @@ namespace EasyCraft.Web.Classes
                 email = r.GetString(3);
                 auth = Functions.MD5(Functions.GetRandomString(15) + pwmd5);
                 type = r.GetInt32(5);
-                qq = r.GetString(6);                
+                qq = r.GetString(6);
                 FastConsole.PrintSuccess(string.Format(Language.t("用户 {0} 成功登录."), username));
-
             }
         }
 
@@ -82,7 +83,8 @@ namespace EasyCraft.Web.Classes
         public static User Register(string username, string password, string email, string qq)
         {
             SQLiteCommand c = Database.DB.CreateCommand();
-            c.CommandText = "INSERT INTO `user` (username, password, email, `type` , `qq` ) VALUES ( $username , $password , $email , 1 , $qq)";
+            c.CommandText =
+                "INSERT INTO `user` (username, password, email, `type` , `qq` ) VALUES ( $username , $password , $email , 1 , $qq)";
             c.Parameters.AddWithValue("$username", username);
             string pwmd5 = Functions.MD5(password);
             c.Parameters.AddWithValue("$password", pwmd5);
@@ -114,6 +116,24 @@ namespace EasyCraft.Web.Classes
                 return -1;
             }
         }
+
+        public bool CheckUserAbility(int PermissonID)
+        {
+            if (!PermissonTable.ContainsKey(PermissonID)) return false;
+            return PermissonTable[PermissonID] <= this.type;
+        }
+
+        public static void RefreshPermissonTable()
+        {
+            PermissonTable.Clear();
+            SQLiteCommand c = Database.DB.CreateCommand();
+            c.CommandText = "SELECT `pid`,`usertype` FROM `permission`";
+            SQLiteDataReader r = c.ExecuteReader();
+            while (r.Read())
+            {
+                PermissonTable[r.GetInt32(0)] = r.GetInt32(1);
+            }
+        }
     }
 
     enum UserType
@@ -123,5 +143,21 @@ namespace EasyCraft.Web.Classes
         customer,
         seller,
         admin
+    }
+
+    enum Permisson
+    {
+        CreateServer, //创建服务器
+        EditServer, //编辑服务器信息
+        StartServer, //开启任意服务器
+        StopServer, //停止任意服务器
+        QueryLog, //获取任意日志
+        SendCmd, //发送指令
+        CleanLog, //清除日志
+        SeeServer, //查看任意服务器信息
+        EditAnnouncement, //编辑公告
+        UseAllFTP, //使用全部的FTP
+        UseFTP, //使用FTP
+        SeeAllServer, //查看全部服务器
     }
 }

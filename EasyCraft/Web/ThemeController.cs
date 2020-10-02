@@ -334,7 +334,7 @@ namespace EasyCraft.Web
                             string initname = line.Substring(phraseidx + 6, inilidx - phraseidx - 7);
                             if (initname == "servers")
                             {
-                                if (wp.vars.user.type >= (int) UserType.customer) //可以查看全部服务器
+                                if (wp.vars.user.CheckUserAbility((int)Permisson.SeeAllServer)) //可以查看全部服务器
                                 {
                                     wp.vars.servers = ServerManager.servers.Values.ToList();
                                 }
@@ -352,7 +352,7 @@ namespace EasyCraft.Web
                                 {
                                     if (ServerManager.servers.ContainsKey(sid))
                                     {
-                                        if (wp.vars.user.type >= 2 ||
+                                        if (wp.vars.user.CheckUserAbility((int)Permisson.SeeServer) ||
                                             ServerManager.servers[sid].owner == wp.vars.user.uid)
                                         {
                                             wp.vars.server = ServerManager.servers[sid];
