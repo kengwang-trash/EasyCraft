@@ -159,5 +159,7 @@ namespace EasyCraft.Web.Classes
         UseAllFTP, //使用全部的FTP
         UseFTP, //使用FTP
         SeeAllServer, //查看全部服务器
+        KillServer,//强制关闭服务器
+        KillServerAll,//强制关闭服务器目录下的所有进程 (danger)
     }
 }

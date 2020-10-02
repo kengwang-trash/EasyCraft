@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Text;
+using EasyCraft.Web.Classes;
 
 namespace EasyCraft.Core
 {
@@ -179,6 +180,7 @@ namespace EasyCraft.Core
             {
                 SettingsDatabase.annoucement = render.GetString(0);
             }
+            User.RefreshPermissonTable();
         }
     }
 

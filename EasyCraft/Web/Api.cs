@@ -323,6 +323,84 @@ namespace EasyCraft.Web
                     }
 
                     break;
+                case "kill_server":
+                    if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -1;
+                        callback.message = Language.t("未找到此服务器");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                        return;
+                    }
+
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.KillServer) ||
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                    {
+                        try
+                        {
+                            ServerManager.servers[int.Parse(wp.POST["sid"])].Kill();
+                            Callback callback = new Callback();
+                            callback.code = 9000;
+                            callback.message = Language.t("服务器已强行停止");
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                            return;
+                        }
+                        catch (Exception)
+                        {
+                            Callback callback = new Callback();
+                            callback.code = -2;
+                            callback.message = Language.t("服务器强行停止失败");
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                        }
+                    }
+                    else
+                    {
+                        NewServer callback = new NewServer();
+                        callback.code = -3;
+                        callback.message = Language.t("权限不足");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                    }
+
+                    break;
+                case "kill_server_all":
+                    if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
+                    {
+                        Callback callback = new Callback();
+                        callback.code = -1;
+                        callback.message = Language.t("未找到此服务器");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                        return;
+                    }
+
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.KillServerAll) ||
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                    {
+                        try
+                        {
+                            ServerManager.servers[int.Parse(wp.POST["sid"])].KillAll();
+                            Callback callback = new Callback();
+                            callback.code = 9000;
+                            callback.message = Language.t("成功强停服务器");
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                            return;
+                        }
+                        catch (Exception)
+                        {
+                            Callback callback = new Callback();
+                            callback.code = -2;
+                            callback.message = Language.t("服务器强停失败");
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                        }
+                    }
+                    else
+                    {
+                        NewServer callback = new NewServer();
+                        callback.code = -3;
+                        callback.message = Language.t("权限不足");
+                        wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                    }
+
+                    break;
                 case "log":
                     if (!wp.POST.ContainsKey("sid") || !ServerManager.servers.ContainsKey(int.Parse(wp.POST["sid"])))
                     {
