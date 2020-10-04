@@ -13,6 +13,8 @@ namespace EasyCraft.Core
 
         public static string release = "Personal";
 
+        public readonly static string BUILDINFO = "{BUILDINFO}";
+        
         public static int httpport
         {
             get

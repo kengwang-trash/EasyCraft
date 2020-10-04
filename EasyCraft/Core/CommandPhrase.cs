@@ -43,6 +43,10 @@ namespace EasyCraft.Core
                 Server s = ServerManager.servers[int.Parse(command[1])];
                 s.KillAll();
             }
+            else if (command[0] == "version")
+            {
+                FastConsole.PrintInfo(Settings.BUILDINFO);
+            }
             else
             {
                 FastConsole.PrintTrash("不支持的指令: " + commandstr);
