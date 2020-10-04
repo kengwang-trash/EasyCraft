@@ -47,7 +47,6 @@
           <e p="defdb.db" t="Include" />
           <e p="lang.json" t="Include" />
         </e>
-        <e p="Struct" t="Include" />
         <e p="Web" t="Include">
           <e p="Api.cs" t="Include" />
           <e p="Classes" t="Include">

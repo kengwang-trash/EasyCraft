@@ -73,8 +73,17 @@ namespace EasyCraft.Web
                     break;
                 case "register":
                     if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password") &&
-                        wp.POST.ContainsKey("email"))
+                        wp.POST.ContainsKey("email") && wp.POST.ContainsKey("qq"))
                     {
+                        if (string.IsNullOrEmpty(wp.POST["username"]) || string.IsNullOrEmpty(wp.POST["password"]) ||
+                            string.IsNullOrEmpty(wp.POST["email"]) || string.IsNullOrEmpty(wp.POST["qq"]))
+                        {
+                            Callback callback = new Callback();
+                            callback.code = -2;
+                            callback.message = Language.t("注册失败,参数不完整");
+                            wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
+                            return;
+                        }
                         if (User.GetUid(wp.POST["username"]) != -1)
                         {
                             Callback callback = new Callback();
@@ -578,6 +587,7 @@ namespace EasyCraft.Web
                             Callback callback = new Callback();
                             callback.code = 9000;
                             callback.message = Language.t("公告编辑成功");
+                            Settings.LoadDatabase();
                             wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                         }
                     }

@@ -571,6 +571,16 @@ namespace EasyCraft.Web
                         return wp.vars.user.uid.ToString();
                     case "var.user.qq":
                         return wp.vars.user.qq;
+                    case "var.user.avatar":
+                        if (string.IsNullOrEmpty(wp.vars.user.qq))
+                        {
+                            return "https://cdn.v2ex.com/gravatar/" +
+                                   Functions.MD5(wp.vars.user.email.Trim().ToLower());
+                        }
+                        else
+                        {
+                            return $"https://q1.qlogo.cn/g?b=qq&nk={wp.vars.user.qq}&s=640";
+                        }
                     case "var.user.type":
                         return wp.vars.user.type.ToString();
                     case "var.for.server.id":

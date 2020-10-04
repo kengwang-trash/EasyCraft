@@ -18,7 +18,10 @@ namespace EasyCraft.Web
         public HttpListenerRequest request;
         public HttpListenerResponse response;
         public Dictionary<string, string> cookies = new Dictionary<string, string>();
-        public static Dictionary<string, Dictionary<string, string>> MultiSessions = new Dictionary<string, Dictionary<string, string>>();
+
+        public static Dictionary<string, Dictionary<string, string>> MultiSessions =
+            new Dictionary<string, Dictionary<string, string>>();
+
         public Dictionary<string, string> session = new Dictionary<string, string>();
         public HTTPVars vars = new HTTPVars();
         public Uri uri = null;
@@ -38,6 +41,7 @@ namespace EasyCraft.Web
                     cookies[cookie.Name] = cookie.Value;
                 }
             }
+
             if (cookies.ContainsKey("SESSDATA"))
             {
                 if (MultiSessions.ContainsKey(cookies["SESSDATA"]))
@@ -65,7 +69,9 @@ namespace EasyCraft.Web
                 cookies["SESSDATA"] = sesscookie.Value;
                 session = new Dictionary<string, string>();
             }
-            if (request.HttpMethod == "POST" && request.ContentType != null && request.ContentType.Contains("application/x-www-form-urlencoded"))
+
+            if (request.HttpMethod == "POST" && request.ContentType != null &&
+                request.ContentType.Contains("application/x-www-form-urlencoded"))
             {
                 StreamReader sr = new StreamReader(request.InputStream);
                 string postraw = sr.ReadToEnd();
@@ -87,17 +93,23 @@ namespace EasyCraft.Web
                 string absolutepage = uri.AbsolutePath.Substring(5);
                 response.ContentType = "application/json";
                 Api.PhraseAPI(absolutepage, this);
-
             }
             else if (uri.AbsolutePath.StartsWith("/page/"))
             {
                 response.ContentType = "text/html;charset=utf-8;";
-                if (vars.user.islogin || uri.AbsolutePath == "/page/login")
+                if (uri.AbsolutePath == "/page/logout")
+                {
+                    session["auth"] = "";
+                    response.StatusCode = 302;
+                    response.Headers.Add("Location: /page/login");
+                }
+                else if (vars.user.islogin || uri.AbsolutePath == "/page/login" || uri.AbsolutePath == "/page/register")
                 {
                     if (urllist.Count < 2)
                     {
                         Print404();
                     }
+
                     if (ThemeController.CheckPagePath(urllist[2]))
                     {
                         PrintWeb(ThemeController.LoadPage(urllist[2], this));
@@ -112,7 +124,6 @@ namespace EasyCraft.Web
                     response.StatusCode = 302;
                     response.Headers.Add("Location: /page/login");
                 }
-
             }
             else if (uri.AbsolutePath == "/")
             {
@@ -124,7 +135,7 @@ namespace EasyCraft.Web
                 string absolutepage = uri.AbsolutePath.Substring(8);
                 if (CheckAssetsPath(absolutepage))
                 {
-                    response.Headers.Add("Cache-Control:max-age=259200");//设置为三天的缓存
+                    response.Headers.Add("Cache-Control:max-age=259200"); //设置为三天的缓存
                     if (absolutepage.EndsWith("js"))
                     {
                         response.ContentType = "text/javascript";
@@ -133,6 +144,7 @@ namespace EasyCraft.Web
                     {
                         response.ContentType = "text/css";
                     }
+
                     PrintWeb(File.ReadAllBytes("theme/" + ThemeController.themeName + "/assets/" + absolutepage));
                 }
                 else
@@ -140,6 +152,7 @@ namespace EasyCraft.Web
                     Print404();
                 }
             }
+
             try
             {
                 if (cookies["SESSDATA"] != null && session != null && MultiSessions != null && cookies != null)
@@ -150,17 +163,17 @@ namespace EasyCraft.Web
             {
                 //潜在BUG,可能某些情况不会写session
             }
-
         }
-
 
 
         private bool CheckAssetsPath(string page)
         {
-            if (page.Contains("..") || page.Contains('~') || page.Contains('\'') || page.Contains('\"') || page.Contains('\"'))
+            if (page.Contains("..") || page.Contains('~') || page.Contains('\'') || page.Contains('\"') ||
+                page.Contains('\"'))
             {
                 return false;
             }
+
             if (File.Exists("theme/" + ThemeController.themeName + "/assets/" + page))
             {
                 return true;
@@ -174,7 +187,8 @@ namespace EasyCraft.Web
         public void Print404()
         {
             response.StatusCode = 404;
-            PrintWeb("<h1>404 Not Found</h1><hr />Path: " + uri.AbsoluteUri + "<br />Time:" + DateTime.Now.ToString() + "<br />Server: EasyCraft<br />");
+            PrintWeb("<h1>404 Not Found</h1><hr />Path: " + uri.AbsoluteUri + "<br />Time:" + DateTime.Now.ToString() +
+                     "<br />Server: EasyCraft<br />");
         }
 
         public void PrintWeb(string echo)
@@ -184,8 +198,9 @@ namespace EasyCraft.Web
                 byte[] buff = Encoding.UTF8.GetBytes(echo);
                 response.OutputStream.Write(buff, 0, buff.Length);
             }
-            catch (Exception) { }
-
+            catch (Exception)
+            {
+            }
         }
 
         public void PrintWeb(byte[] echo)
@@ -204,6 +219,7 @@ namespace EasyCraft.Web
                 string value = Uri.UnescapeDataString(pd.Substring(pd.IndexOf("=") + 1));
                 ans[key] = value;
             }
+
             return ans;
         }
     }

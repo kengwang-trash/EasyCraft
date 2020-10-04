@@ -73,12 +73,14 @@ namespace EasyCraft
                 if (DB != null)
                     DB.Close();
                 throw new Exception("No Database File Founded");
+                /*
                 var connectionString = new SQLiteConnectionStringBuilder()
                 {
                     DataSource = Environment.CurrentDirectory + "/db/db.db"
                 }.ToString();
                 DB = new SQLiteConnection(connectionString);
                 DB.Open();
+                */
             }
             catch (Exception e)
             {
