@@ -542,7 +542,7 @@ namespace SharpFtpServer
                 {
                     string tmpusername = username.Substring(0, dotpos);
                     int tmpserver = int.Parse(username.Substring(dotpos + 1));
-                    bool res = checkUserName(tmpusername, tmpserver);
+                    bool res = CheckUserName(tmpusername, tmpserver);
                     if (res)
                     {
                         _username = tmpusername;
@@ -565,11 +565,12 @@ namespace SharpFtpServer
             }
         }
 
-        private static bool checkUserName(string username, int sid)
+        private static bool CheckUserName(string username, int sid)
         {
-            if (EasyCraft.Web.Classes.User.GetUid(username) != -1)
+            int uid = EasyCraft.Web.Classes.User.GetUid(username);
+            if (uid != -1)
             {
-                if (ServerManager.servers.ContainsKey(sid))
+                if (ServerManager.servers.ContainsKey(sid) && ServerManager.servers[sid].owner == uid)
                 {
                     return true;
                 }
@@ -589,7 +590,9 @@ namespace SharpFtpServer
             _currentUser = new User(_username, password);
             if (_currentUser.islogin)
             {
-                if (_currentUser.CheckUserAbility((int)Permisson.UseAllFTP) || (ServerManager.servers[_sid].owner == _currentUser.uid && _currentUser.CheckUserAbility((int)Permisson.UseFTP)))
+                if (_currentUser.CheckUserAbility((int) Permisson.UseAllFTP) ||
+                    (ServerManager.servers[_sid].owner == _currentUser.uid &&
+                     _currentUser.CheckUserAbility((int) Permisson.UseFTP)))
                 {
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {

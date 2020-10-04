@@ -80,16 +80,26 @@ namespace EasyCraft.Web.Classes
             co.ExecuteNonQueryAsync();
         }
 
-        public static User Register(string username, string password, string email, string qq)
+        public static User Register(string username, string password, string email, string qq = null)
         {
             SQLiteCommand c = Database.DB.CreateCommand();
-            c.CommandText =
-                "INSERT INTO `user` (username, password, email, `type` , `qq` ) VALUES ( $username , $password , $email , 1 , $qq)";
+            if (!string.IsNullOrEmpty(qq))
+            {
+                c.CommandText =
+                    "INSERT INTO `user` (username, password, email, `type` , `qq` ) VALUES ( $username , $password , $email , 1 , $qq)";
+                c.Parameters.AddWithValue("$qq", qq);
+            }
+            else
+            {
+                c.CommandText =
+                    "INSERT INTO `user` (username, password, email, `type` ) VALUES ( $username , $password , $email , 1 )";
+            }
+
             c.Parameters.AddWithValue("$username", username);
             string pwmd5 = Functions.MD5(password);
             c.Parameters.AddWithValue("$password", pwmd5);
             c.Parameters.AddWithValue("$email", email);
-            c.Parameters.AddWithValue("$qq", qq);
+            
             if (c.ExecuteNonQuery() != 0)
             {
                 return new User(username, password);
@@ -159,7 +169,7 @@ namespace EasyCraft.Web.Classes
         UseAllFTP, //使用全部的FTP
         UseFTP, //使用FTP
         SeeAllServer, //查看全部服务器
-        KillServer,//强制关闭服务器
-        KillServerAll,//强制关闭服务器目录下的所有进程 (danger)
+        KillServer, //强制关闭服务器
+        KillServerAll, //强制关闭服务器目录下的所有进程 (danger)
     }
 }

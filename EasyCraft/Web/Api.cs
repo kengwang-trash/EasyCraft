@@ -73,10 +73,10 @@ namespace EasyCraft.Web
                     break;
                 case "register":
                     if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password") &&
-                        wp.POST.ContainsKey("email") && wp.POST.ContainsKey("qq"))
+                        wp.POST.ContainsKey("email"))
                     {
                         if (string.IsNullOrEmpty(wp.POST["username"]) || string.IsNullOrEmpty(wp.POST["password"]) ||
-                            string.IsNullOrEmpty(wp.POST["email"]) || string.IsNullOrEmpty(wp.POST["qq"]))
+                            string.IsNullOrEmpty(wp.POST["email"]))
                         {
                             Callback callback = new Callback();
                             callback.code = -2;
@@ -93,8 +93,16 @@ namespace EasyCraft.Web
                         }
                         else
                         {
-                            User user = User.Register(wp.POST["username"], wp.POST["password"], wp.POST["email"],
-                                wp.POST["qq"]);
+                            User user = null;
+                            if (wp.POST.ContainsKey("qq") && !string.IsNullOrEmpty(wp.POST["qq"]))
+                            {
+                                user = User.Register(wp.POST["username"], wp.POST["password"], wp.POST["email"],
+                                    wp.POST["qq"]);
+                            }
+                            else
+                            {
+                                user = User.Register(wp.POST["username"], wp.POST["password"], wp.POST["email"]);
+                            }
                             if (user == null)
                             {
                                 Callback callback = new Callback();
