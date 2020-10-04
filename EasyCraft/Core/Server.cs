@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Linq;
 using EasyCraft.Web.JSONCallback;
 
 namespace EasyCraft.Core
@@ -19,6 +20,7 @@ namespace EasyCraft.Core
 
         public int maxplayer = 10;
         public int ram = 1024;
+
         public bool running
         {
             get
@@ -32,7 +34,6 @@ namespace EasyCraft.Core
                 {
                     return false;
                 }
-
             }
         }
 
@@ -49,6 +50,7 @@ namespace EasyCraft.Core
         public Dictionary<long, ServerLog> log = new Dictionary<long, ServerLog>();
 
         Core c;
+
         public Server(int id)
         {
             this.id = id;
@@ -58,7 +60,8 @@ namespace EasyCraft.Core
         public static int CreateServer()
         {
             SQLiteCommand c = Database.DB.CreateCommand();
-            c.CommandText = "INSERT INTO `server` (`name`,`expiretime`) VALUES ('EasyCraft Server', $1 );select last_insert_rowid();";
+            c.CommandText =
+                "INSERT INTO `server` (`name`,`expiretime`) VALUES ('EasyCraft Server', $1 );select last_insert_rowid();";
             c.Parameters.AddWithValue("$1", DateTime.Now);
             SQLiteDataReader r = c.ExecuteReader();
             if (r.Read())
@@ -74,7 +77,8 @@ namespace EasyCraft.Core
         public void SaveServerConfig()
         {
             SQLiteCommand c = Database.DB.CreateCommand();
-            c.CommandText = "UPDATE `server` SET name = $name , owner = $owner , port = $port , core = $core , maxplayer = $maxplayer , ram = $ram , world = $world , expiretime = $expiretime , autostart = $autostart , lastcore = $lastcore WHERE id = $id ";
+            c.CommandText =
+                "UPDATE `server` SET name = $name , owner = $owner , port = $port , core = $core , maxplayer = $maxplayer , ram = $ram , world = $world , expiretime = $expiretime , autostart = $autostart , lastcore = $lastcore WHERE id = $id ";
             c.Parameters.AddWithValue("$id", id);
             c.Parameters.AddWithValue("$name", name);
             c.Parameters.AddWithValue("$owner", owner);
@@ -117,6 +121,14 @@ namespace EasyCraft.Core
             serverdir = Environment.CurrentDirectory + "/server/server" + id.ToString() + "/";
 
             System.IO.Directory.CreateDirectory(serverdir);
+
+            try
+            {
+                this.c = new Core(core);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         public void ClearLog()
@@ -153,6 +165,11 @@ namespace EasyCraft.Core
         {
             if (cmd == null) return "";
             cmd = cmd.Replace("{SERVER_DIR}", serverdir);
+            cmd = cmd.Replace("{PORT}", port.ToString());
+            cmd = cmd.Replace("{SERVER_ID}", id.ToString());
+            cmd = cmd.Replace("{WORLD}", world);
+            cmd = cmd.Replace("{RAM}", ram.ToString());
+            cmd = cmd.Replace("{PLAYER}", maxplayer.ToString());
             return cmd;
         }
 
@@ -172,7 +189,7 @@ namespace EasyCraft.Core
         {
             //这个不建议使用,我只是用着来玩玩哦~
             //具体开不开放给普通用户我也不知道呢~
-            //这个功能是把所有服务器的进程全部结束
+            //这个功能是把服务器下所有的进程全部结束
             Process[] processes = Process.GetProcesses();
             foreach (Process process in processes)
             {
@@ -184,7 +201,10 @@ namespace EasyCraft.Core
                         PrintLog(string.Format(Language.t("成功结束进程 {0} (pid:{1})"), process.ProcessName, process.Id));
                     }
                 }
-                catch (Exception) { continue; }
+                catch (Exception)
+                {
+                    continue;
+                }
             }
         }
 
@@ -196,131 +216,194 @@ namespace EasyCraft.Core
 
         public void Start()
         {
-            if ((expiretime - DateTime.Now).TotalSeconds < 0)
-            {
-                PrintError(string.Format(Language.t("服务器已于 {0} 过期, 无法开启服务器"), expiretime.ToString()));
-                return;
-            }
             try
             {
-                c = new Core(core);
-
-            }
-            catch (Exception e)
-            {
-                PrintError(string.Format(Language.t("核心 {0} 加载失败: {1}"), core, e.Message));
-                return;
-            }
-
-            if (core != lastcore)
-            {//新核心需要初始化
-                if (c.initcopy)
+                if ((expiretime - DateTime.Now).TotalSeconds < 0)
                 {
-                    PrintLog("Copying Core Required Files");
-                    Functions.CopyDirectory("core/" + core + "/files/", serverdir);
+                    PrintError(string.Format(Language.t("服务器已于 {0} 过期, 无法开启服务器"), expiretime.ToString()));
+                    return;
                 }
-                lastcore = core;
-                SaveServerConfig();
-            }
 
-            process = new Process();
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.ErrorDialog = false;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.WorkingDirectory = serverdir;
-            process.StartInfo.RedirectStandardInput = true;  // 重定向输入
-            process.ErrorDataReceived += Process_ErrorDataReceived;
-            process.OutputDataReceived += Process_OutputDataReceived;
-            process.StartInfo.CreateNoWindow = true;
-            process.Exited += Process_Exited;
-
-
-            if (c.usecmd || c.multicommand)
-            {
-                process.StartInfo.FileName = Environment.OSVersion.Platform == PlatformID.Win32NT ? "cmd.exe" : "bash";
-                process.StartInfo.RedirectStandardInput = true;
-                if (c.multicommand)
+                try
                 {
+                    c = new Core(core);
+                }
+                catch (Exception e)
+                {
+                    PrintError(string.Format(Language.t("核心 {0} 加载失败: {1}"), core, e.Message));
+                    return;
+                }
 
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                if (core != lastcore)
+                {
+                    //新核心需要初始化
+                    if (c.initcopy)
                     {
-                        if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
-                        File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
-
+                        PrintLog("Copying Core Required Files");
+                        Functions.CopyDirectory("core/" + core + "/files/", serverdir);
                     }
-                    else
+
+                    lastcore = core;
+                    SaveServerConfig();
+                }
+
+                //更改server.properties
+                PrintLog(Language.t("处理 server.properties 中"));
+                if (!File.Exists(serverdir + "/server.properties") &&
+                    File.Exists("core/" + core + "/server.properties"))
+                    File.Copy("core/" + core + "/server.properties", serverdir + "/server.properties");
+                if (c.corestruct.serverproperties != null)
+                {
+                    List<string> lines = new List<string>();
+                    List<string> convertedname = new List<string>();
+                    if (File.Exists(serverdir + "/server.properties"))
                     {
-                        if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
+                        foreach (string line in File.ReadAllLines(serverdir + "/server.properties"))
+                        {
+                            if (line.StartsWith("#") || line.IndexOf("=") == -1) continue;
+                            string name = line.Substring(0, line.IndexOf("=") - 1);
+                            convertedname.Add(name);
+                            if (c.corestruct.serverproperties.ContainsKey(name))
+                            {
+                                if (c.corestruct.serverproperties[name].isvar)
+                                {
+                                    if (c.corestruct.serverproperties[name].what != "{REMOVE}")
+                                    {
+                                        lines.Add(
+                                            name + "=" + PhraseServerCommand(c.corestruct.serverproperties[name].what));
+                                    }
+                                    continue;
+                                }
+                            }
 
-                        File.AppendAllText(serverdir + "start.bash", "#!/bin/bash\r\n");
+                            lines.Add(line);
+                        }
                     }
 
-                    foreach (string com in c.commands)
+                    List<string> reconvert = c.corestruct.serverproperties.Keys.Except(convertedname).ToList();
+                    foreach (string name in reconvert)
+                    {
+                        if (c.corestruct.serverproperties.ContainsKey(name))
+                        {
+                            if (c.corestruct.serverproperties[name].isvar)
+                            {
+                                lines.Add(name + "=" + PhraseServerCommand(c.corestruct.serverproperties[name].what));
+                                continue;
+                            }
+                            else if (!string.IsNullOrEmpty(c.corestruct.serverproperties[name].defvalue))
+                            {
+                                lines.Add(name + "=" + c.corestruct.serverproperties[name].defvalue);
+                                continue;
+                            }
+                        }
+                    }
+
+                    File.WriteAllLines(serverdir + "/server.properties", lines);
+                }
+
+                process = new Process();
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.ErrorDialog = false;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.WorkingDirectory = serverdir;
+                process.StartInfo.RedirectStandardInput = true; // 重定向输入
+                process.ErrorDataReceived += Process_ErrorDataReceived;
+                process.OutputDataReceived += Process_OutputDataReceived;
+                process.StartInfo.CreateNoWindow = true;
+                process.Exited += Process_Exited;
+
+
+                if (c.usecmd || c.multicommand)
+                {
+                    process.StartInfo.FileName =
+                        Environment.OSVersion.Platform == PlatformID.Win32NT ? "cmd.exe" : "bash";
+                    process.StartInfo.RedirectStandardInput = true;
+                    if (c.multicommand)
                     {
                         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                         {
-                            File.AppendAllText(serverdir + "start.bat", PhraseServerCommand(com) + "\r\n");
-
+                            if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
+                            File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
                         }
                         else
                         {
-                            File.AppendAllText(serverdir + "start.sh", PhraseServerCommand(com) + "\r\n");
+                            if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
+
+                            File.AppendAllText(serverdir + "start.bash", "#!/bin/bash\r\n");
                         }
 
+                        foreach (string com in c.commands)
+                        {
+                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                            {
+                                File.AppendAllText(serverdir + "start.bat", PhraseServerCommand(com) + "\r\n");
+                            }
+                            else
+                            {
+                                File.AppendAllText(serverdir + "start.sh", PhraseServerCommand(com) + "\r\n");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                        {
+                            if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
+                            File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
+                        }
+                        else
+                        {
+                            if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
+
+                            File.AppendAllText(serverdir + "start.sh", "#!/bin/bash\r\n");
+                        }
+
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                        {
+                            File.AppendAllText(serverdir + "start.bat",
+                                PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                        }
+                        else
+                        {
+                            File.AppendAllText(serverdir + "start.sh",
+                                PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                        }
+                    }
+
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    {
+                        process.StartInfo.FileName = serverdir + "/start.bat";
+                    }
+                    else
+                    {
+                        process.StartInfo.FileName = "/bin/bash";
+                        process.StartInfo.Arguments = serverdir + "/start.sh";
                     }
                 }
                 else
                 {
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    {
-                        if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
-                        File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
-
-                    }
-                    else
-                    {
-                        if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
-
-                        File.AppendAllText(serverdir + "start.sh", "#!/bin/bash\r\n");
-                    }
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    {
-                        File.AppendAllText(serverdir + "start.bat", PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
-
-                    }
-                    else
-                    {
-                        File.AppendAllText(serverdir + "start.sh", PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
-                    }
+                    process.StartInfo.FileName = PhraseServerCommand(c.path);
+                    process.StartInfo.Arguments = PhraseServerCommand(c.argument);
                 }
 
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                try
                 {
-                    process.StartInfo.FileName = serverdir + "/start.bat";
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
                 }
-                else
+                catch (Exception e)
                 {
-                    process.StartInfo.FileName = "/bin/bash";
-                    process.StartInfo.Arguments = serverdir + "/start.sh";
+                    PrintError(string.Format(Language.t("无法启动服务器: {0}"), e.Message));
                 }
-            }
-            else
-            {
-                process.StartInfo.FileName = PhraseServerCommand(c.path);
-                process.StartInfo.Arguments = PhraseServerCommand(c.argument);
-            }
-
-            try
-            {
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
             }
             catch (Exception e)
             {
                 PrintError(string.Format(Language.t("无法启动服务器: {0}"), e.Message));
+#if DEBUG
+                FastConsole.PrintError(e.StackTrace);
+#endif
             }
         }
 

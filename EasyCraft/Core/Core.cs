@@ -7,7 +7,7 @@ namespace EasyCraft.Core
 {
     class Core
     {
-        private CoreStruct corestruct;
+        public CoreStruct corestruct;
         private string coreconfig;
         public string id;
         public string name;
@@ -40,9 +40,8 @@ namespace EasyCraft.Core
             }
         }
     }
-    
-    
-    
+
+
     class CoreStruct
     {
         public string id { get; set; }
@@ -50,7 +49,7 @@ namespace EasyCraft.Core
 
         public CoreStartConfig startconfig { get; set; }
         public CoreFirstStartConfig init { get; set; }
-
+        public Dictionary<string,CoreServerPropertiesArgument> serverproperties { get; set; }
     }
 
     class CoreStartConfig
@@ -66,5 +65,15 @@ namespace EasyCraft.Core
     class CoreFirstStartConfig
     {
         public bool copyfiles { get; set; }
+    }
+
+    class CoreServerPropertiesArgument
+    {
+        public string name { get; set; }
+        public bool show { get; set; }
+        public string type { get; set; }
+        public string defvalue { get; set; }
+        public bool isvar { get; set; }
+        public string what { get; set; }
     }
 }
