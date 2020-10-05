@@ -170,6 +170,7 @@ namespace EasyCraft.Core
             cmd = cmd.Replace("{WORLD}", world);
             cmd = cmd.Replace("{RAM}", ram.ToString());
             cmd = cmd.Replace("{PLAYER}", maxplayer.ToString());
+            cmd = cmd.Replace("{COREPATH}", Path.GetFullPath("./core/" + core));
             return cmd;
         }
 
@@ -282,18 +283,18 @@ namespace EasyCraft.Core
                     }
 
                     List<string> reconvert = c.corestruct.serverproperties.Keys.Except(convertedname).ToList();
-                    foreach (string name in reconvert)
+                    foreach (string key in reconvert)
                     {
-                        if (c.corestruct.serverproperties.ContainsKey(name))
+                        if (c.corestruct.serverproperties.ContainsKey(key))
                         {
-                            if (c.corestruct.serverproperties[name].isvar)
+                            if (c.corestruct.serverproperties[key].isvar)
                             {
-                                lines.Add(name + "=" + PhraseServerCommand(c.corestruct.serverproperties[name].what));
+                                lines.Add(key + "=" + PhraseServerCommand(c.corestruct.serverproperties[key].what));
                                 continue;
                             }
-                            else if (!string.IsNullOrEmpty(c.corestruct.serverproperties[name].defvalue))
+                            else if (!string.IsNullOrEmpty(c.corestruct.serverproperties[key].defvalue))
                             {
-                                lines.Add(name + "=" + c.corestruct.serverproperties[name].defvalue);
+                                lines.Add(key + "=" + c.corestruct.serverproperties[key].defvalue);
                                 continue;
                             }
                         }
@@ -301,7 +302,7 @@ namespace EasyCraft.Core
 
                     File.WriteAllLines(serverdir + "/server.properties", lines);
                 }
-                
+
                 PrintLog(Language.t("即将开启服务器"));
                 process = new Process();
                 process.StartInfo.RedirectStandardOutput = true;
@@ -413,7 +414,6 @@ namespace EasyCraft.Core
         private void Process_Exited(object sender, EventArgs e)
         {
             PrintLog(Language.t("服务器已停止"));
-
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
