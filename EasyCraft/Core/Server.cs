@@ -239,7 +239,7 @@ namespace EasyCraft.Core
                     //新核心需要初始化
                     if (c.initcopy)
                     {
-                        PrintLog("Copying Core Required Files");
+                        PrintLog(Language.t("载入核心必须文件"));
                         Functions.CopyDirectory("core/" + core + "/files/", serverdir);
                     }
 
@@ -272,6 +272,7 @@ namespace EasyCraft.Core
                                         lines.Add(
                                             name + "=" + PhraseServerCommand(c.corestruct.serverproperties[name].what));
                                     }
+
                                     continue;
                                 }
                             }
@@ -300,7 +301,8 @@ namespace EasyCraft.Core
 
                     File.WriteAllLines(serverdir + "/server.properties", lines);
                 }
-
+                
+                PrintLog(Language.t("即将开启服务器"));
                 process = new Process();
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;
@@ -392,6 +394,7 @@ namespace EasyCraft.Core
                     process.Start();
                     process.BeginOutputReadLine();
                     process.BeginErrorReadLine();
+                    PrintLog(Language.t("服务器已开启"));
                 }
                 catch (Exception e)
                 {
@@ -409,7 +412,8 @@ namespace EasyCraft.Core
 
         private void Process_Exited(object sender, EventArgs e)
         {
-            PrintLog("Server Stopped");
+            PrintLog(Language.t("服务器已停止"));
+
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
