@@ -334,7 +334,7 @@ namespace EasyCraft.Web
                             string initname = line.Substring(phraseidx + 6, inilidx - phraseidx - 7);
                             if (initname == "servers")
                             {
-                                if (wp.vars.user.CheckUserAbility((int)Permisson.SeeAllServer)) //可以查看全部服务器
+                                if (wp.vars.user.CheckUserAbility((int) Permisson.SeeAllServer)) //可以查看全部服务器
                                 {
                                     wp.vars.servers = ServerManager.servers.Values.ToList();
                                 }
@@ -352,7 +352,7 @@ namespace EasyCraft.Web
                                 {
                                     if (ServerManager.servers.ContainsKey(sid))
                                     {
-                                        if (wp.vars.user.CheckUserAbility((int)Permisson.SeeServer) ||
+                                        if (wp.vars.user.CheckUserAbility((int) Permisson.SeeServer) ||
                                             ServerManager.servers[sid].owner == wp.vars.user.uid)
                                         {
                                             wp.vars.server = ServerManager.servers[sid];
@@ -645,6 +645,34 @@ namespace EasyCraft.Web
                         return Settings.ftpport.ToString();
                     case "var.easycraft.announcement":
                         return SettingsDatabase.annoucement;
+                    case "var.user.can.createserver":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.CreateServer) ? "true" : "false";
+                    case "var.user.can.editserver":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.EditServer) ? "true" : "false";
+                    case "var.user.can.startserver":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.StartServer) ? "true" : "false";
+                    case "var.user.can.stopserver":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.StopServer) ? "true" : "false";
+                    case "var.user.can.querylog":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.QueryLog) ? "true" : "false";
+                    case "var.user.can.sendcmd":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.SendCmd) ? "true" : "false";
+                    case "var.user.can.cleanlog":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.CleanLog) ? "true" : "false";
+                    case "var.user.can.seeserver":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.SeeServer) ? "true" : "false";
+                    case "var.user.can.editannouncement":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.EditAnnouncement) ? "true" : "false";
+                    case "var.user.can.useallftp":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.UseAllFTP) ? "true" : "false";
+                    case "var.user.can.useftp":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.UseFTP) ? "true" : "false";
+                    case "var.user.can.seeallserver":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.SeeAllServer) ? "true" : "false";
+                    case "var.user.can.killserver":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.KillServer) ? "true" : "false";
+                    case "var.user.can.killserverall":
+                        return wp.vars.user.CheckUserAbility((int) Permisson.KillServerAll) ? "true" : "false";
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
                         {

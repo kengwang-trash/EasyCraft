@@ -60,6 +60,16 @@ namespace EasyCraft.Core
         public List<string> commands { get; set; }
         public string path { get; set; }
         public string argument { get; set; }
+        public DockerConfig docker { get; set; }
+    }
+
+    class DockerConfig
+    {
+        public string imagename { get; set; }
+        public Dictionary<string, string> envvar { get; set; }
+        public string dockerpath { get; set; }
+        public string port { get; set; }
+        public bool serverpropertiesprocess { get; set; }
     }
 
     class CoreFirstStartConfig

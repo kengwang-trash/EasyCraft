@@ -23,8 +23,59 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources/8eee639d-08dd-44ae-9f24-1880b8ef979d.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources/8eee639d-08dd-44ae-9f24-1880b8ef979d.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/sqldialects.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/riderModule.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/riderModule.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft.sln" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Core.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Core.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Database.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/FastConsole.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/FastConsole.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Schedule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Schedule.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/ServerLog.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/ServerLog.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/ServerManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/ServerManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/UserGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/UserGroup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/FtpServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/FtpServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/LogEntry.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/LogEntry.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/RateLimitingStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/RateLimitingStream.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/rfc2389.txt" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/rfc2389.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/rfc959.txt" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/rfc959.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Resources/lang.json" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Resources/lang.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/Api.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/Api.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/Classes/HTTPVars.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/Classes/HTTPVars.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/Classes/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/Classes/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Callback.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Callback.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/LogBack.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/LogBack.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/NewServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/NewServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/ServerInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/ServerInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/UserLogin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/UserLogin.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/WebPanelPhraser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/WebPanelPhraser.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/nuget.config" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/nuget.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/publish-lin.sh" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/publish-lin.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/publish-win.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/publish-win.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Notes.md" beforeDir="false" afterPath="$PROJECT_DIR$/Notes.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,14 +84,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/492BB766-4BC2-4403-87F3-5B272E6F228C/13/HttpListener.Windows.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/20735148-1523-4917-A5E8-F91B0B239405/12/JsonSerializer.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Workspace/EasyCraft/Main/EasyCraft/EasyCraft/Core/Server.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Workspace/EasyCraft/Main/EasyCraft/EasyCraft/Core/Server.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/20735148-1523-4917-A5E8-F91B0B239405/5/JsonConvert.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://D:/Workspace/EasyCraft/Main/EasyCraft/EasyCraft/Core/Server.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -54,15 +97,16 @@
         <option value="$PROJECT_DIR$/../../Theme/MDefault/assets/script/easycraft.js" />
         <option value="$PROJECT_DIR$/../../Theme/MDefault/page/login.html" />
         <option value="$PROJECT_DIR$/../../Theme/MDefault/page/register.html" />
-        <option value="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Web/WebPanelPhraser.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Web/Classes/User.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Web/Api.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" />
-        <option value="$PROJECT_DIR$/EasyCraft/Core/Core.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" />
+        <option value="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" />
+        <option value="$PROJECT_DIR$/EasyCraft/Core/Core.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Core/Server.cs" />
+        <option value="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" />
       </list>
     </option>
   </component>
@@ -74,8 +118,8 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="sqlite" />
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.34994584" />
-    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.30010834" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.3501094" />
+    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.30032822" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -85,14 +129,15 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.smartKeys_rider" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager">
-    <configuration name="EasyCraft" type="DotNetProject" factoryName=".NET Project">
-      <option name="EXE_PATH" value="" />
+    <configuration name="EasyCraft" type="DotNetProject" factoryName=".NET Project" singleton="false">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/EasyCraft/bin/Debug/netcoreapp3.1/EasyCraft.dll" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/EasyCraft/bin/Debug/netcoreapp3.1" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
@@ -102,7 +147,25 @@
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
       <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
       <option name="PROJECT_KIND" value="DotNetCore" />
-      <option name="PROJECT_TFM" value="" />
+      <option name="PROJECT_TFM" value=".NETCoreApp,Version=v3.1" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration default="true" type="DotNetProject" factoryName=".NET Project">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/EasyCraft/bin/Debug/netcoreapp3.1/EasyCraft.dll" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/EasyCraft/bin/Debug/netcoreapp3.1" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="PROJECT_PATH" value="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" />
+      <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
+      <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
+      <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
+      <option name="PROJECT_KIND" value="DotNetCore" />
+      <option name="PROJECT_TFM" value=".NETCoreApp,Version=v3.1" />
       <method v="2">
         <option name="Build" />
       </method>
@@ -123,6 +186,9 @@
       <workItem from="1601812803505" duration="13093000" />
       <workItem from="1601864829664" duration="2342000" />
       <workItem from="1601896114908" duration="2862000" />
+      <workItem from="1601987424824" duration="1593000" />
+      <workItem from="1601996714859" duration="5436000" />
+      <workItem from="1602034701049" duration="12012000" />
     </task>
     <servers />
   </component>
@@ -151,102 +217,124 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="336" y="361" key="#SQL_Dialects/0.0.1920.1040@0.0.1920.1040" timestamp="1601620925460" />
-    <state x="552" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1601871142882">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="603" y="207" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1601988995635">
+      <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="552" y="178" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1601871142882" />
-    <state width="476" height="464" key="DebuggerActiveHint" timestamp="1601825161632">
+    <state x="603" y="207" key="#com.intellij.execution.impl.EditConfigurationsDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1601988995635" />
+    <state width="632" height="464" key="DebuggerActiveHint" timestamp="1602045842718">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="476" height="464" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1601825161632" />
-    <state width="1877" height="249" key="GridCell.Tab.0.bottom" timestamp="1601871824921">
+    <state width="632" height="464" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1602045842718" />
+    <state width="1867" height="235" key="GridCell.Tab.0.bottom" timestamp="1602050584976">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="249" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1601871824921" />
-    <state width="1877" height="249" key="GridCell.Tab.0.center" timestamp="1601871824920">
+    <state width="1867" height="235" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1602050584976" />
+    <state width="1794" height="363" key="GridCell.Tab.0.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
+    <state width="1867" height="235" key="GridCell.Tab.0.center" timestamp="1602050584976">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="249" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1601871824920" />
-    <state width="1877" height="249" key="GridCell.Tab.0.left" timestamp="1601871824920">
+    <state width="1867" height="235" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1602050584976" />
+    <state width="1794" height="363" key="GridCell.Tab.0.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
+    <state width="1867" height="235" key="GridCell.Tab.0.left" timestamp="1602050584975">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="249" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1601871824920" />
-    <state width="1877" height="249" key="GridCell.Tab.0.right" timestamp="1601871824920">
+    <state width="1867" height="235" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1602050584975" />
+    <state width="1794" height="363" key="GridCell.Tab.0.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
+    <state width="1867" height="235" key="GridCell.Tab.0.right" timestamp="1602050584976">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="249" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1601871824920" />
-    <state width="1877" height="375" key="GridCell.Tab.1.bottom" timestamp="1601828537394">
+    <state width="1867" height="235" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1602050584976" />
+    <state width="1794" height="363" key="GridCell.Tab.0.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
+    <state width="1867" height="365" key="GridCell.Tab.1.bottom" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.1.center" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.1.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.1.center" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.1.left" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.1.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
+    <state width="1867" height="365" key="GridCell.Tab.1.left" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.1.right" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.1.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
+    <state width="1867" height="365" key="GridCell.Tab.1.right" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.2.bottom" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.1.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
+    <state width="1867" height="365" key="GridCell.Tab.2.bottom" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.2.center" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.2.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.2.center" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.2.left" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.2.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.2.left" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.2.right" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.2.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.2.right" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.3.bottom" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.2.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.3.bottom" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.3.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.3.center" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.3.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.3.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.3.center" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.3.center/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.3.left" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.3.center/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.3.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.3.left" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.3.left/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.3.right" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.3.left/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.3.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.3.right" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.3.right/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.4.bottom" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.3.right/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.3.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.4.bottom" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.4.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.4.center" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.4.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.4.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017447" />
+    <state width="1867" height="365" key="GridCell.Tab.4.center" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.4.center/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.4.left" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.4.center/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.4.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017447" />
+    <state width="1867" height="365" key="GridCell.Tab.4.left" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.4.left/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
-    <state width="1877" height="375" key="GridCell.Tab.4.right" timestamp="1601828537394">
+    <state width="1867" height="365" key="GridCell.Tab.4.left/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.4.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017446" />
+    <state width="1867" height="365" key="GridCell.Tab.4.right" timestamp="1602048669831">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="375" key="GridCell.Tab.4.right/0.0.1920.1040@0.0.1920.1040" timestamp="1601828537394" />
+    <state width="1867" height="365" key="GridCell.Tab.4.right/0.0.1920.1040@0.0.1920.1040" timestamp="1602048669831" />
+    <state width="1794" height="363" key="GridCell.Tab.4.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017447" />
     <state width="220" height="475" key="HiddenNamespacesPopup" timestamp="1601620977952">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="220" height="475" key="HiddenNamespacesPopup/0.0.1920.1040@0.0.1920.1040" timestamp="1601620977952" />
-    <state x="461" y="164" key="SettingsEditor" timestamp="1601620611363">
+    <state x="452" y="0" width="1037" height="737" key="SettingsEditor" timestamp="1602043771246">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="164" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1601620611363" />
+    <state x="452" y="0" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1602043771246" />
+    <state x="516" y="193" width="1037" height="737" key="SettingsEditor/72.27.1848.1053@72.27.1848.1053" timestamp="1601988048846" />
     <state x="92" y="92" width="1736" height="856" key="VCS.FileHistoryDialog" timestamp="1601899371593">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -275,9 +363,9 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1601824978874" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1601816759845">
+    <state x="623" y="225" width="840" height="678" key="search.everywhere.popup" timestamp="1602043917821">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1601816759845" />
+    <state x="623" y="225" width="840" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1602043917821" />
   </component>
 </project>

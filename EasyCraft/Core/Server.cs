@@ -271,7 +271,8 @@ namespace EasyCraft.Core
                                     if (c.corestruct.serverproperties[name].what != "{REMOVE}")
                                     {
                                         lines.Add(
-                                            name + "=" + PhraseServerCommand(c.corestruct.serverproperties[name].what));
+                                            name + "=" +
+                                            PhraseServerCommand(c.corestruct.serverproperties[name].what));
                                     }
 
                                     continue;
@@ -317,7 +318,7 @@ namespace EasyCraft.Core
                 process.Exited += Process_Exited;
 
 
-                if (c.usecmd || c.multicommand)
+                if (c.usecmd || c.multicommand || c.os == "docker")
                 {
                     process.StartInfo.FileName =
                         Environment.OSVersion.Platform == PlatformID.Win32NT ? "cmd.exe" : "bash";
@@ -350,39 +351,85 @@ namespace EasyCraft.Core
                     }
                     else
                     {
-                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                        if (c.os != "docker")
                         {
-                            if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
-                            File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
+                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                            {
+                                if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
+                                File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
+                            }
+                            else
+                            {
+                                if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
+
+                                File.AppendAllText(serverdir + "start.sh", "#!/bin/bash\r\n");
+                            }
+
+
+                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                            {
+                                File.AppendAllText(serverdir + "start.bat",
+                                    PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                            }
+                            else
+                            {
+                                File.AppendAllText(serverdir + "start.sh",
+                                    PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                            }
+                            
+                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                            {
+                                process.StartInfo.FileName = serverdir + "/start.bat";
+                            }
+                            else
+                            {
+                                process.StartInfo.FileName = "/bin/bash";
+                                process.StartInfo.Arguments = serverdir + "/start.sh";
+                            }
                         }
                         else
                         {
-                            if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
+                            //Docker启动
+                            PrintLog(Language.t("当前核心使用了 Docker ,此功能仍为测试性功能"));
+                            string dockerport = PhraseServerCommand(c.corestruct.startconfig.docker.port);
+                            string envstr = "";
+                            if (c.corestruct.startconfig.docker.envvar != null &&
+                                c.corestruct.startconfig.docker.envvar.Count != 0)
+                            {
+                                foreach (KeyValuePair<string, string> pair in c.corestruct.startconfig.docker.envvar)
+                                {
+                                    envstr += $" -e {pair.Key}={PhraseServerCommand(pair.Value)}";
+                                }
+                            }
 
-                            File.AppendAllText(serverdir + "start.sh", "#!/bin/bash\r\n");
-                        }
+                            string dockerserverdir = "";
+                            if (Environment.OSVersion.Platform == PlatformID.Unix)
+                            {
+                                dockerserverdir = serverdir;
+                            }
+                            else
+                            {
+                                dockerserverdir = serverdir.Replace("\\", "/");
+                                dockerserverdir = dockerserverdir.Replace(Path.GetPathRoot(dockerserverdir) + ":",
+                                    "/" + Path.GetPathRoot(dockerserverdir));
+                            }
 
-                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                        {
-                            File.AppendAllText(serverdir + "start.bat",
-                                PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
-                        }
-                        else
-                        {
-                            File.AppendAllText(serverdir + "start.sh",
-                                PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                            string argument =
+                                $"run -i --name mc-server{id} -p {dockerport}{envstr} -v \"{dockerserverdir}\":{c.corestruct.startconfig.docker.dockerpath} {c.corestruct.startconfig.docker.imagename}";
+                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                            {
+                                process.StartInfo.FileName = "./tools/bash.exe";
+                                process.StartInfo.Arguments = "docker "+argument;
+                            }
+                            else
+                            {
+                                process.StartInfo.FileName = "docker";
+                                process.StartInfo.Arguments = argument;
+                                
+                            }
                         }
                     }
 
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    {
-                        process.StartInfo.FileName = serverdir + "/start.bat";
-                    }
-                    else
-                    {
-                        process.StartInfo.FileName = "/bin/bash";
-                        process.StartInfo.Arguments = serverdir + "/start.sh";
-                    }
                 }
                 else
                 {
