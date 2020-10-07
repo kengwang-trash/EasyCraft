@@ -76,6 +76,7 @@ namespace EasyCraft
             FtpServer.server.Start();
             FastConsole.PrintInfo(Language.t("正在开启 HTTP 服务器"));
             HTTPServer.StartListen();
+            Settings.LoadStarted();
             Console.CancelKeyPress += ExitEasyCraft;
             string c = "";
             while ((c = Console.ReadLine()) != "exit")

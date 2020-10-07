@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using EasyCraft.Web.Classes;
@@ -14,7 +15,7 @@ namespace EasyCraft.Core
         public static string release = "Personal";
 
         public readonly static string BUILDINFO = "{BUILDINFO}";
-        
+
         public static int httpport
         {
             get
@@ -88,7 +89,6 @@ namespace EasyCraft.Core
                 if (File.Exists("easycraft.conf"))
                 {
                     sf = Newtonsoft.Json.JsonConvert.DeserializeObject<SettinsFile>(File.ReadAllText("easycraft.conf"));
-
                 }
                 else
                 {
@@ -113,6 +113,7 @@ namespace EasyCraft.Core
                             FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
                         }
                     }
+
                     while (true)
                     {
                         Console.WriteLine(Language.t("FTP 监听端口 [21]:"));
@@ -165,7 +166,6 @@ namespace EasyCraft.Core
                     File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
                     LoadConfig();
                 }
-
             }
             catch (Exception e)
             {
@@ -182,7 +182,35 @@ namespace EasyCraft.Core
             {
                 SettingsDatabase.annoucement = render.GetString(0);
             }
+
             User.RefreshPermissonTable();
+        }
+
+        public static void LoadStarted()
+        {
+            if (File.Exists("./tools/startup.list"))
+            {
+                foreach (string cmd in File.ReadAllLines("./tools/startup.list"))
+                {
+                    Process process = new Process();
+                    process.StartInfo.FileName = "cmd";
+                    process.StartInfo.WorkingDirectory = "./tools/";
+                    process.StartInfo.RedirectStandardInput = true;
+                    process.StartInfo.RedirectStandardOutput =true;
+                    process.StartInfo.RedirectStandardError =true;
+                    process.OutputDataReceived += StandardOutput;
+                    process.ErrorDataReceived += StandardOutput;
+                    process.Start();
+                    process.StandardInput.Write(cmd + "\r\n");
+                }
+
+                FastConsole.PrintSuccess("Successful Load Startup Event");
+            }
+        }
+
+        private static void StandardOutput(object sender, DataReceivedEventArgs e)
+        {
+            FastConsole.PrintTrash("[STARTUP] "+e.Data);
         }
     }
 
@@ -201,7 +229,7 @@ namespace EasyCraft.Core
     class HTTPConf
     {
         public int port { get; set; }
-        public bool https { get; set; }//Not Support yet
+        public bool https { get; set; } //Not Support yet
     }
 
     class FTPConf
