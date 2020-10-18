@@ -261,8 +261,13 @@ namespace EasyCraft.Core
                     {
                         foreach (string line in File.ReadAllLines(serverdir + "/server.properties"))
                         {
-                            if (line.StartsWith("#") || line.IndexOf("=") == -1) continue;
-                            string name = line.Substring(0, line.IndexOf("=") - 1);
+                            if (line.StartsWith("#") || line.IndexOf("=") == -1)
+                            {
+                                lines.Add(line);
+                                continue;
+                            }
+
+                            string name = line.Substring(0, line.IndexOf("="));
                             convertedname.Add(name);
                             if (c.corestruct.serverproperties.ContainsKey(name))
                             {
