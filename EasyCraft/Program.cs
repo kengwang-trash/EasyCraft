@@ -67,6 +67,8 @@ namespace EasyCraft
             FastConsole.PrintInfo(Language.t("加载主题中"));
             ThemeController.InitComp();
             ThemeController.InitPage();
+            FastConsole.PrintInfo(Language.t("载入 Docker 中"));
+            //Docker Run Here
             FastConsole.PrintInfo(Language.t("加载任务中"));
             Schedule.LoadSchedule();
             Schedule.StartTrigger();

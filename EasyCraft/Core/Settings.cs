@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using EasyCraft.Web.Classes;
 
@@ -26,7 +27,7 @@ namespace EasyCraft.Core
     class Settings
     {
         static SettinsFile sf = new SettinsFile();
-
+        
         public readonly static string release = "Personal";
 
         //$info="Build by Azure DevOps on $(Agent.OS)\r\nBuild Time: $(Get-Date)\r\nBuild ID: $(Build.BuildNumber)\r\nCommit: $(Build.SourceVersion)\r\nCopyright Kengwang $(Get-Date -Format 'yyyy')"
@@ -34,6 +35,7 @@ namespace EasyCraft.Core
 
         public static int httpport
         {
+            
             get
             {
                 if (sf.HTTP != null && sf.HTTP.port != 0)
@@ -178,6 +180,15 @@ namespace EasyCraft.Core
                         }
                     }
 
+                    while (true)
+                    {
+                        Console.WriteLine(Language.t("是否启用 Docker 支持 (需要本机安装 Docker) [yes]:"));
+                        string line = Console.ReadLine();
+                        if (string.IsNullOrEmpty(line)) line = "yes";
+                        sf.Advanced.enabledocker = line == "yes";
+                        break;
+                    }
+
                     FastConsole.PrintSuccess(Language.t("安装完成,正在保存配置文件"));
                     File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
                     LoadConfig();
@@ -239,6 +250,7 @@ namespace EasyCraft.Core
     {
         public HTTPConf HTTP { get; set; }
         public FTPConf FTP { get; set; }
+        public AdvancedConfig Advanced { get; set; }
         public string key { get; set; }
     }
 
@@ -246,6 +258,12 @@ namespace EasyCraft.Core
     {
         public int port { get; set; }
         public bool https { get; set; } //Not Support yet
+    }
+
+    class AdvancedConfig
+    {
+        public bool enabledocker { get; set; }
+        public bool usesandboxie { get; set; } //Not Support yet
     }
 
     class FTPConf

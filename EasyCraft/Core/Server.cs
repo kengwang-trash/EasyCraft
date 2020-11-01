@@ -381,7 +381,7 @@ namespace EasyCraft.Core
                                 File.AppendAllText(serverdir + "start.sh",
                                     PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
                             }
-                            
+
                             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                             {
                                 process.StartInfo.FileName = serverdir + "/start.bat";
@@ -394,6 +394,7 @@ namespace EasyCraft.Core
                         }
                         else
                         {
+
                             //Docker启动
                             PrintLog(Language.t("当前核心使用了 Docker ,此功能仍为测试性功能"));
                             string dockerport = PhraseServerCommand(c.corestruct.startconfig.docker.port);
@@ -424,13 +425,13 @@ namespace EasyCraft.Core
                             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                             {
                                 process.StartInfo.FileName = "./tools/bash.exe";
-                                process.StartInfo.Arguments = "docker "+argument;
+                                process.StartInfo.Arguments = "docker " + argument;
                             }
                             else
                             {
                                 process.StartInfo.FileName = "docker";
                                 process.StartInfo.Arguments = argument;
-                                
+
                             }
                         }
                     }
