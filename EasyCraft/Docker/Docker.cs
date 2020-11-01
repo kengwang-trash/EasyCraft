@@ -1,4 +1,5 @@
 ﻿using EasyCraft.Core;
+using EasyCraft.Docker.Structure;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,19 @@ namespace EasyCraft.Docker
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public List<Container> ListContainer()
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<List<Container>>(Request("/containers/json"));
+
+            }
+            catch (Exception)
+            {
+                return new List<Container>();
             }
         }
     }
