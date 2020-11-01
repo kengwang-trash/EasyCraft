@@ -501,7 +501,7 @@ namespace SharpFtpServer
 
         private string Options(string arguments)
         {
-            if (arguments == "UTF8 ON")
+            if (arguments.ToUpper() == "UTF8 ON")
             {
                 //设置成UTF8无BOM
                 _readerEncoding = new UTF8Encoding(false);
@@ -523,7 +523,7 @@ namespace SharpFtpServer
 
         private string Auth(string authMode)
         {
-            if (authMode == "TLS")
+            if (authMode.ToUpper() == "TLS")
             {
                 return "234 Enabling TLS Connection";
             }
@@ -551,7 +551,7 @@ namespace SharpFtpServer
                     }
                     else
                     {
-                        return "530 Username Error Retype";
+                        return "530 Username Error, Retype";
                     }
                 }
                 else
@@ -777,7 +777,7 @@ namespace SharpFtpServer
                     _connectionType = TransferType.Image;
                     break;
                 default:
-                    return "504 Command not implemented for that parameter";
+                    return "504 Parameter Error";
             }
 
             if (!string.IsNullOrWhiteSpace(formatControl))
@@ -788,11 +788,11 @@ namespace SharpFtpServer
                         _formatControlType = FormatControlType.NonPrint;
                         break;
                     default:
-                        return "504 Command not implemented for that parameter";
+                        return "504 Parameter Error";
                 }
             }
 
-            return string.Format("200 Type set to {0}", _connectionType);
+            return string.Format("200 Type is {0}", _connectionType);
         }
 
         private string Delete(string pathname)
@@ -1002,7 +1002,7 @@ namespace SharpFtpServer
 
         private string Structure(string structure)
         {
-            switch (structure)
+            switch (structure.ToUpper())
             {
                 case "F":
                     _fileStructureType = FileStructureType.File;

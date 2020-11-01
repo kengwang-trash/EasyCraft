@@ -23,8 +23,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,6 +139,7 @@
       <workItem from="1602034701049" duration="24053000" />
       <workItem from="1602134051689" duration="1230000" />
       <workItem from="1602385300323" duration="3092000" />
+      <workItem from="1604162399488" duration="51000" />
     </task>
     <servers />
   </component>
@@ -322,19 +322,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/EasyCraft/Core/Server.cs</url>
-          <line>251</line>
-          <properties documentPath="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\Core\Server.cs" initialLine="251">
-            <startOffsets>
-              <option value="8033" />
-            </startOffsets>
-            <endOffsets>
-              <option value="8080" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/EasyCraft/Core/Server.cs</url>
           <line>308</line>

@@ -7,13 +7,24 @@ namespace EasyCraft.Core
 {
     class FastConsole
     {
+        static StreamWriter logfile = null;
         public static void PrintInfo(string message)
         {
 
             string print = "[INFO] " + message;
             if (logLevel >= FastConsoleLogLevel.noserver)
                 Console.WriteLine(print);
+            logfile.WriteLine("[" + DateTime.Now.ToString() + " INFO] " + message);
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
+        }
+
+        public static void Init()
+        {
+            //设定书写的开始位置为文件的末尾 
+            FileStream files = File.OpenWrite("log.log");
+            files.Position = files.Length;
+            logfile=new StreamWriter(files, Encoding.UTF8);
+            logfile.AutoFlush = true;
         }
 
         public static void PrintTrash(string message)
@@ -23,6 +34,8 @@ namespace EasyCraft.Core
             if (logLevel > FastConsoleLogLevel.notrash)
             {
                 Console.WriteLine(print);
+                logfile.WriteLine("[" + DateTime.Now.ToString() + " DEBUG] " + message);
+
                 //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " DEBUG] " + message + "\r\n");
             }
         }
@@ -34,6 +47,8 @@ namespace EasyCraft.Core
             string print = "[INFO] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
+            logfile.WriteLine("[" + DateTime.Now.ToString() + " INFO] " + message);
+
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
         }
 
@@ -45,6 +60,8 @@ namespace EasyCraft.Core
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " WARN] " + message + "\r\n");
+            logfile.WriteLine("[" + DateTime.Now.ToString() + " WARN] " + message);
+
         }
 
         public static void PrintError(string message)
@@ -55,6 +72,8 @@ namespace EasyCraft.Core
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " ERROR] " + message + "\r\n");
+            logfile.WriteLine("[" + DateTime.Now.ToString() + " ERROR] " + message);
+
         }
 
 
@@ -67,6 +86,8 @@ namespace EasyCraft.Core
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " FATAL] " + message + "\r\n");
+            logfile.WriteLine("[" + DateTime.Now.ToString() + " FATAL] " + message);
+
         }
         public static FastConsoleLogLevel logLevel;
     }

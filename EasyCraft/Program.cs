@@ -10,6 +10,7 @@ namespace EasyCraft
     {
         static void Main(string[] args)
         {
+            FastConsole.Init();
             Console.WriteLine(
 @" =================================================
    _____                 ____            __ _   
@@ -18,7 +19,7 @@ namespace EasyCraft
   | |__| (_| \__ \ |_| | |___| | | (_| |  _| |_ 
   |_____\__,_|___/\__, |\____|_|  \__,_|_|  \__|
                   |___/                
- ============= Version : V " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString() + @" ===============
+ ============= Version : V " + EasyCraftInfo.VersionOut + @" ===============
  ============== Copyright Kengwang ===============
 ");
             int argc = args.Length;

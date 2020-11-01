@@ -8,13 +8,29 @@ using EasyCraft.Web.Classes;
 
 namespace EasyCraft.Core
 {
+
+    class EasyCraftInfo
+    {
+        public static readonly string SoftName = "EasyCraft";
+        public static readonly string SoftNameZh = "易开服";
+        public static readonly string VersionFull = "1.0.0.0";
+        public static readonly string VersionOut = "1.0.0";
+        public static readonly string CommitID = "{COMMITID}";
+        public static readonly string Builder = "{BUILDER}";
+        public static readonly string BuildID = "{BUILDID}";
+        public static readonly string BuildOS = "{BUILDOS}";
+        public static readonly string BuildTime = "{BUILDTIME}";
+        public static readonly string Copyright = "EasyCraft Team 2020,Made with Love by Kengwang";
+    }
+
     class Settings
     {
         static SettinsFile sf = new SettinsFile();
 
-        public static string release = "Personal";
+        public readonly static string release = "Personal";
 
-        public readonly static string BUILDINFO = "{BUILDINFO}";
+        //$info="Build by Azure DevOps on $(Agent.OS)\r\nBuild Time: $(Get-Date)\r\nBuild ID: $(Build.BuildNumber)\r\nCommit: $(Build.SourceVersion)\r\nCopyright Kengwang $(Get-Date -Format 'yyyy')"
+        public readonly static string BUILDINFO = string.Format("{0} {1} V{2}\r\nBuild by {3} on {4}\r\nBuild Time: {5}\r\nBuild ID: {6}\r\nCommit: {7}\r\nCopyright {8}", EasyCraftInfo.SoftName, EasyCraftInfo.SoftNameZh, EasyCraftInfo.VersionFull, EasyCraftInfo.Builder, EasyCraftInfo.BuildOS, EasyCraftInfo.BuildTime, EasyCraftInfo.BuildID, EasyCraftInfo.CommitID, EasyCraftInfo.Copyright);
 
         public static int httpport
         {
@@ -196,8 +212,8 @@ namespace EasyCraft.Core
                     process.StartInfo.FileName = "cmd";
                     process.StartInfo.WorkingDirectory = "./tools/";
                     process.StartInfo.RedirectStandardInput = true;
-                    process.StartInfo.RedirectStandardOutput =true;
-                    process.StartInfo.RedirectStandardError =true;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
                     process.OutputDataReceived += StandardOutput;
                     process.ErrorDataReceived += StandardOutput;
                     process.Start();
@@ -210,7 +226,7 @@ namespace EasyCraft.Core
 
         private static void StandardOutput(object sender, DataReceivedEventArgs e)
         {
-            FastConsole.PrintTrash("[STARTUP] "+e.Data);
+            FastConsole.PrintTrash("[STARTUP] " + e.Data);
         }
     }
 
