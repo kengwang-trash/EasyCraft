@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using EasyCraft.Docker;
 using EasyCraft.Web.Classes;
 
 namespace EasyCraft.Core
@@ -26,6 +27,8 @@ namespace EasyCraft.Core
 
     class Settings
     {
+        public static Docker.Docker docker;
+
         static SettinsFile sf = new SettinsFile();
         
         public readonly static string release = "Personal";
