@@ -111,7 +111,7 @@ namespace EasyCraft.Core
                 System.IO.StreamReader reader = new System.IO.StreamReader(respStream,Encoding.UTF8);
                 string t = reader.ReadToEnd();
                 VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(t);
-
+                FastConsole.PrintInfo(b.log);
 
                 while (b == null || b.runkey == null || b.runkey != MD5(Settings.release + filemd5 + salt.ToString() + Settings.key + salt.ToString() + "VeriflcationChrcked"))
                 {
@@ -132,7 +132,7 @@ namespace EasyCraft.Core
                     e.HResult = -20240628;
                     throw (e);
                 }
-                FastConsole.PrintSuccess(Language.t("授权检测通过,感谢支持!"));
+                //FastConsole.PrintSuccess(Language.t("授权检测通过,感谢支持!"));
 
                 if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
                 {

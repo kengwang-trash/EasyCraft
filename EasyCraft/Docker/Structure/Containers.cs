@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EasyCraft.Docker.Structure
+namespace EasyCraft.Docker.Structure.Containers
 {
     public class PortsItem
     {

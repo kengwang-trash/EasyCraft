@@ -21,6 +21,14 @@
           <e p="Settings.cs" t="Include" />
           <e p="UserGroup.cs" t="Include" />
         </e>
+        <e p="Docker" t="Include">
+          <e p="Docker.cs" t="Include" />
+          <e p="DockerConfig.cs" t="Include" />
+          <e p="Structure" t="Include">
+            <e p="Containers.cs" t="Include" />
+            <e p="Info.cs" t="Include" />
+          </e>
+        </e>
         <e p="EasyCraft.csproj" t="IncludeRecursive" />
         <e p="FTP" t="Include">
           <e p="ClientConnection.cs" t="Include" />
@@ -45,7 +53,6 @@
         <e p="publish-win.cmd" t="Include" />
         <e p="Resources" t="Include">
           <e p="defdb.db" t="Include" />
-          <e p="lang.json" t="Include" />
         </e>
         <e p="Web" t="Include">
           <e p="Api.cs" t="Include" />

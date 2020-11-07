@@ -20,7 +20,7 @@ namespace EasyCraft
   |_____\__,_|___/\__, |\____|_|  \__,_|_|  \__|
                   |___/                
  ============= Version : V " + EasyCraftInfo.VersionOut + @" ===============
- ============== Copyright Kengwang ===============
+ ============= Copyright Kengwang ==============
 ");
             int argc = args.Length;
             FastConsole.logLevel = FastConsoleLogLevel.all;
