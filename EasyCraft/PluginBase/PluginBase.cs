@@ -5,9 +5,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using EasyCraft.Core;
+using EasyCraft.Web;
 
 namespace EasyCraft.PluginBase
 {
+#if WINDOWS
     public class PluginBase
     {
         #region DLLFuncs
@@ -134,19 +136,6 @@ namespace EasyCraft.PluginBase
 
         #endregion
 
-        private static NamedPipeServerStream pipeServer = null;
-        private static string pipeid = "3CE5CC8B-5FFA-4F47-8FCF-32D2092CBB0B";
-
-        public static void InitializePipe()
-        {
-            pipeServer = new NamedPipeServerStream(pipeid, PipeDirection.InOut);
-            pipeServer.BeginWaitForConnection(PipeReceived, null);
-        }
-
-        private static void PipeReceived(IAsyncResult result)
-        {
-        }
-
         public static void LoadPlugins()
         {
             foreach (string file in Directory.EnumerateFiles("data/plugin/", "*.dll").ToList())
@@ -162,8 +151,15 @@ namespace EasyCraft.PluginBase
                         (PluginDelegate.Initialize) GetFunctionAddress(moduleIntPtr, "Initialize",
                             typeof(PluginDelegate.Initialize));
                     string authkey = Functions.GetRandomString();
-                    string plugininfos = initialize(pipeid, authkey);
+                    string plugininfos = initialize("ws://127.0.0.1:"+WebSocketListener.port+"/", authkey);
                     string[] plugininfo = plugininfos.Split('$');
+
+                    p.id = plugininfo[0];
+                    p.name = plugininfo[1];
+                    p.author = plugininfo[2];
+                    p.link = plugininfo[3];
+                    p.key = authkey;
+                    p.path = Path.GetFullPath(file);
                     FastConsole.PrintSuccess(string.Format(Language.t("成功加载插件: {0}"), plugininfo[1]));
                 }
                 catch (Exception e)
@@ -177,8 +173,12 @@ namespace EasyCraft.PluginBase
     class Plugin
     {
         public string id = "";
+        public string name = "";
         public string key = "";
+        public string author = "";
+        public string link = "";
         public string path = "";
         public IntPtr hModule = IntPtr.Zero;
     }
+#endif
 }

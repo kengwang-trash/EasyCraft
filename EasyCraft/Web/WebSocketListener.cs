@@ -43,8 +43,8 @@ namespace EasyCraft.Web
             FastConsole.PrintSuccess("[WebSocket Connect] 新 WebSocket 客户端连接");
             try
             {
-                listener.BeginGetContext(WebSocketRequestHandlerAsync, null);
                 HttpListenerContext context = listener.EndGetContext(ar);
+                listener.BeginGetContext(WebSocketRequestHandlerAsync, null);
                 context.Response.Headers["Server"] = "EasyCraft 1.0.0 over";
                 HttpListenerWebSocketContext c = context.AcceptWebSocketAsync(null).Result;
                 while (true)

@@ -67,16 +67,17 @@ namespace EasyCraft
             FastConsole.PrintInfo(Language.t("加载主题中"));
             ThemeController.InitComp();
             ThemeController.InitPage();
+#if WINDOWS
+            FastConsole.PrintInfo(Language.t("正在开启 WebSocket 服务器"));
+            WebSocketListener.StartListen(); //No more WebSocket
             FastConsole.PrintInfo(Language.t("加载 PluginBase 中"));
-            PluginBase.PluginBase.InitializePipe();
             PluginBase.PluginBase.LoadPlugins();
+#endif
             FastConsole.PrintInfo(Language.t("载入 Docker 中"));
             Settings.docker = new Docker.Docker();
             FastConsole.PrintInfo(Language.t("加载任务中"));
             Schedule.LoadSchedule();
             Schedule.StartTrigger();
-            //FastConsole.PrintInfo(Language.t("正在开启 WebSocket 服务器"));
-            //WebSocketListener.StartListen(); //No more WebSocket
             FastConsole.PrintInfo(Language.t("正在开启 FTP 服务器"));
             FtpServer.server = new SharpFtpServer.FtpServer();
             FtpServer.server.Start();
