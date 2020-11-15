@@ -42,11 +42,17 @@
         </e>
         <e p="nuget.config" t="Include" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Debug" t="Include">
-            <e p="netcoreapp3.1" t="Include">
-              <e p="EasyCraft.AssemblyInfo.cs" t="Include" />
+          <e p="x86" t="Include">
+            <e p="Debug" t="Include">
+              <e p="netcoreapp3.1" t="Include">
+                <e p="EasyCraft.AssemblyInfo.cs" t="Include" />
+              </e>
             </e>
           </e>
+        </e>
+        <e p="PluginBase" t="Include">
+          <e p="PluginBase.cs" t="Include" />
+          <e p="PluginDelegate.cs" t="Include" />
         </e>
         <e p="Program.cs" t="Include" />
         <e p="publish-lin.sh" t="Include" />

@@ -3,14 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Debug;Release</Configurations>
+    <Configurations>Release;Debug</Configurations>
     <Authors>EasyCraft Panel Team</Authors>
     <Description>A Minecraft Server Panel</Description>
     <Copyright>Kengwang</Copyright>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+    <Platforms>x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
