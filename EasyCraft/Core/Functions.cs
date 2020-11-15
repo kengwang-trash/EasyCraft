@@ -45,10 +45,10 @@ namespace EasyCraft.Core
         {
             string[] dirs =
             {
-                "log/weberr",
-                "db",
-                "core",
-                "server"
+                "data/log/weberr",
+                "data/db",
+                "data/core",
+                "data/server"
             };
             foreach (string dir in dirs)
             {

@@ -118,7 +118,7 @@ namespace EasyCraft.Core
                 FastConsole.PrintWarning(string.Format(Language.t("服务器 {0} 加载失败."), id));
             }
 
-            serverdir = Environment.CurrentDirectory + "/server/server" + id.ToString() + "/";
+            serverdir = Environment.CurrentDirectory + "/data/server/server" + id.ToString() + "/";
 
             System.IO.Directory.CreateDirectory(serverdir);
 

@@ -15,11 +15,11 @@ namespace EasyCraft
         {
             try
             {
-                if (!File.Exists(Environment.CurrentDirectory + "/db/db.db"))
+                if (!File.Exists(Environment.CurrentDirectory + "/data/db/db.db"))
                     throw new Exception("Database File Not Found");
                 var connectionString = new SQLiteConnectionStringBuilder()
                 {
-                    DataSource = Environment.CurrentDirectory + "/db/db.db",
+                    DataSource = Environment.CurrentDirectory + "/data/db/db.db",
                     Version = 3
                 }.ToString();
                 DB = new SQLiteConnection(connectionString);
@@ -68,15 +68,15 @@ namespace EasyCraft
         {
             try
             {
-                if (!File.Exists(Environment.CurrentDirectory + "/db/db.db"))
-                    System.IO.File.Create(Environment.CurrentDirectory + "/db/db.db");
+                if (!File.Exists(Environment.CurrentDirectory + "/data/db/db.db"))
+                    System.IO.File.Create(Environment.CurrentDirectory + "/data/db/db.db");
                 if (DB != null)
                     DB.Close();
                 throw new Exception("No Database File Founded");
                 /*
                 var connectionString = new SQLiteConnectionStringBuilder()
                 {
-                    DataSource = Environment.CurrentDirectory + "/db/db.db"
+                    DataSource = Environment.CurrentDirectory + "/data/db/db.db"
                 }.ToString();
                 DB = new SQLiteConnection(connectionString);
                 DB.Open();

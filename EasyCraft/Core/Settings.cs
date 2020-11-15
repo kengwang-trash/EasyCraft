@@ -218,13 +218,13 @@ namespace EasyCraft.Core
 
         public static void LoadStarted()
         {
-            if (File.Exists("./tools/startup.list"))
+            if (File.Exists("data/tools/startup.list"))
             {
-                foreach (string cmd in File.ReadAllLines("./tools/startup.list"))
+                foreach (string cmd in File.ReadAllLines("data/tools/startup.list"))
                 {
                     Process process = new Process();
                     process.StartInfo.FileName = "cmd";
-                    process.StartInfo.WorkingDirectory = "./tools/";
+                    process.StartInfo.WorkingDirectory = "data/tools/";
                     process.StartInfo.RedirectStandardInput = true;
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;

@@ -149,7 +149,7 @@ namespace EasyCraft.PluginBase
 
         public static void LoadPlugins()
         {
-            foreach (string file in Directory.EnumerateFiles("plugin/", "*.dll").ToList())
+            foreach (string file in Directory.EnumerateFiles("data/plugin/", "*.dll").ToList())
             {
                 try
                 {

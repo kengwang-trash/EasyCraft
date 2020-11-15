@@ -145,7 +145,7 @@ namespace EasyCraft.Web
                         response.ContentType = "text/css";
                     }
 
-                    PrintWeb(File.ReadAllBytes("theme/" + ThemeController.themeName + "/assets/" + absolutepage));
+                    PrintWeb(File.ReadAllBytes("data/theme/" + ThemeController.themeName + "/assets/" + absolutepage));
                 }
                 else
                 {
@@ -174,7 +174,7 @@ namespace EasyCraft.Web
                 return false;
             }
 
-            if (File.Exists("theme/" + ThemeController.themeName + "/assets/" + page))
+            if (File.Exists("data/theme/" + ThemeController.themeName + "/assets/" + page))
             {
                 return true;
             }

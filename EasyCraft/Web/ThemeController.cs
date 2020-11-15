@@ -23,7 +23,7 @@ namespace EasyCraft.Web
         public static void InitComp()
         {
             component.Clear();
-            string[] files = Directory.GetFiles("theme/" + themeName + "/component/", "*.html");
+            string[] files = Directory.GetFiles("data/theme/" + themeName + "/component/", "*.html");
             foreach (string file in files)
             {
                 component[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
@@ -33,7 +33,7 @@ namespace EasyCraft.Web
         public static void InitPage()
         {
             page.Clear();
-            string[] files = Directory.GetFiles("theme/" + themeName + "/page/", "*.html");
+            string[] files = Directory.GetFiles("data/theme/" + themeName + "/page/", "*.html");
             foreach (string file in files)
             {
                 page[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
@@ -45,18 +45,18 @@ namespace EasyCraft.Web
         {
             themeConfig =
                 Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(
-                    File.ReadAllText("panel/themes/" + themeName + "/config/config.json"));
+                    File.ReadAllText("data/theme/" + themeName + "/config/config.json"));
         }
 
         public static void SaveThemeConfig()
         {
-            File.WriteAllText("panel/themes/" + themeName + "/config/config.json",
+            File.WriteAllText("data/theme/" + themeName + "/config/config.json",
                 Newtonsoft.Json.JsonConvert.SerializeObject(themeConfig));
         }
 
         public static string LoadPage(string name, WebPanelPhraser wp)
         {
-            string pagetext = File.ReadAllText("theme/" + ThemeController.themeName + "/page/" + name + ".html");
+            string pagetext = File.ReadAllText("data/theme/" + ThemeController.themeName + "/page/" + name + ".html");
             //string pagetext = page[name];
             return PhraseStatment(pagetext, new Dictionary<string, string>(), wp, "page." + name);
         }
@@ -66,7 +66,7 @@ namespace EasyCraft.Web
             if (CheckComponentPath(comname))
             {
                 string pagetext =
-                    File.ReadAllText("theme/" + ThemeController.themeName + "/component/" + comname + ".html");
+                    File.ReadAllText("data/theme/" + ThemeController.themeName + "/component/" + comname + ".html");
                 //string pagetext = component[comname];
                 return PhraseStatment(pagetext, postvars, wp, "comp." + comname);
             }
@@ -420,7 +420,7 @@ namespace EasyCraft.Web
             {
                 return false;
             }
-            if (File.Exists("theme/" + ThemeController.themeName + "/component/" + page + ".html"))
+            if (File.Exists("data/theme/" + ThemeController.themeName + "/component/" + page + ".html"))
             {
                 return true;
             }
@@ -438,7 +438,7 @@ namespace EasyCraft.Web
             {
                 return false;
             }
-            if (File.Exists("theme/" + ThemeController.themeName + "/page/" + page + ".html"))
+            if (File.Exists("data/theme/" + ThemeController.themeName + "/page/" + page + ".html"))
             {
                 return true;
             }

@@ -22,7 +22,7 @@ namespace EasyCraft.Core
         public Core(string id)
         {
             this.id = id;
-            coreconfig = File.ReadAllText("core/" + id + "/manifest.json");
+            coreconfig = File.ReadAllText("data/core/" + id + "/manifest.json");
             corestruct = Newtonsoft.Json.JsonConvert.DeserializeObject<CoreStruct>(coreconfig);
             name = corestruct.name;
             os = corestruct.startconfig.os;

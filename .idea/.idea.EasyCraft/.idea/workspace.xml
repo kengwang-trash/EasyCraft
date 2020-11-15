@@ -23,12 +23,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginDelegate.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Core.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Core.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Database.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +46,6 @@
         <option value="$PROJECT_DIR$/../../Theme/MDefault/component/leftbar.html" />
         <option value="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Struct/CoreStruct.cs" />
-        <option value="$PROJECT_DIR$/EasyCraft/Core/Database.cs" />
         <option value="$PROJECT_DIR$/../../Theme/MDefault/assets/script/easycraft.js" />
         <option value="$PROJECT_DIR$/../../Theme/MDefault/page/login.html" />
         <option value="$PROJECT_DIR$/../../Theme/MDefault/page/register.html" />
@@ -58,14 +55,15 @@
         <option value="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" />
-        <option value="$PROJECT_DIR$/EasyCraft/Core/Core.cs" />
-        <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" />
-        <option value="$PROJECT_DIR$/EasyCraft/Core/Server.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginDegelate.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginDelegate.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/Program.cs" />
         <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" />
+        <option value="$PROJECT_DIR$/EasyCraft/Core/Server.cs" />
+        <option value="$PROJECT_DIR$/EasyCraft/Core/Core.cs" />
+        <option value="$PROJECT_DIR$/EasyCraft/Core/Database.cs" />
+        <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
       </list>
     </option>
   </component>
@@ -189,25 +187,25 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="632" height="464" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1602386826616" />
-    <state width="1867" height="365" key="GridCell.Tab.0.bottom" timestamp="1605417915654">
+    <state width="1867" height="235" key="GridCell.Tab.0.bottom" timestamp="1605420296684">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1867" height="365" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1605417915654" />
+    <state width="1867" height="235" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1605420296684" />
     <state width="1794" height="363" key="GridCell.Tab.0.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
-    <state width="1867" height="365" key="GridCell.Tab.0.center" timestamp="1605417915653">
+    <state width="1867" height="235" key="GridCell.Tab.0.center" timestamp="1605420296684">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1867" height="365" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1605417915653" />
+    <state width="1867" height="235" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1605420296684" />
     <state width="1794" height="363" key="GridCell.Tab.0.center/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
-    <state width="1867" height="365" key="GridCell.Tab.0.left" timestamp="1605417915653">
+    <state width="1867" height="235" key="GridCell.Tab.0.left" timestamp="1605420296683">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1867" height="365" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1605417915653" />
+    <state width="1867" height="235" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1605420296683" />
     <state width="1794" height="363" key="GridCell.Tab.0.left/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
-    <state width="1867" height="365" key="GridCell.Tab.0.right" timestamp="1605417915653">
+    <state width="1867" height="235" key="GridCell.Tab.0.right" timestamp="1605420296684">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1867" height="365" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1605417915653" />
+    <state width="1867" height="235" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1605420296684" />
     <state width="1794" height="363" key="GridCell.Tab.0.right/72.27.1848.1053@72.27.1848.1053" timestamp="1601989017445" />
     <state width="1867" height="365" key="GridCell.Tab.1.bottom" timestamp="1605417915654">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -293,10 +291,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="220" height="475" key="HiddenNamespacesPopup/0.0.1920.1040@0.0.1920.1040" timestamp="1601620977952" />
-    <state x="452" y="0" width="1037" height="737" key="SettingsEditor" timestamp="1605417859094">
+    <state x="452" y="0" width="1037" height="737" key="SettingsEditor" timestamp="1605420206124">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="452" y="0" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1605417859094" />
+    <state x="452" y="0" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1605420206124" />
     <state x="516" y="193" width="1037" height="737" key="SettingsEditor/72.27.1848.1053@72.27.1848.1053" timestamp="1601988048846" />
     <state x="92" y="92" width="1736" height="856" key="VCS.FileHistoryDialog" timestamp="1601899371593">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -322,14 +320,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="1090" y="236" width="654" height="804" key="find.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1601651136294" />
-    <state x="616" y="240" key="run.anything.popup" timestamp="1601824978874">
+    <state x="616" y="240" key="run.anything.popup" timestamp="1605420281076">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1601824978874" />
-    <state x="623" y="225" width="840" height="678" key="search.everywhere.popup" timestamp="1605413435946">
+    <state x="616" y="240" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1605420281076" />
+    <state x="623" y="225" width="840" height="678" key="search.everywhere.popup" timestamp="1605420322286">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="623" y="225" width="840" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1605413435946" />
+    <state x="623" y="225" width="840" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1605420322286" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -339,10 +337,10 @@
           <line>308</line>
           <properties documentPath="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\Core\Server.cs" initialLine="303">
             <startOffsets>
-              <option value="10897" />
+              <option value="10902" />
             </startOffsets>
             <endOffsets>
-              <option value="10957" />
+              <option value="10962" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="2" />

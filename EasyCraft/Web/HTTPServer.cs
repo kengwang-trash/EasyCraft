@@ -90,7 +90,7 @@ namespace EasyCraft.Web
         static void Write500Log(string logid,Exception e)
         {
             FastConsole.PrintError( "========= EasyCraft Error Log =========" + "\r\nError Message: " + e.Message + "\r\nTrance: \r\n" + e.StackTrace+"\r\n\r\n");
-            File.AppendAllTextAsync(string.Format("log/weberr/{0}.log", logid), "========= EasyCraft Error Log =========" + "\r\nError Message: " + e.Message + "\r\nTrance: \r\n" + e.StackTrace+"\r\n\r\n");
+            File.AppendAllTextAsync(string.Format("data/log/weberr/{0}.log", logid), "========= EasyCraft Error Log =========" + "\r\nError Message: " + e.Message + "\r\nTrance: \r\n" + e.StackTrace+"\r\n\r\n");
             if (e.InnerException != null) Write500Log(logid, e.InnerException);
         }
     }

@@ -596,11 +596,11 @@ namespace SharpFtpServer
                 {
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {
-                        _root = (Environment.CurrentDirectory + "\\server\\server" + _sid.ToString() + "\\");
+                        _root = (Environment.CurrentDirectory + "\\data\\server\\server" + _sid.ToString() + "\\");
                     }
                     else
                     {
-                        _root = (Environment.CurrentDirectory + "/server/server" + _sid.ToString() + "/");
+                        _root = (Environment.CurrentDirectory + "/data/server/server" + _sid.ToString() + "/");
                     }
 
                     _currentDirectory = _root;
