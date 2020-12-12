@@ -3,26 +3,30 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Release Windows;Debug Windows;Debug Linux;Release Linux</Configurations>
+    <Configurations>Windows-Release;Windows-Debug;Linux-Debug;Linux-Release</Configurations>
     <Authors>EasyCraft Panel Team</Authors>
     <Description>A Minecraft Server Panel</Description>
     <Copyright>Kengwang</Copyright>
-    <Platforms>x86</Platforms>
+    <Platforms>AnyCPU</Platforms>
+    <SignAssembly>false</SignAssembly>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Linux|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Linux-Debug|AnyCPU'">
     <DefineConstants>TRACE;DEBUG;LINUX;NOWINDOWS</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Linux|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Linux-Release|AnyCPU'">
     <DefineConstants>TRACE;LINUX;NOWINDOWS</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Windows|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Windows-Release|AnyCPU'">
     <DefineConstants>TRACE;WINDOWS;NOLINUX</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Windows|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Windows-Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE;WINDOWS;NOLINUX</DefineConstants>
   </PropertyGroup>
 

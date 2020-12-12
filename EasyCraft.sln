@@ -7,20 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyCraft", "EasyCraft\Easy
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug Linux|Any CPU = Debug Linux|Any CPU
-		Debug Windows|Any CPU = Debug Windows|Any CPU
-		Release Linux|Any CPU = Release Linux|Any CPU
-		Release Windows|Any CPU = Release Windows|Any CPU
+		Linux-Debug|Any CPU = Linux-Debug|Any CPU
+		Linux-Release|Any CPU = Linux-Release|Any CPU
+		Windows-Debug|Any CPU = Windows-Debug|Any CPU
+		Windows-Release|Any CPU = Windows-Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Debug Linux|Any CPU.ActiveCfg = Debug Linux|x86
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Debug Linux|Any CPU.Build.0 = Debug Linux|x86
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Debug Windows|Any CPU.ActiveCfg = Debug Windows|x86
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Debug Windows|Any CPU.Build.0 = Debug Windows|x86
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Release Linux|Any CPU.ActiveCfg = Release Linux|x86
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Release Linux|Any CPU.Build.0 = Release Linux|x86
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Release Windows|Any CPU.ActiveCfg = Release Windows|x86
-		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Release Windows|Any CPU.Build.0 = Release Windows|x86
+		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Linux-Debug|Any CPU.ActiveCfg = Linux-Debug|Any CPU
+		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Linux-Debug|Any CPU.Build.0 = Linux-Debug|Any CPU
+		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Linux-Release|Any CPU.ActiveCfg = Linux-Release|Any CPU
+		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Windows-Debug|Any CPU.ActiveCfg = Windows-Debug|Any CPU
+		{C4A03242-4EA6-4A64-AAB5-DBB7CA8B24D4}.Windows-Release|Any CPU.ActiveCfg = Windows-Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

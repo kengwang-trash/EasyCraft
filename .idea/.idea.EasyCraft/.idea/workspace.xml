@@ -23,10 +23,63 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources/8eee639d-08dd-44ae-9f24-1880b8ef979d.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources/8eee639d-08dd-44ae-9f24-1880b8ef979d.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/sqldialects.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/riderModule.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/riderModule.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft.sln" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Core.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Core.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Database.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Database.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/FastConsole.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/FastConsole.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Schedule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Schedule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/ServerLog.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/ServerLog.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/ServerManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/ServerManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/UserGroup.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/UserGroup.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/DockerConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Docker/DockerConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/Structure/Containers.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Docker/Structure/Containers.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/Structure/Info.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Docker/Structure/Info.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/FtpServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/FtpServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/LogEntry.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/LogEntry.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/RateLimitingStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/RateLimitingStream.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/rfc2389.txt" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/rfc2389.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/rfc959.txt" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/rfc959.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginDelegate.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginDelegate.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EasyCraft/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/Api.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/Api.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/Classes/HTTPVars.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/Classes/HTTPVars.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/Classes/User.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/Classes/User.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Callback.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Callback.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/LogBack.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/LogBack.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/NewServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/NewServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/ServerInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/ServerInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/UserLogin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/UserLogin.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/WebPanelPhraser.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/WebPanelPhraser.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/nuget.config" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/nuget.config" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/publish-lin.sh" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/publish-lin.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/publish-win.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/publish-win.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Notes.md" beforeDir="false" afterPath="$PROJECT_DIR$/Notes.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,9 +88,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/AD61CA47-F8B7-4CC6-93A0-BA44CC73B5C7/329/FileStream.Windows.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -150,6 +200,7 @@
       <workItem from="1602385300323" duration="3092000" />
       <workItem from="1604162399488" duration="51000" />
       <workItem from="1605408937615" duration="8008000" />
+      <workItem from="1606001987179" duration="446000" />
     </task>
     <servers />
   </component>
@@ -187,6 +238,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="632" height="464" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1602386826616" />
+    <state x="746" y="151" width="424" height="482" key="FileChooserDialogImpl" timestamp="1606002284333">
+      <screen x="0" y="28" width="1920" height="1052" />
+    </state>
+    <state x="746" y="151" width="424" height="482" key="FileChooserDialogImpl/0.28.1920.1052@0.28.1920.1052" timestamp="1606002284333" />
     <state width="1867" height="365" key="GridCell.Tab.0.bottom" timestamp="1605425097064">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -291,10 +346,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="220" height="475" key="HiddenNamespacesPopup/0.0.1920.1040@0.0.1920.1040" timestamp="1601620977952" />
-    <state x="452" y="0" width="1037" height="737" key="SettingsEditor" timestamp="1605421387907">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="452" y="28" width="1037" height="737" key="SettingsEditor" timestamp="1606002292029">
+      <screen x="0" y="28" width="1920" height="1052" />
     </state>
     <state x="452" y="0" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1605421387907" />
+    <state x="452" y="28" key="SettingsEditor/0.28.1920.1052@0.28.1920.1052" timestamp="1606002292029" />
     <state x="516" y="193" width="1037" height="737" key="SettingsEditor/72.27.1848.1053@72.27.1848.1053" timestamp="1601988048846" />
     <state x="92" y="92" width="1736" height="856" key="VCS.FileHistoryDialog" timestamp="1601899371593">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -335,14 +391,7 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/EasyCraft/Core/Server.cs</url>
           <line>308</line>
-          <properties documentPath="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\Core\Server.cs" initialLine="303">
-            <startOffsets>
-              <option value="10902" />
-            </startOffsets>
-            <endOffsets>
-              <option value="10962" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\Core\Server.cs" initialLine="303" />
           <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>

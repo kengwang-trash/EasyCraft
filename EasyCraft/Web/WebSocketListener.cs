@@ -54,6 +54,9 @@ namespace EasyCraft.Web
                         ArraySegment<byte> buffer = WebSocket.CreateClientBuffer(8192, 8192);
                         WebSocketReceiveResult res = c.WebSocket.ReceiveAsync(buffer, CancellationToken.None).Result;
                         string resule = Encoding.UTF8.GetString(buffer);
+                        buffer = WebSocket.CreateClientBuffer(8192, 8192);
+                        string send = "你发送了 ${resule}";
+                        var a = c.WebSocket.SendAsync(Encoding.UTF8.GetBytes(send), WebSocketMessageType.Text, false, CancellationToken.None);
                     }
                     else
                     {
