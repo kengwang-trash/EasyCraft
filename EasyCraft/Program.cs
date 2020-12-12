@@ -67,12 +67,12 @@ namespace EasyCraft
             FastConsole.PrintInfo(Language.t("加载主题中"));
             ThemeController.InitComp();
             ThemeController.InitPage();
-#if WINDOWS
+#if false
             FastConsole.PrintInfo(Language.t("正在开启 WebSocket 服务器"));
             WebSocketListener.StartListen(); //No more WebSocket
+#endif
             FastConsole.PrintInfo(Language.t("加载 PluginBase 中"));
             PluginBase.PluginBase.LoadPlugins();
-#endif
             FastConsole.PrintInfo(Language.t("载入 Docker 中"));
             Settings.docker = new Docker.Docker();
             FastConsole.PrintInfo(Language.t("加载任务中"));

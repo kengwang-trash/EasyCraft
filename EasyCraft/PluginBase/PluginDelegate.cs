@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace EasyCraft.PluginBase
+namespace EasyCraft.PluginBase.Callbacks
 {
-    public class PluginDelegate
+    public struct PluginInfo
     {
-        public delegate string Initialize([MarshalAs(UnmanagedType.LPWStr)] String Handler, [MarshalAs(UnmanagedType.LPWStr)]String AuthKey);
+        public string id;
+        public string name;
+        public string author;
+        public string link;
+        public string description;
     }
 }
