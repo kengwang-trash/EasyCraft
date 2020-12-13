@@ -26,9 +26,7 @@
     <option>randomizeRenaming</option>
     <option>xmlserialization</option>
     <excludelist>
-      <type name="EasyCraft.PluginBase.PluginHandler" excludetype="false">
-        <method name="Handle" signature="object(object)" />
-      </type>
+      <namespace name="EasyCraft.PluginBase" />
     </excludelist>
     <mapping>
       <mapoutput overwrite="false">
@@ -44,14 +42,12 @@
       <referencerule rulekey="{494EA3BA-B947-44B5-BEE8-A11CC85AAF9B}" />
     </referencerulelist>
   </renaming>
-  <controlflow level="high" />
-  <stringencrypt>
-    <includelist>
-      <assembly>
-        <file dir="" name="EasyCraft.dll" />
-      </assembly>
-    </includelist>
-  </stringencrypt>
+  <controlflow level="high">
+    <excludelist>
+      <namespace name="EasyCraft.PluginBase" />
+    </excludelist>
+  </controlflow>
+  <stringencrypt />
   <removal>
     <option>disable</option>
     <triggerlist>

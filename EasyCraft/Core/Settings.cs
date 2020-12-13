@@ -62,7 +62,7 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    return 80;
+                    return 21;
                 }
             }
         }
