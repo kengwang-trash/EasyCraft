@@ -19,7 +19,7 @@ namespace EasyCraft
   | |__| (_| \__ \ |_| | |___| | | (_| |  _| |_ 
   |_____\__,_|___/\__, |\____|_|  \__,_|_|  \__|
                   |___/                
- ============= Version : V " + EasyCraftInfo.VersionOut + @" ===============
+ ============= Version : V " + EasyCraftInfo.VersionOut + @"  ==============
  ============= Copyright Kengwang ==============
 ");
             int argc = args.Length;

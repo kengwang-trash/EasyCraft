@@ -9,12 +9,12 @@
   <input>
     <loadpaths />
     <asmlist>
-      <inputassembly refid="514f661d-e683-412e-bb17-fae7b96bd078">
+      <inputassembly refid="37561cd1-4f9c-4522-97f7-a5a89b418d7d">
         <option>honoroas</option>
         <option>stripoa</option>
         <option>library</option>
         <option>transformxaml</option>
-        <file dir="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\bin\x86\Debug Windows\netcoreapp3.1" name="EasyCraft.dll" />
+        <file dir="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\bin\Windows-Release\netcoreapp3.1" name="EasyCraft.dll" />
       </inputassembly>
     </asmlist>
   </input>
@@ -25,6 +25,11 @@
     <option>enhancedOI</option>
     <option>randomizeRenaming</option>
     <option>xmlserialization</option>
+    <excludelist>
+      <type name="EasyCraft.PluginBase.PluginHandler" excludetype="false">
+        <method name="Handle" signature="object(object)" />
+      </type>
+    </excludelist>
     <mapping>
       <mapoutput overwrite="false">
         <file dir="${configdir}\Dotfuscated" name="Map.xml" />
