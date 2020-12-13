@@ -378,7 +378,7 @@ namespace EasyCraft.Web
 
                             if (initname == "cores")
                             {
-                                DirectoryInfo[] root = new DirectoryInfo("core/").GetDirectories();
+                                DirectoryInfo[] root = new DirectoryInfo("data/core/").GetDirectories();
                                 wp.vars.cores.Clear();
                                 foreach (DirectoryInfo di in root)
                                 {

@@ -27,7 +27,6 @@ namespace EasyCraft.Web
                             return;
                         }
                     }
-
                     if (wp.POST.ContainsKey("username") && wp.POST.ContainsKey("password"))
                     {
                         wp.vars.user = new User(wp.POST["username"], wp.POST["password"]);

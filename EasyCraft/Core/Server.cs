@@ -170,7 +170,7 @@ namespace EasyCraft.Core
             cmd = cmd.Replace("{WORLD}", world);
             cmd = cmd.Replace("{RAM}", ram.ToString());
             cmd = cmd.Replace("{PLAYER}", maxplayer.ToString());
-            cmd = cmd.Replace("{COREPATH}", Path.GetFullPath("./core/" + core));
+            cmd = cmd.Replace("{COREPATH}", Path.GetFullPath("data/core/" + core));
             return cmd;
         }
 
@@ -241,7 +241,7 @@ namespace EasyCraft.Core
                     if (c.initcopy)
                     {
                         PrintLog(Language.t("载入核心必须文件"));
-                        Functions.CopyDirectory("core/" + core + "/files/", serverdir);
+                        Functions.CopyDirectory("data/core/" + core + "/files/", serverdir);
                     }
 
                     lastcore = core;
@@ -251,8 +251,8 @@ namespace EasyCraft.Core
                 //更改server.properties
                 PrintLog(Language.t("处理 server.properties 中"));
                 if (!File.Exists(serverdir + "/server.properties") &&
-                    File.Exists("core/" + core + "/server.properties"))
-                    File.Copy("core/" + core + "/server.properties", serverdir + "/server.properties");
+                    File.Exists("data/core/" + core + "/server.properties"))
+                    File.Copy("data/core/" + core + "/server.properties", serverdir + "/server.properties");
                 if (c.corestruct.serverproperties != null)
                 {
                     List<string> lines = new List<string>();

@@ -10,6 +10,7 @@
     <Platforms>AnyCPU</Platforms>
     <SignAssembly>false</SignAssembly>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Linux-Debug|AnyCPU'">

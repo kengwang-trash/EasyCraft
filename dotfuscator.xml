@@ -27,6 +27,7 @@
     <option>xmlserialization</option>
     <excludelist>
       <namespace name="EasyCraft.PluginBase" />
+      <namespace name="EasyCraft.Web.JSONCallback" />
     </excludelist>
     <mapping>
       <mapoutput overwrite="false">

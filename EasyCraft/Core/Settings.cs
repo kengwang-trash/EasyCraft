@@ -29,7 +29,7 @@ namespace EasyCraft.Core
     {
         public static Docker.Docker docker;
 
-        static SettinsFile sf = new SettinsFile();
+        static SettingsFile sf = new SettingsFile();
         
         public readonly static string release = "Personal";
 
@@ -109,7 +109,7 @@ namespace EasyCraft.Core
             {
                 if (File.Exists("easycraft.conf"))
                 {
-                    sf = Newtonsoft.Json.JsonConvert.DeserializeObject<SettinsFile>(File.ReadAllText("easycraft.conf"));
+                    sf = Newtonsoft.Json.JsonConvert.DeserializeObject<SettingsFile>(File.ReadAllText("easycraft.conf"));
                 }
                 else
                 {
@@ -249,7 +249,7 @@ namespace EasyCraft.Core
         public static string annoucement = "";
     }
 
-    class SettinsFile
+    class SettingsFile
     {
         public HTTPConf HTTP { get; set; }
         public FTPConf FTP { get; set; }
