@@ -1,16 +1,22 @@
 # EasyCraft
-
+<img style="float: right" src="/logo/logo.png"/>
 下一代 Minecraft 服务器面板
 
-## 自动编译状态
+主要开发者: Kengwang
 
-Windows CI:
+图标提供 & 前端设计: Kevin
 
-[![Build Status](https://dev.azure.com/kengwang/EasyCraft/_apis/build/status/EasyCraft-ASP.NET%20Core-Windows%20CI?branchName=master)](https://dev.azure.com/kengwang/EasyCraft/_build/latest?definitionId=21&branchName=master)
+请不要传播此源代码
 
-Linux CI:
+© Kengwang 2021 All Rights Reserved
 
-[![Build Status](https://dev.azure.com/kengwang/EasyCraft/_apis/build/status/EasyCraft-ASP.NET%20Core-%20Linux%20CI?branchName=master)](https://dev.azure.com/kengwang/EasyCraft/_build/latest?definitionId=22&branchName=master)
 
-上述为每天 3:00 对于 master branch 的native编译
+
+## 计划
+
+### Docker
+
+* 添加容器
+
+
 

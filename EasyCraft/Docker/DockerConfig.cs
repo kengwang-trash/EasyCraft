@@ -7,6 +7,7 @@ namespace EasyCraft.Docker
     class DockerConfig
     {
         public Uri Uri;
+        public string Id;
         public string Url;
         public string OSType;
         public string KernelVersion;

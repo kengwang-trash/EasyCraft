@@ -99,6 +99,7 @@ namespace EasyCraft.Docker
             try
             {
                 Structure.Info.Root responce = JsonConvert.DeserializeObject<Structure.Info.Root>(ResponsetToString(Request("/info")));
+                Config.Id = responce.ID;
                 Config.Architecture = responce.Architecture;
                 Config.KernelVersion = responce.KernelVersion;
                 Config.OSType = responce.OSType;
@@ -137,6 +138,12 @@ namespace EasyCraft.Docker
                 return new List<Container>();
             }
         }
+
+        public bool CreateContainer()
+        {
+
+        }
+
     }
 
     enum RequestType
