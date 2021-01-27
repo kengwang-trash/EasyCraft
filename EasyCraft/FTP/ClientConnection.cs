@@ -570,7 +570,7 @@ namespace SharpFtpServer
             int uid = EasyCraft.Web.Classes.User.GetUid(username);
             if (uid != -1)
             {
-                if (ServerManager.servers.ContainsKey(sid) && ServerManager.servers[sid].owner == uid)
+                if (ServerManager.servers.ContainsKey(sid) && ServerManager.servers[sid].Owner == uid)
                 {
                     return true;
                 }
@@ -591,7 +591,7 @@ namespace SharpFtpServer
             if (_currentUser.islogin)
             {
                 if (_currentUser.CheckUserAbility((int) Permisson.UseAllFTP) ||
-                    (ServerManager.servers[_sid].owner == _currentUser.uid &&
+                    (ServerManager.servers[_sid].Owner == _currentUser.uid &&
                      _currentUser.CheckUserAbility((int) Permisson.UseFTP)))
                 {
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)

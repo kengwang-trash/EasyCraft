@@ -47,14 +47,6 @@ namespace EasyCraft.Core
             {
                 FastConsole.PrintInfo(Settings.BUILDINFO);
             }
-            else if (command[0] == "docker")
-            {
-                if (command[1] == "list")
-                {
-                    FastConsole.PrintInfo(Language.t("以下是 Docker 容器"));
-                    Settings.docker.ListContainer(true).ForEach(container => { FastConsole.PrintInfo(container.Names[0]+"("+ container.Id+") "+container.State); });
-                }
-            }
             else
             {
                 FastConsole.PrintTrash("不支持的指令: " + commandstr);

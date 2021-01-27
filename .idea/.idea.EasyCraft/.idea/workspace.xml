@@ -24,9 +24,21 @@
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Schedule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Schedule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/DockerConfig.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/Structure/Containers.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Docker/Structure/Info.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/Api.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/Api.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Core.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Core.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/ThemeController.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,10 +48,24 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="IdeDocumentHistory">
     <changedPaths>
       <option value="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" />
       <option value="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Program.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Core.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Core/Server.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1iJKXSDoHdQ9d2Vhcs4phgRPvu0" />
@@ -63,7 +89,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="SolutionBuilderGeneralOptionsPageId" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager">
@@ -127,7 +153,8 @@
       <workItem from="1604162399488" duration="51000" />
       <workItem from="1605408937615" duration="8008000" />
       <workItem from="1606001987179" duration="446000" />
-      <workItem from="1611762407091" duration="294000" />
+      <workItem from="1611762407091" duration="1509000" />
+      <workItem from="1611764021735" duration="1746000" />
     </task>
     <servers />
   </component>
@@ -157,8 +184,15 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/EasyCraft/Core/Server.cs</url>
           <line>308</line>
-          <properties documentPath="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\Core\Server.cs" initialLine="303" />
-          <option name="timeStamp" value="2" />
+          <properties documentPath="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\Core\Server.cs" initialLine="308" containingFunctionPresentation="method 'Start'">
+            <startOffsets>
+              <option value="10929" />
+            </startOffsets>
+            <endOffsets>
+              <option value="10989" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

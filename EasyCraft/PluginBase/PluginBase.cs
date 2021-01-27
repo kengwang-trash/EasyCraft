@@ -15,7 +15,7 @@ namespace EasyCraft.PluginBase
     public class PluginBase
     {
         public static Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
-
+        public static Dictionary<string, string[]> hooks = new Dictionary<string, string[]>();
 
         public static void LoadPlugins()
         {
@@ -40,6 +40,12 @@ namespace EasyCraft.PluginBase
                     p.author = info.author;
                     p.link = info.link;
                     p.key = key;
+                    p.auth = info.auth;
+                    p.hooks = info.hooks;
+                    foreach (string pHook in p.hooks)
+                    {
+                        hooks[pHook].Append(p.id);
+                    }
                     p.enabled = (plugindb.ContainsKey(p.id) && plugindb[p.id]);
                     p.path = Path.GetFullPath(file);
                     plugins[p.id] = p;
@@ -67,6 +73,8 @@ namespace EasyCraft.PluginBase
         public string link;
         public string path;
         public string key;
+        public string[] hooks;
+        public string[] auth;
         public bool enabled;
     }
 }

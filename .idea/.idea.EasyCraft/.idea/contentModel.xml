@@ -20,14 +20,6 @@
           <e p="Settings.cs" t="Include" />
           <e p="UserGroup.cs" t="Include" />
         </e>
-        <e p="Docker" t="Include">
-          <e p="Docker.cs" t="Include" />
-          <e p="DockerConfig.cs" t="Include" />
-          <e p="Structure" t="Include">
-            <e p="Containers.cs" t="Include" />
-            <e p="Info.cs" t="Include" />
-          </e>
-        </e>
         <e p="EasyCraft.csproj" t="IncludeRecursive" />
         <e p="favicon.ico" t="Include" />
         <e p="FTP" t="Include">
@@ -42,7 +34,7 @@
         </e>
         <e p="nuget.config" t="Include" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Linux-Debug" t="Include">
+          <e p="Windows-Debug" t="Include">
             <e p="netcoreapp3.1" t="Include">
               <e p="EasyCraft.AssemblyInfo.cs" t="Include" />
             </e>

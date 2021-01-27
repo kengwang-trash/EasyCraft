@@ -73,8 +73,6 @@ namespace EasyCraft
 #endif
             FastConsole.PrintInfo(Language.t("加载 PluginBase 中"));
             PluginBase.PluginBase.LoadPlugins();
-            FastConsole.PrintInfo(Language.t("载入 Docker 中"));
-            Settings.docker = new Docker.Docker();
             FastConsole.PrintInfo(Language.t("加载任务中"));
             Schedule.LoadSchedule();
             Schedule.StartTrigger();

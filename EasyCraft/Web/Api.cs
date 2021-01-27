@@ -140,21 +140,21 @@ namespace EasyCraft.Web
                                     if (sid == 0) throw new Exception("服务器创建失败");
                                     Server s = new Server(sid);
 
-                                    if (wp.POST.ContainsKey("name")) s.name = wp.POST["name"];
-                                    if (wp.POST.ContainsKey("owner")) s.owner = User.GetUid(wp.POST["owner"]);
-                                    if (wp.POST.ContainsKey("port")) s.port = int.Parse(wp.POST["port"]);
-                                    if (wp.POST.ContainsKey("core")) s.core = wp.POST["core"];
-                                    if (wp.POST.ContainsKey("maxplayer")) s.maxplayer = int.Parse(wp.POST["maxplayer"]);
-                                    if (wp.POST.ContainsKey("ram")) s.ram = int.Parse(wp.POST["ram"]);
-                                    if (wp.POST.ContainsKey("world")) s.world = wp.POST["world"];
+                                    if (wp.POST.ContainsKey("name")) s.Name = wp.POST["name"];
+                                    if (wp.POST.ContainsKey("owner")) s.Owner = User.GetUid(wp.POST["owner"]);
+                                    if (wp.POST.ContainsKey("port")) s.Port = int.Parse(wp.POST["port"]);
+                                    if (wp.POST.ContainsKey("core")) s.Core = wp.POST["core"];
+                                    if (wp.POST.ContainsKey("maxplayer")) s.Maxplayer = int.Parse(wp.POST["maxplayer"]);
+                                    if (wp.POST.ContainsKey("ram")) s.Ram = int.Parse(wp.POST["ram"]);
+                                    if (wp.POST.ContainsKey("world")) s.World = wp.POST["world"];
                                     if (wp.POST.ContainsKey("expiretime"))
-                                        s.expiretime = DateTime.Parse(wp.POST["expiretime"]);
+                                        s.Expiretime = DateTime.Parse(wp.POST["expiretime"]);
                                     s.SaveServerConfig();
-                                    ServerManager.servers.Add(s.id, s);
+                                    ServerManager.servers.Add(s.Id, s);
                                     NewServer callback = new NewServer();
                                     callback.code = 9000;
                                     callback.message = Language.t("服务器创建成功");
-                                    callback.data = s.id;
+                                    callback.data = s.Id;
                                     wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                                 }
                                 catch (Exception)
@@ -201,30 +201,30 @@ namespace EasyCraft.Web
                     }
 
                     Server server = ServerManager.servers[int.Parse(wp.POST["sid"])];
-                    if (wp.vars.user.CheckUserAbility((int)Permisson.EditServer) || server.owner == wp.vars.user.uid)
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.EditServer) || server.Owner == wp.vars.user.uid)
                     {
                         try
                         {
-                            if (server.owner == wp.vars.user.uid)
+                            if (server.Owner == wp.vars.user.uid)
                             {
-                                if (wp.POST.ContainsKey("world")) server.world = wp.POST["world"];
-                                if (wp.POST.ContainsKey("core")) server.core = wp.POST["core"];
+                                if (wp.POST.ContainsKey("world")) server.World = wp.POST["world"];
+                                if (wp.POST.ContainsKey("core")) server.Core = wp.POST["core"];
                                 server.SaveServerConfig();
                                 ServerManager.servers[int.Parse(wp.POST["sid"])] = server;
                             }
 
                             if (wp.vars.user.CheckUserAbility((int)Permisson.EditServer))
                             {
-                                if (wp.POST.ContainsKey("name")) server.name = wp.POST["name"];
-                                if (wp.POST.ContainsKey("owner")) server.owner = int.Parse(wp.POST["owner"]);
-                                if (wp.POST.ContainsKey("port")) server.port = int.Parse(wp.POST["port"]);
-                                if (wp.POST.ContainsKey("core")) server.core = wp.POST["core"];
+                                if (wp.POST.ContainsKey("name")) server.Name = wp.POST["name"];
+                                if (wp.POST.ContainsKey("owner")) server.Owner = int.Parse(wp.POST["owner"]);
+                                if (wp.POST.ContainsKey("port")) server.Port = int.Parse(wp.POST["port"]);
+                                if (wp.POST.ContainsKey("core")) server.Core = wp.POST["core"];
                                 if (wp.POST.ContainsKey("maxplayer"))
-                                    server.maxplayer = int.Parse(wp.POST["maxplayer"]);
-                                if (wp.POST.ContainsKey("ram")) server.ram = int.Parse(wp.POST["ram"]);
-                                if (wp.POST.ContainsKey("world")) server.world = wp.POST["world"];
+                                    server.Maxplayer = int.Parse(wp.POST["maxplayer"]);
+                                if (wp.POST.ContainsKey("ram")) server.Ram = int.Parse(wp.POST["ram"]);
+                                if (wp.POST.ContainsKey("world")) server.World = wp.POST["world"];
                                 if (wp.POST.ContainsKey("expiretime"))
-                                    server.expiretime = Convert.ToDateTime(wp.POST["expiretime"]);
+                                    server.Expiretime = Convert.ToDateTime(wp.POST["expiretime"]);
                                 server.SaveServerConfig();
                                 ServerManager.servers[int.Parse(wp.POST["sid"])] = server;
                             }
@@ -263,9 +263,9 @@ namespace EasyCraft.Web
                     }
 
                     if (wp.vars.user.CheckUserAbility((int)Permisson.StartServer) ||
-                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].Owner == wp.vars.user.uid)
                     {
-                        if (ServerManager.servers[int.Parse(wp.POST["sid"])].expiretime < DateTime.Now)
+                        if (ServerManager.servers[int.Parse(wp.POST["sid"])].Expiretime < DateTime.Now)
                         {
                             Callback callback = new Callback();
                             callback.code = -3;
@@ -311,7 +311,7 @@ namespace EasyCraft.Web
                     }
 
                     if (wp.vars.user.CheckUserAbility((int)Permisson.StopServer) ||
-                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].Owner == wp.vars.user.uid)
                     {
                         try
                         {
@@ -350,7 +350,7 @@ namespace EasyCraft.Web
                     }
 
                     if (wp.vars.user.CheckUserAbility((int)Permisson.KillServer) ||
-                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].Owner == wp.vars.user.uid)
                     {
                         try
                         {
@@ -389,7 +389,7 @@ namespace EasyCraft.Web
                     }
 
                     if (wp.vars.user.CheckUserAbility((int)Permisson.KillServerAll) ||
-                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].Owner == wp.vars.user.uid)
                     {
                         try
                         {
@@ -428,7 +428,7 @@ namespace EasyCraft.Web
                     }
 
                     if (wp.vars.user.CheckUserAbility((int)Permisson.QueryLog) ||
-                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].Owner == wp.vars.user.uid)
                     {
                         Server s = ServerManager.servers[int.Parse(wp.POST["sid"])];
                         List<ServerLog> logs = null;
@@ -446,7 +446,7 @@ namespace EasyCraft.Web
                         callback.code = 9000;
                         callback.message = Language.t("成功");
                         callback.data = new LogBackData();
-                        callback.data.starting = s.running;
+                        callback.data.starting = s.Running;
                         callback.data.logs = logs;
                         if (logs.Count != 0)
                         {
@@ -486,7 +486,7 @@ namespace EasyCraft.Web
                     }
 
                     if (wp.vars.user.CheckUserAbility((int)Permisson.SendCmd) ||
-                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].Owner == wp.vars.user.uid)
                     {
                         if (wp.POST.ContainsKey("cmd"))
                         {
@@ -524,7 +524,7 @@ namespace EasyCraft.Web
                     }
 
                     if (wp.vars.user.CheckUserAbility((int)Permisson.CleanLog) ||
-                        ServerManager.servers[int.Parse(wp.POST["sid"])].owner == wp.vars.user.uid)
+                        ServerManager.servers[int.Parse(wp.POST["sid"])].Owner == wp.vars.user.uid)
                     {
                         ServerManager.servers[int.Parse(wp.POST["sid"])].ClearLog();
                         Callback callback = new Callback();
@@ -552,19 +552,19 @@ namespace EasyCraft.Web
                     }
 
                     Server s_info = ServerManager.servers[int.Parse(wp.POST["sid"])];
-                    if (wp.vars.user.CheckUserAbility((int)Permisson.SeeServer) || s_info.owner == wp.vars.user.uid)
+                    if (wp.vars.user.CheckUserAbility((int)Permisson.SeeServer) || s_info.Owner == wp.vars.user.uid)
                     {
                         ServerInfo callback = new ServerInfo();
                         callback.code = 9000;
                         callback.data = new ServerInfoData();
-                        callback.data.id = s_info.id;
-                        callback.data.name = s_info.name;
-                        callback.data.port = s_info.port;
-                        callback.data.maxplayer = s_info.maxplayer;
-                        callback.data.ram = s_info.ram;
-                        callback.data.running = s_info.running;
-                        callback.data.expiretime = s_info.expiretime.ToString();
-                        callback.data.core = s_info.core;
+                        callback.data.id = s_info.Id;
+                        callback.data.name = s_info.Name;
+                        callback.data.port = s_info.Port;
+                        callback.data.maxplayer = s_info.Maxplayer;
+                        callback.data.ram = s_info.Ram;
+                        callback.data.running = s_info.Running;
+                        callback.data.expiretime = s_info.Expiretime.ToString();
+                        callback.data.core = s_info.Core;
                         wp.PrintWeb(Newtonsoft.Json.JsonConvert.SerializeObject(callback));
                     }
                     else

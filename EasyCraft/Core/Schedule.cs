@@ -58,25 +58,25 @@ namespace EasyCraft.Core
                     switch (s.type)
                     {
                         case 1://执行CMD
-                            if (ServerManager.servers[s.server].running)
+                            if (ServerManager.servers[s.server].Running)
                             {
                                 ServerManager.servers[s.server].Send(s.param);
                             }
                             break;
                         case 2://开服
-                            if (!ServerManager.servers[s.server].running)
+                            if (!ServerManager.servers[s.server].Running)
                             {
                                 ServerManager.servers[s.server].Start();
                             }
                             break;
                         case 3://关服
-                            if (ServerManager.servers[s.server].running)
+                            if (ServerManager.servers[s.server].Running)
                             {
                                 ServerManager.servers[s.server].Stop();
                             }
                             break;
                         case 4://重启
-                            if (ServerManager.servers[s.server].running)
+                            if (ServerManager.servers[s.server].Running)
                             {
                                 ServerManager.servers[s.server].Stop();
                                 ServerManager.servers[s.server].Start();

@@ -341,7 +341,7 @@ namespace EasyCraft.Web
                                 else
                                 {
                                     wp.vars.servers = ServerManager.servers.Values.ToList()
-                                        .Where(s => s.owner == wp.vars.user.uid).ToList();
+                                        .Where(s => s.Owner == wp.vars.user.uid).ToList();
                                 }
                             }
 
@@ -353,7 +353,7 @@ namespace EasyCraft.Web
                                     if (ServerManager.servers.ContainsKey(sid))
                                     {
                                         if (wp.vars.user.CheckUserAbility((int) Permisson.SeeServer) ||
-                                            ServerManager.servers[sid].owner == wp.vars.user.uid)
+                                            ServerManager.servers[sid].Owner == wp.vars.user.uid)
                                         {
                                             wp.vars.server = ServerManager.servers[sid];
                                         }
@@ -584,46 +584,46 @@ namespace EasyCraft.Web
                     case "var.user.type":
                         return wp.vars.user.type.ToString();
                     case "var.for.server.id":
-                        return wp.vars.for_server.id.ToString();
+                        return wp.vars.for_server.Id.ToString();
                     case "var.for.server.running":
-                        return wp.vars.for_server.running ? "true" : "false";
+                        return wp.vars.for_server.Running ? "true" : "false";
                     case "var.for.server.name":
-                        return wp.vars.for_server.name;
+                        return wp.vars.for_server.Name;
                     case "var.for.server.owner":
-                        return wp.vars.for_server.owner.ToString();
+                        return wp.vars.for_server.Owner.ToString();
                     case "var.for.server.port":
-                        return wp.vars.for_server.port.ToString();
+                        return wp.vars.for_server.Port.ToString();
                     case "var.for.server.maxplayer":
-                        return wp.vars.for_server.maxplayer.ToString();
+                        return wp.vars.for_server.Maxplayer.ToString();
                     case "var.for.server.ram":
-                        return wp.vars.for_server.ram.ToString();
+                        return wp.vars.for_server.Ram.ToString();
                     case "var.for.server.expired":
-                        return ((wp.vars.for_server.expiretime - DateTime.Now).Days < 0) ? "true" : "false";
+                        return ((wp.vars.for_server.Expiretime - DateTime.Now).Days < 0) ? "true" : "false";
                     case "var.for.server.expiretime":
-                        return wp.vars.for_server.expiretime.ToString("yyyy-MM-dd");
+                        return wp.vars.for_server.Expiretime.ToString("yyyy-MM-dd");
                     case "var.for.server.core":
-                        return wp.vars.for_server.core;
+                        return wp.vars.for_server.Core;
 
                     case "var.server.id":
-                        return wp.vars.server.id.ToString();
+                        return wp.vars.server.Id.ToString();
                     case "var.server.running":
-                        return wp.vars.server.running ? "true" : "false";
+                        return wp.vars.server.Running ? "true" : "false";
                     case "var.server.name":
-                        return wp.vars.server.name;
+                        return wp.vars.server.Name;
                     case "var.server.owner":
-                        return wp.vars.server.owner.ToString();
+                        return wp.vars.server.Owner.ToString();
                     case "var.server.port":
-                        return wp.vars.server.port.ToString();
+                        return wp.vars.server.Port.ToString();
                     case "var.server.maxplayer":
-                        return wp.vars.server.maxplayer.ToString();
+                        return wp.vars.server.Maxplayer.ToString();
                     case "var.server.ram":
-                        return wp.vars.server.ram.ToString();
+                        return wp.vars.server.Ram.ToString();
                     case "var.server.expired":
-                        return ((wp.vars.server.expiretime - DateTime.Now).Days < 0) ? "true" : "false";
+                        return ((wp.vars.server.Expiretime - DateTime.Now).Days < 0) ? "true" : "false";
                     case "var.server.expiretime":
-                        return wp.vars.server.expiretime.ToString("yyyy-MM-dd");
+                        return wp.vars.server.Expiretime.ToString("yyyy-MM-dd");
                     case "var.server.core":
-                        return wp.vars.server.core;
+                        return wp.vars.server.Core;
                     case "var.for.core.id":
                         return wp.vars.for_core.id;
                     case "var.for.core.name":
@@ -631,13 +631,13 @@ namespace EasyCraft.Web
                     case "var.servers.count":
                         return wp.vars.servers.Count.ToString();
                     case "var.servers.running.count":
-                        return wp.vars.servers.Where(s => s.running).ToList().Count.ToString();
+                        return wp.vars.servers.Where(s => s.Running).ToList().Count.ToString();
                     case "var.servers.willexpire.count":
                         return wp.vars.servers
-                            .Where(s => (s.expiretime - DateTime.Now).Days <= 3 &&
-                                        (s.expiretime - DateTime.Now).Days >= 0).ToList().Count.ToString();
+                            .Where(s => (s.Expiretime - DateTime.Now).Days <= 3 &&
+                                        (s.Expiretime - DateTime.Now).Days >= 0).ToList().Count.ToString();
                     case "var.servers.expired.count":
-                        return wp.vars.servers.Where(s => (s.expiretime - DateTime.Now).Days < 0).ToList().Count
+                        return wp.vars.servers.Where(s => (s.Expiretime - DateTime.Now).Days < 0).ToList().Count
                             .ToString();
                     case "var.easycraft.ftpaddr":
                         return Settings.remoteip;

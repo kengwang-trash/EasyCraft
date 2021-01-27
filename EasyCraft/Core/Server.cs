@@ -12,16 +12,16 @@ namespace EasyCraft.Core
 {
     class Server
     {
-        public int id;
-        public string name = "EasyCraft Server";
-        public int owner;
-        public int port;
-        public string core;
+        public readonly int Id;
+        public string Name = "EasyCraft Server";
+        public int Owner;
+        public int Port;
+        public string Core;
 
-        public int maxplayer = 10;
-        public int ram = 1024;
+        public int Maxplayer = 10;
+        public int Ram = 1024;
 
-        public bool running
+        public bool Running
         {
             get
             {
@@ -37,10 +37,10 @@ namespace EasyCraft.Core
             }
         }
 
-        public bool autostart = false;
+        public bool Autostart = false;
 
-        public string world = "world";
-        public DateTime expiretime = DateTime.MaxValue;
+        public string World = "world";
+        public DateTime Expiretime = DateTime.MaxValue;
 
         Process process = null;
         string lastcore = "";
@@ -53,7 +53,7 @@ namespace EasyCraft.Core
 
         public Server(int id)
         {
-            this.id = id;
+            this.Id = id;
             RefreshServerConfig();
         }
 
@@ -79,16 +79,16 @@ namespace EasyCraft.Core
             SQLiteCommand c = Database.DB.CreateCommand();
             c.CommandText =
                 "UPDATE `server` SET name = $name , owner = $owner , port = $port , core = $core , maxplayer = $maxplayer , ram = $ram , world = $world , expiretime = $expiretime , autostart = $autostart , lastcore = $lastcore WHERE id = $id ";
-            c.Parameters.AddWithValue("$id", id);
-            c.Parameters.AddWithValue("$name", name);
-            c.Parameters.AddWithValue("$owner", owner);
-            c.Parameters.AddWithValue("$port", port);
-            c.Parameters.AddWithValue("$core", core);
-            c.Parameters.AddWithValue("$maxplayer", maxplayer);
-            c.Parameters.AddWithValue("$ram", ram);
-            c.Parameters.AddWithValue("$world", world);
-            c.Parameters.AddWithValue("$expiretime", expiretime);
-            c.Parameters.AddWithValue("$autostart", autostart);
+            c.Parameters.AddWithValue("$id", Id);
+            c.Parameters.AddWithValue("$name", Name);
+            c.Parameters.AddWithValue("$owner", Owner);
+            c.Parameters.AddWithValue("$port", Port);
+            c.Parameters.AddWithValue("$core", Core);
+            c.Parameters.AddWithValue("$maxplayer", Maxplayer);
+            c.Parameters.AddWithValue("$ram", Ram);
+            c.Parameters.AddWithValue("$world", World);
+            c.Parameters.AddWithValue("$expiretime", Expiretime);
+            c.Parameters.AddWithValue("$autostart", Autostart);
             c.Parameters.AddWithValue("$lastcore", lastcore);
             c.ExecuteNonQuery();
         }
@@ -97,34 +97,34 @@ namespace EasyCraft.Core
         {
             SQLiteCommand c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM server WHERE id = $id ";
-            c.Parameters.AddWithValue("$id", id);
+            c.Parameters.AddWithValue("$id", Id);
             SQLiteDataReader render = c.ExecuteReader();
 
             if (render.Read())
             {
-                name = render.GetString(1);
-                owner = render.GetInt32(2);
-                port = render.GetInt32(3);
-                core = render.GetString(4);
-                maxplayer = render.GetInt32(5);
-                ram = render.GetInt32(6);
-                world = render.GetString(7);
-                expiretime = render.GetDateTime(8);
-                autostart = render.GetBoolean(9);
+                Name = render.GetString(1);
+                Owner = render.GetInt32(2);
+                Port = render.GetInt32(3);
+                Core = render.GetString(4);
+                Maxplayer = render.GetInt32(5);
+                Ram = render.GetInt32(6);
+                World = render.GetString(7);
+                Expiretime = render.GetDateTime(8);
+                Autostart = render.GetBoolean(9);
                 lastcore = render.GetString(10);
             }
             else
             {
-                FastConsole.PrintWarning(string.Format(Language.t("服务器 {0} 加载失败."), id));
+                FastConsole.PrintWarning(string.Format(Language.t("服务器 {0} 加载失败."), Id));
             }
 
-            serverdir = Environment.CurrentDirectory + "/data/server/server" + id.ToString() + "/";
+            serverdir = Environment.CurrentDirectory + "/data/server/server" + Id.ToString() + "/";
 
             System.IO.Directory.CreateDirectory(serverdir);
 
             try
             {
-                this.c = new Core(core);
+                this.c = new Core(Core);
             }
             catch (Exception)
             {
@@ -146,7 +146,7 @@ namespace EasyCraft.Core
             l.time = DateTime.Now;
             log.Add(l.id, l);
             if (FastConsole.logLevel == FastConsoleLogLevel.all)
-                FastConsole.PrintInfo("[server" + id + "] " + message);
+                FastConsole.PrintInfo("[server" + Id + "] " + message);
         }
 
         private void PrintError(string message)
@@ -158,19 +158,19 @@ namespace EasyCraft.Core
             l.time = DateTime.Now;
             log.Add(l.id, l);
             if (FastConsole.logLevel == FastConsoleLogLevel.all)
-                FastConsole.PrintWarning("[server" + id + "] " + message);
+                FastConsole.PrintWarning("[server" + Id + "] " + message);
         }
 
         private string PhraseServerCommand(string cmd)
         {
             if (cmd == null) return "";
             cmd = cmd.Replace("{SERVER_DIR}", serverdir);
-            cmd = cmd.Replace("{PORT}", port.ToString());
-            cmd = cmd.Replace("{SERVER_ID}", id.ToString());
-            cmd = cmd.Replace("{WORLD}", world);
-            cmd = cmd.Replace("{RAM}", ram.ToString());
-            cmd = cmd.Replace("{PLAYER}", maxplayer.ToString());
-            cmd = cmd.Replace("{COREPATH}", Path.GetFullPath("data/core/" + core));
+            cmd = cmd.Replace("{PORT}", Port.ToString());
+            cmd = cmd.Replace("{SERVER_ID}", Id.ToString());
+            cmd = cmd.Replace("{WORLD}", World);
+            cmd = cmd.Replace("{RAM}", Ram.ToString());
+            cmd = cmd.Replace("{PLAYER}", Maxplayer.ToString());
+            cmd = cmd.Replace("{COREPATH}", Path.GetFullPath("data/core/" + Core));
             return cmd;
         }
 
@@ -219,40 +219,40 @@ namespace EasyCraft.Core
         {
             try
             {
-                if ((expiretime - DateTime.Now).TotalSeconds < 0)
+                if ((Expiretime - DateTime.Now).TotalSeconds < 0)
                 {
-                    PrintError(string.Format(Language.t("服务器已于 {0} 过期, 无法开启服务器"), expiretime.ToString()));
+                    PrintError(string.Format(Language.t("服务器已于 {0} 过期, 无法开启服务器"), Expiretime.ToString()));
                     return;
                 }
 
                 try
                 {
-                    c = new Core(core);
+                    c = new Core(Core);
                 }
                 catch (Exception e)
                 {
-                    PrintError(string.Format(Language.t("核心 {0} 加载失败: {1}"), core, e.Message));
+                    PrintError(string.Format(Language.t("核心 {0} 加载失败: {1}"), Core, e.Message));
                     return;
                 }
 
-                if (core != lastcore)
+                if (Core != lastcore)
                 {
                     //新核心需要初始化
                     if (c.initcopy)
                     {
                         PrintLog(Language.t("载入核心必须文件"));
-                        Functions.CopyDirectory("data/core/" + core + "/files/", serverdir);
+                        Functions.CopyDirectory("data/core/" + Core + "/files/", serverdir);
                     }
 
-                    lastcore = core;
+                    lastcore = Core;
                     SaveServerConfig();
                 }
 
                 //更改server.properties
                 PrintLog(Language.t("处理 server.properties 中"));
                 if (!File.Exists(serverdir + "/server.properties") &&
-                    File.Exists("data/core/" + core + "/server.properties"))
-                    File.Copy("data/core/" + core + "/server.properties", serverdir + "/server.properties");
+                    File.Exists("data/core/" + Core + "/server.properties"))
+                    File.Copy("data/core/" + Core + "/server.properties", serverdir + "/server.properties");
                 if (c.corestruct.serverproperties != null)
                 {
                     List<string> lines = new List<string>();
@@ -323,7 +323,7 @@ namespace EasyCraft.Core
                 process.Exited += Process_Exited;
 
 
-                if (c.usecmd || c.multicommand || c.os == "docker")
+                if (c.usecmd || c.multicommand)
                 {
                     process.StartInfo.FileName =
                         Environment.OSVersion.Platform == PlatformID.Win32NT ? "cmd.exe" : "bash";
@@ -356,87 +356,42 @@ namespace EasyCraft.Core
                     }
                     else
                     {
-                        if (c.os != "docker")
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                         {
-                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                            {
-                                if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
-                                File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
-                            }
-                            else
-                            {
-                                if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
-
-                                File.AppendAllText(serverdir + "start.sh", "#!/bin/bash\r\n");
-                            }
-
-
-                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                            {
-                                File.AppendAllText(serverdir + "start.bat",
-                                    PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
-                            }
-                            else
-                            {
-                                File.AppendAllText(serverdir + "start.sh",
-                                    PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
-                            }
-
-                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                            {
-                                process.StartInfo.FileName = serverdir + "/start.bat";
-                            }
-                            else
-                            {
-                                process.StartInfo.FileName = "/bin/bash";
-                                process.StartInfo.Arguments = serverdir + "/start.sh";
-                            }
+                            if (File.Exists(serverdir + "/start.bat")) File.Delete(serverdir + "/start.bat");
+                            File.AppendAllText(serverdir + "start.bat", "@echo off\r\n");
                         }
                         else
                         {
+                            if (File.Exists(serverdir + "/start.sh")) File.Delete(serverdir + "/start.sh");
 
-                            //Docker启动
-                            PrintLog(Language.t("当前核心使用了 Docker ,此功能仍为测试性功能"));
-                            string dockerport = PhraseServerCommand(c.corestruct.startconfig.docker.port);
-                            string envstr = "";
-                            if (c.corestruct.startconfig.docker.envvar != null &&
-                                c.corestruct.startconfig.docker.envvar.Count != 0)
-                            {
-                                foreach (KeyValuePair<string, string> pair in c.corestruct.startconfig.docker.envvar)
-                                {
-                                    envstr += $" -e {pair.Key}={PhraseServerCommand(pair.Value)}";
-                                }
-                            }
+                            File.AppendAllText(serverdir + "start.sh", "#!/bin/bash\r\n");
+                        }
 
-                            string dockerserverdir = "";
-                            if (Environment.OSVersion.Platform == PlatformID.Unix)
-                            {
-                                dockerserverdir = serverdir;
-                            }
-                            else
-                            {
-                                dockerserverdir = serverdir.Replace("\\", "/");
-                                dockerserverdir = dockerserverdir.Replace(Path.GetPathRoot(dockerserverdir) + ":",
-                                    "/" + Path.GetPathRoot(dockerserverdir));
-                            }
 
-                            string argument =
-                                $"run -i --name mc-server{id} -p {dockerport}{envstr} -v \"{dockerserverdir}\":{c.corestruct.startconfig.docker.dockerpath} {c.corestruct.startconfig.docker.imagename}";
-                            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                            {
-                                process.StartInfo.FileName = "./tools/bash.exe";
-                                process.StartInfo.Arguments = "docker " + argument;
-                            }
-                            else
-                            {
-                                process.StartInfo.FileName = "docker";
-                                process.StartInfo.Arguments = argument;
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                        {
+                            File.AppendAllText(serverdir + "start.bat",
+                                PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                        }
+                        else
+                        {
+                            File.AppendAllText(serverdir + "start.sh",
+                                PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
+                        }
 
-                            }
+                        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                        {
+                            process.StartInfo.FileName = serverdir + "/start.bat";
+                        }
+                        else
+                        {
+                            process.StartInfo.FileName = "/bin/bash";
+                            process.StartInfo.Arguments = serverdir + "/start.sh";
                         }
                     }
-
                 }
+            
                 else
                 {
                     process.StartInfo.FileName = PhraseServerCommand(c.path);

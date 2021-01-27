@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using EasyCraft.Docker;
 using EasyCraft.Web.Classes;
 
 namespace EasyCraft.Core
@@ -22,13 +21,11 @@ namespace EasyCraft.Core
         public static readonly string BuildID = "{BUILDID}";
         public static readonly string BuildOS = "{BUILDOS}";
         public static readonly string BuildTime = "{BUILDTIME}";
-        public static readonly string Copyright = "EasyCraft Team 2020,Made with Love by Kengwang";
+        public static readonly string Copyright = "EasyCraft Team 2021,Made with Love by Kengwang";
     }
 
     class Settings
     {
-        public static Docker.Docker docker;
-
         static SettingsFile sf = new SettingsFile();
         
         public readonly static string release = "Personal";
@@ -182,16 +179,6 @@ namespace EasyCraft.Core
                             break;
                         }
                     }
-
-                    while (true)
-                    {
-                        Console.WriteLine(Language.t("是否启用 Docker 支持 (需要本机安装 Docker) [yes]:"));
-                        string line = Console.ReadLine();
-                        if (string.IsNullOrEmpty(line)) line = "yes";
-                        sf.Advanced.enabledocker = line == "yes";
-                        break;
-                    }
-
                     FastConsole.PrintSuccess(Language.t("安装完成,正在保存配置文件"));
                     File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
                     LoadConfig();
@@ -265,7 +252,6 @@ namespace EasyCraft.Core
 
     class AdvancedConfig
     {
-        public bool enabledocker { get; set; }
         public bool usesandboxie { get; set; } //Not Support yet
     }
 
