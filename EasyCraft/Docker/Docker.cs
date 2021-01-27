@@ -141,7 +141,7 @@ namespace EasyCraft.Docker
 
         public bool CreateContainer()
         {
-
+            return false;
         }
 
     }
