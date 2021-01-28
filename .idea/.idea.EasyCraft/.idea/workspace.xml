@@ -24,8 +24,8 @@
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,15 +56,15 @@
       <option value="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Core.cs" />
-      <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/Structs/ServerBasicInfo.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/Structs/PluginInfo.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" />
       <option value="$PROJECT_DIR$/../../Plugin/ExamplePlugin/EasyCraftPlugin/EasyCraftPlugin/Dep.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Core/Server.cs" />
-      <option value="$PROJECT_DIR$/EasyCraft/Program.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginHandler.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Program.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1iJKXSDoHdQ9d2Vhcs4phgRPvu0" />
@@ -153,7 +153,7 @@
       <workItem from="1605408937615" duration="8008000" />
       <workItem from="1606001987179" duration="446000" />
       <workItem from="1611762407091" duration="1509000" />
-      <workItem from="1611764021735" duration="18220000" />
+      <workItem from="1611764021735" duration="19607000" />
     </task>
     <servers />
   </component>

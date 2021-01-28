@@ -49,6 +49,7 @@ namespace EasyCraft
 
             FastConsole.PrintInfo("Loading Language Pack");
             Language.LoadLanguagePack();
+            
             FastConsole.PrintInfo(Language.t("加载配置表中"));
             Settings.LoadConfig();
             FastConsole.PrintInfo(Language.t("检查更新中"));

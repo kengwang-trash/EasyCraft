@@ -89,73 +89,12 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    FastConsole.PrintWarning(Language.t("未找到配置文件,正在启动安装进程"));
-                    FastConsole.PrintWarning(Language.t("正在准备安装... 请稍候"));
-                    sf.FTP = new FTPConf();
-                    sf.HTTP = new HTTPConf();
-                    Console.WriteLine(Language.t("请填写以下信息"));
-                    while (true)
-                    {
-                        Console.WriteLine(Language.t("HTTP 监听端口 [80]:"));
-                        var line = Console.ReadLine();
-                        if (string.IsNullOrEmpty(line)) line = "80";
-                        var port = 0;
-                        if (int.TryParse(line, out port))
-                        {
-                            sf.HTTP.port = port;
-                            break;
-                        }
-
-                        FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
-                    }
-
-                    while (true)
-                    {
-                        Console.WriteLine(Language.t("FTP 监听端口 [21]:"));
-                        var line = Console.ReadLine();
-                        if (string.IsNullOrEmpty(line)) line = "21";
-                        var port = 0;
-                        if (int.TryParse(line, out port))
-                        {
-                            sf.FTP.port = port;
-                            break;
-                        }
-
-                        FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
-                    }
-
-                    while (true)
-                    {
-                        Console.WriteLine(Language.t("服务器远端IP <用户可以通过此 IP 访问服务器>:"));
-                        var line = Console.ReadLine();
-                        if (string.IsNullOrEmpty(line))
-                        {
-                            FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
-                        }
-                        else
-                        {
-                            sf.FTP.remote_addr = line;
-                            break;
-                        }
-                    }
-
-                    while (true)
-                    {
-                        Console.WriteLine(Language.t("授权密钥 [若无请留空]:"));
-                        var line = Console.ReadLine();
-                        if (string.IsNullOrEmpty(line))
-                        {
-                            sf.key = "none";
-                            break;
-                        }
-
-                        sf.key = line;
-                        break;
-                    }
-
-                    FastConsole.PrintSuccess(Language.t("安装完成,正在保存配置文件"));
-                    File.WriteAllText("easycraft.conf", JsonConvert.SerializeObject(sf));
-                    LoadConfig();
+                    #if WINDOWS
+                    FastConsole.PrintWarning(Language.t("未找到配置文件,请运行 install.exe 进行安装"));
+                    #else
+                    FastConsole.PrintWarning(Language.t("未找到配置文件,请运行 `bash install.sh` 进行安装"));
+                    #endif
+                    Environment.Exit(-5);
                 }
             }
             catch (Exception e)
