@@ -23,16 +23,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/Structs/PluginInfo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/Structs/ServerBasicInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources/8eee639d-08dd-44ae-9f24-1880b8ef979d.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/dataSources/8eee639d-08dd-44ae-9f24-1880b8ef979d.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Server.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +54,6 @@
     <changedPaths>
       <option value="$PROJECT_DIR$/EasyCraft/EasyCraft.csproj" />
       <option value="$PROJECT_DIR$/EasyCraft/Docker/Docker.cs" />
-      <option value="$PROJECT_DIR$/EasyCraft/Program.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Core/CommandPhrase.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Core.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
@@ -70,7 +62,9 @@
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" />
       <option value="$PROJECT_DIR$/../../Plugin/ExamplePlugin/EasyCraftPlugin/EasyCraftPlugin/Dep.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Core/Server.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Program.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginHandler.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1iJKXSDoHdQ9d2Vhcs4phgRPvu0" />
@@ -159,7 +153,7 @@
       <workItem from="1605408937615" duration="8008000" />
       <workItem from="1606001987179" duration="446000" />
       <workItem from="1611762407091" duration="1509000" />
-      <workItem from="1611764021735" duration="16295000" />
+      <workItem from="1611764021735" duration="18220000" />
     </task>
     <servers />
   </component>

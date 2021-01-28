@@ -1,25 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Data.SQLite;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.IO;
 using System.Linq;
 using EasyCraft.Web.JSONCallback;
 
 namespace EasyCraft.Core
 {
-    class Server
+    internal class Server
     {
         public readonly int Id;
+
+        public bool Autostart;
+
+        private Core c;
+        public string Core;
+        public DateTime Expiretime = DateTime.MaxValue;
+        private string lastcore = "";
+
+
+        public Dictionary<long, ServerLog> log = new Dictionary<long, ServerLog>();
+
+        public int Maxplayer = 10;
         public string Name = "EasyCraft Server";
         public int Owner;
         public int Port;
-        public string Core;
 
-        public int Maxplayer = 10;
+        public Process process;
         public int Ram = 1024;
+        private string serverdir = "";
+
+        public string World = "world";
+
+        public Server(int id)
+        {
+            Id = id;
+            RefreshServerConfig();
+        }
 
         public bool Running
         {
@@ -37,46 +54,21 @@ namespace EasyCraft.Core
             }
         }
 
-        public bool Autostart = false;
-
-        public string World = "world";
-        public DateTime Expiretime = DateTime.MaxValue;
-
-        public Process process = null;
-        string lastcore = "";
-        string serverdir = "";
-
-
-        public Dictionary<long, ServerLog> log = new Dictionary<long, ServerLog>();
-
-        Core c;
-
-        public Server(int id)
-        {
-            this.Id = id;
-            RefreshServerConfig();
-        }
-
         public static int CreateServer()
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText =
                 "INSERT INTO `server` (`name`,`expiretime`) VALUES ('EasyCraft Server', $1 );select last_insert_rowid();";
             c.Parameters.AddWithValue("$1", DateTime.Now);
-            SQLiteDataReader r = c.ExecuteReader();
+            var r = c.ExecuteReader();
             if (r.Read())
-            {
                 return r.GetInt32(0);
-            }
-            else
-            {
-                throw new Exception("Failed to create");
-            }
+            throw new Exception("Failed to create");
         }
 
         public void SaveServerConfig()
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText =
                 "UPDATE `server` SET name = $name , owner = $owner , port = $port , core = $core , maxplayer = $maxplayer , ram = $ram , world = $world , expiretime = $expiretime , autostart = $autostart , lastcore = $lastcore WHERE id = $id ";
             c.Parameters.AddWithValue("$id", Id);
@@ -95,10 +87,10 @@ namespace EasyCraft.Core
 
         public void RefreshServerConfig()
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM server WHERE id = $id ";
             c.Parameters.AddWithValue("$id", Id);
-            SQLiteDataReader render = c.ExecuteReader();
+            var render = c.ExecuteReader();
 
             if (render.Read())
             {
@@ -118,9 +110,9 @@ namespace EasyCraft.Core
                 FastConsole.PrintWarning(string.Format(Language.t("服务器 {0} 加载失败."), Id));
             }
 
-            serverdir = Environment.CurrentDirectory + "/data/server/server" + Id.ToString() + "/";
+            serverdir = Environment.CurrentDirectory + "/data/server/server" + Id + "/";
 
-            System.IO.Directory.CreateDirectory(serverdir);
+            Directory.CreateDirectory(serverdir);
 
             try
             {
@@ -140,7 +132,7 @@ namespace EasyCraft.Core
         private void PrintLog(string message)
         {
             if (message == null) return;
-            ServerLog l = new ServerLog();
+            var l = new ServerLog();
             l.iserror = false;
             l.message = message;
             l.time = DateTime.Now;
@@ -152,7 +144,7 @@ namespace EasyCraft.Core
         private void PrintError(string message)
         {
             if (message == null) return;
-            ServerLog l = new ServerLog();
+            var l = new ServerLog();
             l.iserror = true;
             l.message = message;
             l.time = DateTime.Now;
@@ -176,13 +168,13 @@ namespace EasyCraft.Core
 
         public void Stop()
         {
-            if (process == null || process.HasExited == true) return;
+            if (process == null || process.HasExited) return;
             process.StandardInput.Write("stop\r\n");
         }
 
         public void Kill()
         {
-            if (process == null || process.HasExited == true) return;
+            if (process == null || process.HasExited) return;
             process.Kill(true);
         }
 
@@ -191,9 +183,8 @@ namespace EasyCraft.Core
             //这个不建议使用,我只是用着来玩玩哦~
             //具体开不开放给普通用户我也不知道呢~
             //这个功能是把服务器下所有的进程全部结束
-            Process[] processes = Process.GetProcesses();
-            foreach (Process process in processes)
-            {
+            var processes = Process.GetProcesses();
+            foreach (var process in processes)
                 try
                 {
                     if (process.MainModule.FileName.Replace('/', '\\').Contains(serverdir.Replace('/', '\\')))
@@ -204,14 +195,12 @@ namespace EasyCraft.Core
                 }
                 catch (Exception)
                 {
-                    continue;
                 }
-            }
         }
 
         public void Send(string cmd)
         {
-            if (process == null || process.HasExited == true) return;
+            if (process == null || process.HasExited) return;
             process.StandardInput.Write(cmd);
         }
 
@@ -255,11 +244,10 @@ namespace EasyCraft.Core
                     File.Copy("data/core/" + Core + "/server.properties", serverdir + "/server.properties");
                 if (c.corestruct.serverproperties != null)
                 {
-                    List<string> lines = new List<string>();
-                    List<string> convertedname = new List<string>();
+                    var lines = new List<string>();
+                    var convertedname = new List<string>();
                     if (File.Exists(serverdir + "/server.properties"))
-                    {
-                        foreach (string line in File.ReadAllLines(serverdir + "/server.properties"))
+                        foreach (var line in File.ReadAllLines(serverdir + "/server.properties"))
                         {
                             if (line.StartsWith("#") || line.IndexOf("=") == -1)
                             {
@@ -267,44 +255,31 @@ namespace EasyCraft.Core
                                 continue;
                             }
 
-                            string name = line.Substring(0, line.IndexOf("="));
+                            var name = line.Substring(0, line.IndexOf("="));
                             convertedname.Add(name);
                             if (c.corestruct.serverproperties.ContainsKey(name))
-                            {
                                 if (c.corestruct.serverproperties[name].isvar)
                                 {
                                     if (c.corestruct.serverproperties[name].what != "{REMOVE}")
-                                    {
                                         lines.Add(
                                             name + "=" +
                                             PhraseServerCommand(c.corestruct.serverproperties[name].what));
-                                    }
 
                                     continue;
                                 }
-                            }
 
                             lines.Add(line);
                         }
-                    }
 
-                    List<string> reconvert = c.corestruct.serverproperties.Keys.Except(convertedname).ToList();
-                    foreach (string key in reconvert)
-                    {
+                    var reconvert = c.corestruct.serverproperties.Keys.Except(convertedname).ToList();
+                    foreach (var key in reconvert)
                         if (c.corestruct.serverproperties.ContainsKey(key))
                         {
                             if (c.corestruct.serverproperties[key].isvar)
-                            {
                                 lines.Add(key + "=" + PhraseServerCommand(c.corestruct.serverproperties[key].what));
-                                continue;
-                            }
                             else if (!string.IsNullOrEmpty(c.corestruct.serverproperties[key].defvalue))
-                            {
                                 lines.Add(key + "=" + c.corestruct.serverproperties[key].defvalue);
-                                continue;
-                            }
                         }
-                    }
 
                     File.WriteAllLines(serverdir + "/server.properties", lines);
                 }
@@ -342,17 +317,11 @@ namespace EasyCraft.Core
                             File.AppendAllText(serverdir + "start.bash", "#!/bin/bash\r\n");
                         }
 
-                        foreach (string com in c.commands)
-                        {
+                        foreach (var com in c.commands)
                             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                            {
                                 File.AppendAllText(serverdir + "start.bat", PhraseServerCommand(com) + "\r\n");
-                            }
                             else
-                            {
                                 File.AppendAllText(serverdir + "start.sh", PhraseServerCommand(com) + "\r\n");
-                            }
-                        }
                     }
                     else
                     {
@@ -370,15 +339,11 @@ namespace EasyCraft.Core
 
 
                         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                        {
                             File.AppendAllText(serverdir + "start.bat",
                                 PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
-                        }
                         else
-                        {
                             File.AppendAllText(serverdir + "start.sh",
                                 PhraseServerCommand(c.path) + " " + PhraseServerCommand(c.argument));
-                        }
 
                         if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                         {
@@ -391,7 +356,7 @@ namespace EasyCraft.Core
                         }
                     }
                 }
-            
+
                 else
                 {
                     process.StartInfo.FileName = PhraseServerCommand(c.path);
@@ -407,13 +372,12 @@ namespace EasyCraft.Core
                         process.BeginOutputReadLine();
                         process.BeginErrorReadLine();
                         PluginBase.PluginBase.BroadcastEvent("ServerStarted", new object[] {Id});
-                        PrintLog(Language.t("服务器已开启"));  
+                        PrintLog(Language.t("服务器已开启"));
                     }
                     else
                     {
                         PrintLog(Language.t("服务器被插件禁止开启"));
                     }
-
                 }
                 catch (Exception e)
                 {

@@ -2,39 +2,40 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace EasyCraft.Core
 {
-    class FastConsole
+    internal class FastConsole
     {
-        static StreamWriter logfile = null;
+        private static StreamWriter logfile;
+        public static FastConsoleLogLevel logLevel;
+
         public static void PrintInfo(string message)
         {
-
-            string print = "[INFO] " + message;
+            var print = "[INFO] " + message;
             if (logLevel >= FastConsoleLogLevel.noserver)
                 Console.WriteLine(print);
-            logfile.WriteLine("[" + DateTime.Now.ToString() + " INFO] " + message);
+            logfile.WriteLine("[" + DateTime.Now + " INFO] " + message);
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
         }
 
         public static void Init()
         {
             //设定书写的开始位置为文件的末尾 
-            FileStream files = File.OpenWrite("log.log");
+            var files = File.OpenWrite("log.log");
             files.Position = files.Length;
-            logfile=new StreamWriter(files, Encoding.UTF8);
+            logfile = new StreamWriter(files, Encoding.UTF8);
             logfile.AutoFlush = true;
         }
 
         public static void PrintTrash(string message)
         {
-
-            string print = "[DEBUG] " + message;
+            var print = "[DEBUG] " + message;
             if (logLevel > FastConsoleLogLevel.notrash)
             {
                 Console.WriteLine(print);
-                logfile.WriteLine("[" + DateTime.Now.ToString() + " DEBUG] " + message);
+                logfile.WriteLine("[" + DateTime.Now + " DEBUG] " + message);
 
                 //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " DEBUG] " + message + "\r\n");
             }
@@ -42,66 +43,61 @@ namespace EasyCraft.Core
 
         public static void PrintSuccess(string message)
         {
-            ConsoleColor currentForeColor = Console.ForegroundColor;
+            var currentForeColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Green;
-            string print = "[INFO] " + message;
+            var print = "[INFO] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
-            logfile.WriteLine("[" + DateTime.Now.ToString() + " INFO] " + message);
+            logfile.WriteLine("[" + DateTime.Now + " INFO] " + message);
 
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " INFO] " + message + "\r\n");
         }
 
         public static void PrintWarning(string message)
         {
-            ConsoleColor currentForeColor = Console.ForegroundColor;
+            var currentForeColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Yellow;
-            string print = "[WARN] " + message;
+            var print = "[WARN] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " WARN] " + message + "\r\n");
-            logfile.WriteLine("[" + DateTime.Now.ToString() + " WARN] " + message);
-
+            logfile.WriteLine("[" + DateTime.Now + " WARN] " + message);
         }
 
         public static void PrintError(string message)
         {
-            ConsoleColor currentForeColor = Console.ForegroundColor;
+            var currentForeColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            string print = "[ERROR] " + message;
+            var print = "[ERROR] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " ERROR] " + message + "\r\n");
-            logfile.WriteLine("[" + DateTime.Now.ToString() + " ERROR] " + message);
-
+            logfile.WriteLine("[" + DateTime.Now + " ERROR] " + message);
         }
-
 
 
         public static void PrintFatal(string message)
         {
-            ConsoleColor currentForeColor = Console.ForegroundColor;
+            var currentForeColor = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            string print = "[FATAL] " + message;
+            var print = "[FATAL] " + message;
             Console.WriteLine(print);
             Console.ForegroundColor = currentForeColor;
             //File.AppendAllTextAsync("log.log", "[" + DateTime.Now.ToString() + " FATAL] " + message + "\r\n");
-            logfile.WriteLine("[" + DateTime.Now.ToString() + " FATAL] " + message);
-
+            logfile.WriteLine("[" + DateTime.Now + " FATAL] " + message);
         }
-        public static FastConsoleLogLevel logLevel;
     }
 
 
-    enum FastConsoleLogLevel
+    internal enum FastConsoleLogLevel
     {
-        no,//只输出Fatal和Error
-        noserver,//不输出服务器内的日志
+        no, //只输出Fatal和Error
+        noserver, //不输出服务器内的日志
         notrash,
-        all//所有
+        all //所有
     }
 
-    class Language
+    internal class Language
     {
         public static Dictionary<string, string> dic = new Dictionary<string, string>();
 
@@ -109,14 +105,12 @@ namespace EasyCraft.Core
         {
             try
             {
-                string fi = File.ReadAllText("lang.json");
-                dic = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(fi);
+                var fi = File.ReadAllText("lang.json");
+                dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(fi);
             }
             catch (Exception)
             {
-
             }
-
         }
 
         public static string t(string input)

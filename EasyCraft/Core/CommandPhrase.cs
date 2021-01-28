@@ -1,27 +1,21 @@
 ﻿using EasyCraft.Web;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EasyCraft.Core
 {
-    class CommandPhrase
+    internal class CommandPhrase
     {
         public static void PhraseCommand(string commandstr)
         {
-            if (string.IsNullOrEmpty(commandstr))
-            {
-                return;
-            }
-            string[] command = commandstr.Split(' ');
+            if (string.IsNullOrEmpty(commandstr)) return;
+            var command = commandstr.Split(' ');
             if (command[0] == "start")
             {
-                Server s = ServerManager.servers[int.Parse(command[1])];
+                var s = ServerManager.servers[int.Parse(command[1])];
                 s.Start();
             }
             else if (command[0] == "stop")
             {
-                Server s = ServerManager.servers[int.Parse(command[1])];
+                var s = ServerManager.servers[int.Parse(command[1])];
                 s.Stop();
             }
             else if (command[0] == "theme")
@@ -35,12 +29,12 @@ namespace EasyCraft.Core
             }
             else if (command[0] == "kill")
             {
-                Server s = ServerManager.servers[int.Parse(command[1])];
+                var s = ServerManager.servers[int.Parse(command[1])];
                 s.Kill();
             }
             else if (command[0] == "killall")
             {
-                Server s = ServerManager.servers[int.Parse(command[1])];
+                var s = ServerManager.servers[int.Parse(command[1])];
                 s.KillAll();
             }
             else if (command[0] == "version")

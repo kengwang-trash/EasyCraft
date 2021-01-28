@@ -1,34 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace EasyCraft.Core
 {
-    class Schedule
+    internal class Schedule
     {
         public static List<Schedule> schedules = new List<Schedule>();
-        private static Timer timer = new Timer(timercallback, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
 
-        public int sid;
-        public int server;
-        public int type;
-        public int interval;
-        public string param;
+        private static readonly Timer timer = new Timer(timercallback, null, Timeout.InfiniteTimeSpan,
+            Timeout.InfiniteTimeSpan);
+
         public bool enable;
+        public int interval;
         public DateTime lasttime;
         public DateTime nexttime;
+        public string param;
+        public int server;
+
+        public int sid;
+        public int type;
 
         public static void LoadSchedule()
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM `schedule`";
-            SQLiteDataReader r = c.ExecuteReader();
+            var r = c.ExecuteReader();
             while (r.Read())
             {
-                Schedule s = new Schedule();
+                var s = new Schedule();
                 s.sid = r.GetInt32(0);
                 s.server = r.GetInt32(1);
                 s.type = r.GetInt32(2);
@@ -50,47 +51,46 @@ namespace EasyCraft.Core
         private static void timercallback(object state)
         {
             FastConsole.PrintTrash("[Schedule] Start Schedule");
-            List<Schedule> nowschedules = schedules.Where(s => { return s.nexttime.ToString("yyyy-MM-dd HH:mm") == DateTime.Now.ToString("yyyy-MM-dd HH:mm") && s.enable; }).ToList();
-            foreach (Schedule s in nowschedules)
+            var nowschedules = schedules.Where(s =>
+            {
+                return s.nexttime.ToString("yyyy-MM-dd HH:mm") == DateTime.Now.ToString("yyyy-MM-dd HH:mm") &&
+                       s.enable;
+            }).ToList();
+            foreach (var s in nowschedules)
             {
                 try
                 {
                     switch (s.type)
                     {
-                        case 1://执行CMD
-                            if (ServerManager.servers[s.server].Running)
-                            {
-                                ServerManager.servers[s.server].Send(s.param);
-                            }
+                        case 1: //执行CMD
+                            if (ServerManager.servers[s.server].Running) ServerManager.servers[s.server].Send(s.param);
                             break;
-                        case 2://开服
-                            if (!ServerManager.servers[s.server].Running)
-                            {
-                                ServerManager.servers[s.server].Start();
-                            }
+                        case 2: //开服
+                            if (!ServerManager.servers[s.server].Running) ServerManager.servers[s.server].Start();
                             break;
-                        case 3://关服
-                            if (ServerManager.servers[s.server].Running)
-                            {
-                                ServerManager.servers[s.server].Stop();
-                            }
+                        case 3: //关服
+                            if (ServerManager.servers[s.server].Running) ServerManager.servers[s.server].Stop();
                             break;
-                        case 4://重启
+                        case 4: //重启
                             if (ServerManager.servers[s.server].Running)
                             {
                                 ServerManager.servers[s.server].Stop();
                                 ServerManager.servers[s.server].Start();
                             }
+
                             break;
                     }
-                    FastConsole.PrintTrash("[Schedule] Server " + s.server.ToString() + " Excute Successful");
+
+                    FastConsole.PrintTrash("[Schedule] Server " + s.server + " Excute Successful");
                 }
                 catch (Exception)
                 {
-                    FastConsole.PrintTrash("[Schedule] Server " + s.server.ToString() + " Excute Failed");
+                    FastConsole.PrintTrash("[Schedule] Server " + s.server + " Excute Failed");
                 }
+
                 s.nexttime = DateTime.Now.AddMinutes(s.interval);
             }
+
             timer.Change(TimeSpan.FromMinutes(1), Timeout.InfiniteTimeSpan);
         }
     }

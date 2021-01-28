@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
@@ -9,11 +7,11 @@ namespace SharpFtpServer
 {
     public class RateLimitingStream : Stream
     {
-        private Stream _baseStream;
-        private System.Diagnostics.Stopwatch _watch;
-        private int _speedLimit;
+        private readonly Stream _baseStream;
+        private readonly double _resolution;
+        private readonly int _speedLimit;
         private long _transmitted;
-        private double _resolution;
+        private readonly Stopwatch _watch;
 
         public RateLimitingStream(Stream baseStream, int speedLimit)
             : this(baseStream, speedLimit, 1)
@@ -23,25 +21,36 @@ namespace SharpFtpServer
         public RateLimitingStream(Stream baseStream, int speedLimit, double resolution)
         {
             _baseStream = baseStream;
-            _watch = new System.Diagnostics.Stopwatch();
+            _watch = new Stopwatch();
             _speedLimit = speedLimit;
             _resolution = resolution;
         }
 
+        public override bool CanRead => false;
+
+        public override bool CanSeek => false;
+
+        public override bool CanWrite => true;
+
+        public override long Length => _baseStream.Length;
+
+        public override long Position
+        {
+            get => _baseStream.Position;
+            set => throw new NotImplementedException();
+        }
+
         public override void Write(byte[] buffer, int offset, int count)
         {
-            if (!_watch.IsRunning)
-            {
-                _watch.Start();
-            }
+            if (!_watch.IsRunning) _watch.Start();
 
-            int dataSent = 0;
+            var dataSent = 0;
 
-            while (_speedLimit > 0 && _transmitted >= (_speedLimit * _resolution))
+            while (_speedLimit > 0 && _transmitted >= _speedLimit * _resolution)
             {
                 Thread.Sleep(10);
 
-                if (_watch.ElapsedMilliseconds > (1000 * _resolution))
+                if (_watch.ElapsedMilliseconds > 1000 * _resolution)
                 {
                     _transmitted = 0;
                     _watch.Restart();
@@ -52,48 +61,16 @@ namespace SharpFtpServer
             _transmitted += count;
             dataSent += count;
 
-            if (_watch.ElapsedMilliseconds > (1000 * _resolution))
+            if (_watch.ElapsedMilliseconds > 1000 * _resolution)
             {
                 _transmitted = 0;
                 _watch.Restart();
             }
         }
 
-        public override bool CanRead
-        {
-            get { return false; }
-        }
-
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return true; }
-        }
-
         public override void Flush()
         {
             _baseStream.Flush();
-        }
-
-        public override long Length
-        {
-            get { return _baseStream.Length; }
-        }
-
-        public override long Position
-        {
-            get
-            {
-                return _baseStream.Position;
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
         }
 
         public override int Read(byte[] buffer, int offset, int count)

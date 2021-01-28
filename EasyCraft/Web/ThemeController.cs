@@ -1,62 +1,52 @@
-﻿using EasyCraft.Core;
-using EasyCraft.Web.Classes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
-using System.Net;
-using System.Reflection.Emit;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
+using EasyCraft.Core;
+using EasyCraft.Web.Classes;
+using Newtonsoft.Json;
 
 namespace EasyCraft.Web
 {
-    class ThemeController
+    internal class ThemeController
     {
-        static Dictionary<string, string> component = new Dictionary<string, string>();
-        static Dictionary<string, string> page = new Dictionary<string, string>();
-        static Dictionary<string, string> themeConfig = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> component = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> page = new Dictionary<string, string>();
+        private static Dictionary<string, string> themeConfig = new Dictionary<string, string>();
         public static string themeName = "MDefault";
 
 
         public static void InitComp()
         {
             component.Clear();
-            string[] files = Directory.GetFiles("data/theme/" + themeName + "/component/", "*.html");
-            foreach (string file in files)
-            {
-                component[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
-            }
+            var files = Directory.GetFiles("data/theme/" + themeName + "/component/", "*.html");
+            foreach (var file in files) component[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
         }
 
         public static void InitPage()
         {
             page.Clear();
-            string[] files = Directory.GetFiles("data/theme/" + themeName + "/page/", "*.html");
-            foreach (string file in files)
-            {
-                page[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
-            }
+            var files = Directory.GetFiles("data/theme/" + themeName + "/page/", "*.html");
+            foreach (var file in files) page[Path.GetFileNameWithoutExtension(file)] = File.ReadAllText(file);
         }
 
 
         public static void LoadThemeConfig()
         {
             themeConfig =
-                Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                JsonConvert.DeserializeObject<Dictionary<string, string>>(
                     File.ReadAllText("data/theme/" + themeName + "/config/config.json"));
         }
 
         public static void SaveThemeConfig()
         {
             File.WriteAllText("data/theme/" + themeName + "/config/config.json",
-                Newtonsoft.Json.JsonConvert.SerializeObject(themeConfig));
+                JsonConvert.SerializeObject(themeConfig));
         }
 
         public static string LoadPage(string name, WebPanelPhraser wp)
         {
-            string pagetext = File.ReadAllText("data/theme/" + ThemeController.themeName + "/page/" + name + ".html");
+            var pagetext = File.ReadAllText("data/theme/" + themeName + "/page/" + name + ".html");
             //string pagetext = page[name];
             return PhraseStatment(pagetext, new Dictionary<string, string>(), wp, "page." + name);
         }
@@ -65,43 +55,40 @@ namespace EasyCraft.Web
         {
             if (CheckComponentPath(comname))
             {
-                string pagetext =
-                    File.ReadAllText("data/theme/" + ThemeController.themeName + "/component/" + comname + ".html");
+                var pagetext =
+                    File.ReadAllText("data/theme/" + themeName + "/component/" + comname + ".html");
                 //string pagetext = component[comname];
                 return PhraseStatment(pagetext, postvars, wp, "comp." + comname);
             }
-            else
-            {
-                return "Theme Error: Component \"" + comname + "\" Not Found";
-            }
+
+            return "Theme Error: Component \"" + comname + "\" Not Found";
         }
 
         private static string PhraseStatment(string text, Dictionary<string, string> postvars, WebPanelPhraser wp,
             string pageidf = "unknown")
         {
-            string rettext = "";
-            string[] lines = text.Split("\r\n");
+            var rettext = "";
+            var lines = text.Split("\r\n");
             //If需要参数
-            Dictionary<int, bool> canprint = new Dictionary<int, bool>();
+            var canprint = new Dictionary<int, bool>();
             canprint[0] = true;
-            bool silentplease = false; //是人为的else屏蔽
-            int inifcond = 0;
+            var silentplease = false; //是人为的else屏蔽
+            var inifcond = 0;
             //For循环必要参数
-            bool inforcond = false;
-            int forline = 0;
-            int foridx = 0;
-            string forvarname = "";
-            bool noobjtofor = false; //For中没有元素
+            var inforcond = false;
+            var forline = 0;
+            var foridx = 0;
+            var forvarname = "";
+            var noobjtofor = false; //For中没有元素
             List<object> forlist = null;
-            int foritemid = -1;
+            var foritemid = -1;
 
-            for (int lid = 0; lid < lines.Length; lid++)
+            for (var lid = 0; lid < lines.Length; lid++)
             {
                 rettext += "\r\n";
-                string line = lines[lid];
-                int phraseidx = 0;
-                int lastphraseidx = 0;
-                goto linephrase;
+                var line = lines[lid];
+                var phraseidx = 0;
+                var lastphraseidx = 0;
                 linephrase:
                 try
                 {
@@ -109,23 +96,19 @@ namespace EasyCraft.Web
                     if (phraseidx == -1)
                     {
                         //这行不需要编译
-                        if ((inforcond && noobjtofor) || (inifcond != 0 && !canprint[inifcond])) continue;
+                        if (inforcond && noobjtofor || inifcond != 0 && !canprint[inifcond]) continue;
                         rettext += line.Substring(lastphraseidx);
                     }
                     else
                     {
-                        string phrasecod = "";
+                        var phrasecod = "";
                         if (line.Length <= phraseidx + 4)
-                        {
                             phrasecod = "none";
-                        }
                         else
-                        {
                             phrasecod = line.Substring(phraseidx, 4);
-                        }
 
-                        if (((inifcond != 0 && !canprint[inifcond]) || (inforcond && noobjtofor)) &&
-                            (phrasecod != "{end" && phrasecod != "{els" && phrasecod != "{bre"))
+                        if ((inifcond != 0 && !canprint[inifcond] || inforcond && noobjtofor) && phrasecod != "{end" &&
+                            phrasecod != "{els" && phrasecod != "{bre")
                         {
                             //假如说if不允许就真滴不允许了,后面放心大胆写
                             //假如里面有if则可能会误判else,则需要判断内部是否有if,有的话需要inifcond++=false
@@ -141,9 +124,7 @@ namespace EasyCraft.Web
                         }
 
                         if (!(inifcond != 0 && !canprint[inifcond]))
-                        {
                             rettext += line.Substring(lastphraseidx, phraseidx - lastphraseidx);
-                        }
 
                         if (phrasecod == "{end")
                         {
@@ -170,35 +151,28 @@ namespace EasyCraft.Web
                         //////////////////////// INCLUDE 语法开始 /////////////////////////
                         if (phrasecod == "{inc")
                         {
-                            int includelidx = line.IndexOf("}", phraseidx);
-                            int spacestart = line.IndexOf(" ", phraseidx);
-                            int kstart = line.IndexOf("}", phraseidx);
-                            if (spacestart == -1)
-                            {
-                                spacestart = kstart;
-                            }
+                            var includelidx = line.IndexOf("}", phraseidx);
+                            var spacestart = line.IndexOf(" ", phraseidx);
+                            var kstart = line.IndexOf("}", phraseidx);
+                            if (spacestart == -1) spacestart = kstart;
 
-                            int stringend = Math.Min(spacestart, kstart);
-                            string comname = line.Substring(phraseidx + 9, stringend - 9 - phraseidx);
-                            Dictionary<string, string> vars = new Dictionary<string, string>();
+                            var stringend = Math.Min(spacestart, kstart);
+                            var comname = line.Substring(phraseidx + 9, stringend - 9 - phraseidx);
+                            var vars = new Dictionary<string, string>();
                             if (spacestart < kstart)
                             {
                                 //有空格 有参数
-                                string varsstring = line.Substring(spacestart, kstart - spacestart).Trim();
-                                string[] varitems = varsstring.Split(',');
-                                foreach (string varitem in varitems)
+                                var varsstring = line.Substring(spacestart, kstart - spacestart).Trim();
+                                var varitems = varsstring.Split(',');
+                                foreach (var varitem in varitems)
                                 {
-                                    string[] kv = varitem.Split('=');
+                                    var kv = varitem.Split('=');
                                     if (kv.Length != 2) throw new Exception("Include parameter passing error");
                                     if (kv[1].StartsWith("\""))
-                                    {
                                         //直接哦~
                                         vars[kv[0]] = kv[1].Trim('\"');
-                                    }
                                     else
-                                    {
                                         vars[kv[0]] = PhraseVarName.VarString(kv[1], wp);
-                                    }
                                 }
                             }
 
@@ -213,16 +187,12 @@ namespace EasyCraft.Web
                         if (phrasecod == "{if:")
                         {
                             inifcond++;
-                            int iflidx = line.IndexOf("}", phraseidx);
-                            string varname = line.Substring(phraseidx + 4, iflidx - 4 - phraseidx);
+                            var iflidx = line.IndexOf("}", phraseidx);
+                            var varname = line.Substring(phraseidx + 4, iflidx - 4 - phraseidx);
                             if (PhraseVarName.isBool(varname, wp, postvars))
-                            {
                                 canprint[inifcond] = true;
-                            }
                             else
-                            {
                                 canprint[inifcond] = false;
-                            }
 
                             lastphraseidx = iflidx + 1;
                             goto linephrase;
@@ -232,9 +202,9 @@ namespace EasyCraft.Web
                         /////////////////////  VAR 变量输出语法开始 ////////////////////////
                         if (phrasecod == "{var")
                         {
-                            int varlidx = line.IndexOf("}", phraseidx) + 1;
-                            string varname = line.Substring(phraseidx + 1, varlidx - phraseidx - 2);
-                            string varval = PhraseVarName.VarString(varname, wp, postvars);
+                            var varlidx = line.IndexOf("}", phraseidx) + 1;
+                            var varname = line.Substring(phraseidx + 1, varlidx - phraseidx - 2);
+                            var varval = PhraseVarName.VarString(varname, wp, postvars);
                             rettext += varval;
                             lastphraseidx = varlidx;
                             goto linephrase;
@@ -244,18 +214,14 @@ namespace EasyCraft.Web
                         //////////////////////  SET 定义变量开始   /////////////////////////
                         if (phrasecod == "{set")
                         {
-                            int eqidx = line.IndexOf("=", phraseidx);
-                            int setlidx = line.IndexOf("}", phraseidx) + 1;
-                            string varname = line.Substring(phraseidx + 5, eqidx - phraseidx - 5).Trim(' ');
-                            string varval = line.Substring(eqidx + 1, setlidx - eqidx - 2).Trim(' ');
+                            var eqidx = line.IndexOf("=", phraseidx);
+                            var setlidx = line.IndexOf("}", phraseidx) + 1;
+                            var varname = line.Substring(phraseidx + 5, eqidx - phraseidx - 5).Trim(' ');
+                            var varval = line.Substring(eqidx + 1, setlidx - eqidx - 2).Trim(' ');
                             if (varval.StartsWith("\""))
-                            {
                                 postvars[varname] = varval.Trim('"');
-                            }
                             else
-                            {
                                 postvars[varname] = PhraseVarName.VarString(varval, wp, postvars);
-                            }
 
                             lastphraseidx = setlidx;
                             goto linephrase;
@@ -266,7 +232,7 @@ namespace EasyCraft.Web
                         //////////////////////  FOREACH 循环开始   ////////////////////////
                         if (phrasecod == "{for")
                         {
-                            int forlidx = line.IndexOf("}", phraseidx) + 1;
+                            var forlidx = line.IndexOf("}", phraseidx) + 1;
                             forvarname = line.Substring(phraseidx + 9, forlidx - phraseidx - 10);
                             inforcond = true;
                             forline = lid;
@@ -278,15 +244,9 @@ namespace EasyCraft.Web
                             }
                             else
                             {
-                                if (forvarname == "var.servers")
-                                {
-                                    wp.vars.for_server = (Server) forlist[++foritemid];
-                                }
+                                if (forvarname == "var.servers") wp.vars.for_server = (Server) forlist[++foritemid];
 
-                                if (forvarname == "var.cores")
-                                {
-                                    wp.vars.for_core = (Core.Core) forlist[++foritemid];
-                                }
+                                if (forvarname == "var.cores") wp.vars.for_core = (Core.Core) forlist[++foritemid];
                             }
 
                             lastphraseidx = forlidx;
@@ -306,48 +266,36 @@ namespace EasyCraft.Web
                                 lastphraseidx = phraseidx + 7;
                                 goto linephrase;
                             }
-                            else
-                            {
-                                if (forvarname == "var.servers")
-                                {
-                                    wp.vars.for_server = (Server) forlist[++foritemid];
-                                }
 
-                                if (forvarname == "var.cores")
-                                {
-                                    wp.vars.for_core = (Core.Core) forlist[++foritemid];
-                                }
+                            if (forvarname == "var.servers") wp.vars.for_server = (Server) forlist[++foritemid];
 
-                                inforcond = true;
-                                lid = forline;
-                                line = lines[lid];
-                                lastphraseidx = foridx;
-                                goto linephrase;
-                            }
+                            if (forvarname == "var.cores") wp.vars.for_core = (Core.Core) forlist[++foritemid];
+
+                            inforcond = true;
+                            lid = forline;
+                            line = lines[lid];
+                            lastphraseidx = foridx;
+                            goto linephrase;
                         }
 
                         //////////////////////  INIT 内置变量加载   ////////////////////////
 
                         if (phrasecod == "{ini")
                         {
-                            int inilidx = line.IndexOf("}", phraseidx) + 1;
-                            string initname = line.Substring(phraseidx + 6, inilidx - phraseidx - 7);
+                            var inilidx = line.IndexOf("}", phraseidx) + 1;
+                            var initname = line.Substring(phraseidx + 6, inilidx - phraseidx - 7);
                             if (initname == "servers")
                             {
                                 if (wp.vars.user.CheckUserAbility((int) Permisson.SeeAllServer)) //可以查看全部服务器
-                                {
                                     wp.vars.servers = ServerManager.servers.Values.ToList();
-                                }
                                 else
-                                {
                                     wp.vars.servers = ServerManager.servers.Values.ToList()
                                         .Where(s => s.Owner == wp.vars.user.uid).ToList();
-                                }
                             }
 
                             if (initname == "server")
                             {
-                                int sid = 0;
+                                var sid = 0;
                                 if (int.TryParse(wp.urllist[3], out sid))
                                 {
                                     if (ServerManager.servers.ContainsKey(sid))
@@ -378,12 +326,9 @@ namespace EasyCraft.Web
 
                             if (initname == "cores")
                             {
-                                DirectoryInfo[] root = new DirectoryInfo("data/core/").GetDirectories();
+                                var root = new DirectoryInfo("data/core/").GetDirectories();
                                 wp.vars.cores.Clear();
-                                foreach (DirectoryInfo di in root)
-                                {
-                                    wp.vars.cores.Add(new Core.Core(di.Name));
-                                }
+                                foreach (var di in root) wp.vars.cores.Add(new Core.Core(di.Name));
                             }
 
                             lastphraseidx = inilidx;
@@ -404,8 +349,8 @@ namespace EasyCraft.Web
                 catch (Exception e)
                 {
                     throw new Exception(
-                        "Theme Phrase Error: at \"" + pageidf + "\" Line " + (lid + 1).ToString() + " Position: " +
-                        (phraseidx + 1).ToString(), e);
+                        "Theme Phrase Error: at \"" + pageidf + "\" Line " + (lid + 1) + " Position: " +
+                        (phraseidx + 1), e);
                 }
             }
 
@@ -450,12 +395,12 @@ namespace EasyCraft.Web
         }
     }
 
-    class PhraseVarName
+    internal class PhraseVarName
     {
         public static bool isBool(string varname, WebPanelPhraser wp, Dictionary<string, string> postvar = null)
         {
-            bool result = false;
-            bool reverse = false;
+            var result = false;
+            var reverse = false;
             if (varname.StartsWith('!'))
             {
                 reverse = true;
@@ -466,12 +411,12 @@ namespace EasyCraft.Web
             {
                 if (varname.Contains("="))
                 {
-                    string[] arr = varname.Split('=');
-                    string comparestr = "";
-                    string originstr = "";
+                    var arr = varname.Split('=');
+                    var comparestr = "";
+                    var originstr = "";
 
-                    bool isbigorsmall = false;
-                    bool big = false;
+                    var isbigorsmall = false;
+                    var big = false;
 
                     if (arr[0].EndsWith('>'))
                     {
@@ -510,44 +455,28 @@ namespace EasyCraft.Web
 
                     if (!isbigorsmall)
                     {
-                        bool res = originstr == comparestr;
+                        var res = originstr == comparestr;
                         return reverse ? !res : res;
                     }
-                    else
+
+                    int origint = 0, comint = 0;
+                    int.TryParse(originstr, out origint);
+                    int.TryParse(comparestr, out comint);
+                    if (origint <= comint)
                     {
-                        int origint = 0, comint = 0;
-                        int.TryParse(originstr, out origint);
-                        int.TryParse(comparestr, out comint);
-                        if (origint <= comint)
-                        {
-                            if (big)
-                            {
-                                return reverse ? true : false;
-                            }
-                            else
-                            {
-                                return reverse ? false : true;
-                            }
-                        }
-                        else
-                        {
-                            if (!big)
-                            {
-                                return reverse ? true : false;
-                            }
-                            else
-                            {
-                                return reverse ? false : true;
-                            }
-                        }
+                        if (big)
+                            return reverse ? true : false;
+                        return reverse ? false : true;
                     }
+
+                    if (!big)
+                        return reverse ? true : false;
+                    return reverse ? false : true;
                 }
-                else
-                {
-                    string varval = VarString(varname, wp, postvar);
-                    result = !(varval == "false" || varval == "0");
-                    return reverse ? !result : result;
-                }
+
+                var varval = VarString(varname, wp, postvar);
+                result = !(varval == "false" || varval == "0");
+                return reverse ? !result : result;
             }
             catch (Exception)
             {
@@ -573,14 +502,10 @@ namespace EasyCraft.Web
                         return wp.vars.user.qq;
                     case "var.user.avatar":
                         if (string.IsNullOrEmpty(wp.vars.user.qq))
-                        {
                             return "https://cdn.v2ex.com/gravatar/" +
                                    Functions.MD5(wp.vars.user.email.Trim().ToLower());
-                        }
                         else
-                        {
                             return $"https://q1.qlogo.cn/g?b=qq&nk={wp.vars.user.qq}&s=640";
-                        }
                     case "var.user.type":
                         return wp.vars.user.type.ToString();
                     case "var.for.server.id":
@@ -598,7 +523,7 @@ namespace EasyCraft.Web
                     case "var.for.server.ram":
                         return wp.vars.for_server.Ram.ToString();
                     case "var.for.server.expired":
-                        return ((wp.vars.for_server.Expiretime - DateTime.Now).Days < 0) ? "true" : "false";
+                        return (wp.vars.for_server.Expiretime - DateTime.Now).Days < 0 ? "true" : "false";
                     case "var.for.server.expiretime":
                         return wp.vars.for_server.Expiretime.ToString("yyyy-MM-dd");
                     case "var.for.server.core":
@@ -619,7 +544,7 @@ namespace EasyCraft.Web
                     case "var.server.ram":
                         return wp.vars.server.Ram.ToString();
                     case "var.server.expired":
-                        return ((wp.vars.server.Expiretime - DateTime.Now).Days < 0) ? "true" : "false";
+                        return (wp.vars.server.Expiretime - DateTime.Now).Days < 0 ? "true" : "false";
                     case "var.server.expiretime":
                         return wp.vars.server.Expiretime.ToString("yyyy-MM-dd");
                     case "var.server.core":
@@ -675,13 +600,9 @@ namespace EasyCraft.Web
                         return wp.vars.user.CheckUserAbility((int) Permisson.KillServerAll) ? "true" : "false";
                     default:
                         if (postvar == null || !postvar.ContainsKey(varname))
-                        {
                             return "null";
-                        }
                         else
-                        {
                             return postvar[varname];
-                        }
                 }
             }
             catch (Exception)

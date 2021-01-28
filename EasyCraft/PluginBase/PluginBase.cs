@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.IO;
-using System.IO.Pipes;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
 using EasyCraft.Core;
-using EasyCraft.Web;
 
 namespace EasyCraft.PluginBase
 {
@@ -19,29 +14,23 @@ namespace EasyCraft.PluginBase
 
         public static void LoadPlugins()
         {
-            Dictionary<string, bool> plugindb = new Dictionary<string, bool>();
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var plugindb = new Dictionary<string, bool>();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT id,enable FROM plugin";
-            SQLiteDataReader render = c.ExecuteReader();
-            while (render.Read())
-            {
-                plugindb.Add(render.GetString(0), render.GetBoolean(1));
-            }
+            var render = c.ExecuteReader();
+            while (render.Read()) plugindb.Add(render.GetString(0), render.GetBoolean(1));
 
-            foreach (string file in Directory.EnumerateFiles("data/plugin/", "*.dll").ToList())
-            {
+            foreach (var file in Directory.EnumerateFiles("data/plugin/", "*.dll").ToList())
                 try
                 {
-                    Plugin p = new Plugin();
+                    var p = new Plugin();
                     if (File.Exists(Path.ChangeExtension(file, "pdb")))
-                    {//可载入调试文件
-                        p.assembly = Assembly.Load(File.ReadAllBytes(file),File.ReadAllBytes(Path.ChangeExtension(file, "pdb")));
-                    }
+                        //可载入调试文件
+                        p.assembly = Assembly.Load(File.ReadAllBytes(file),
+                            File.ReadAllBytes(Path.ChangeExtension(file, "pdb")));
                     else
-                    {
                         p.assembly = Assembly.LoadFrom(file);
-                    }
-                    string key = Functions.GetRandomString(20, true, true, true, true);
+                    var key = Functions.GetRandomString(20, true, true, true, true);
                     dynamic info = p.assembly.GetType("EasyCraftPlugin.Plugin").GetMethod("Initialize").Invoke(null,
                         new object[]
                             {Assembly.GetExecutingAssembly().GetType("EasyCraft.PluginBase.PluginHandler"), key});
@@ -52,13 +41,13 @@ namespace EasyCraft.PluginBase
                     p.key = key;
                     p.auth = info.auth;
                     p.hooks = info.hooks;
-                    foreach (string pHook in p.hooks)
+                    foreach (var pHook in p.hooks)
                     {
                         if (!hooks.ContainsKey(pHook)) hooks[pHook] = new List<string>();
                         hooks[pHook].Add(p.id);
                     }
 
-                    p.enabled = (plugindb.ContainsKey(p.id) && plugindb[p.id]);
+                    p.enabled = plugindb.ContainsKey(p.id) && plugindb[p.id];
                     p.path = Path.GetFullPath(file);
                     plugins[p.id] = p;
                     if (p.enabled)
@@ -71,34 +60,31 @@ namespace EasyCraft.PluginBase
                 {
                     FastConsole.PrintWarning(string.Format(Language.t("加载插件 {0} 失败: {1}"), file, e.Message));
                 }
-            }
         }
 
         public static bool BroadcastEvent(string eventid, object[] paratmers)
         {
             if (!hooks.ContainsKey(eventid)) return true;
-            bool finalret = true;
-            foreach (string s in hooks[eventid])
-            {
+            var finalret = true;
+            foreach (var s in hooks[eventid])
                 try
                 {
-                    bool ret = (bool) plugins[s].assembly.GetType("EasyCraftPlugin.Plugin").GetMethod(eventid)
+                    var ret = (bool) plugins[s].assembly.GetType("EasyCraftPlugin.Plugin").GetMethod(eventid)
                         .Invoke(null, paratmers);
-                    finalret = (ret && finalret);
+                    finalret = ret && finalret;
                 }
                 catch (Exception e)
                 {
                     FastConsole.PrintWarning(string.Format(Language.t("插件 [{0}] 执行 {1} 时出错: {2}"), s, eventid,
                         e.Message));
                 }
-            }
 
             return finalret;
         }
 
         public static bool CheckPluginAuth(string pid, string authid)
         {
-            return (plugins[pid].enabled && plugins[pid].auth.Contains(authid));
+            return plugins[pid].enabled && plugins[pid].auth.Contains(authid);
         }
     }
 

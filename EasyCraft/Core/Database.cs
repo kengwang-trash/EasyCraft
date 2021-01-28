@@ -1,15 +1,13 @@
-﻿using EasyCraft.Core;
+﻿using System;
 using System.Data.SQLite;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using EasyCraft.Core;
 
 namespace EasyCraft
 {
-    class Database
+    internal class Database
     {
-        public static SQLiteConnection DB = null;
+        public static SQLiteConnection DB;
 
         public static void Connect()
         {
@@ -17,7 +15,7 @@ namespace EasyCraft
             {
                 if (!File.Exists(Environment.CurrentDirectory + "/data/db/db.db"))
                     throw new Exception("Database File Not Found");
-                var connectionString = new SQLiteConnectionStringBuilder()
+                var connectionString = new SQLiteConnectionStringBuilder
                 {
                     DataSource = Environment.CurrentDirectory + "/data/db/db.db",
                     Version = 3
@@ -34,21 +32,21 @@ namespace EasyCraft
                     FastConsole.PrintInfo(Language.t("尝试创建新的数据库"));
                     CreateNew();
                 }
-
             }
         }
 
         public static void Check()
         {
-            SQLiteCommand c = DB.CreateCommand();
+            var c = DB.CreateCommand();
             c.CommandText = "SELECT version FROM version";
-            SQLiteDataReader sr = c.ExecuteReader();
+            var sr = c.ExecuteReader();
             if (sr.HasRows)
             {
                 sr.Read();
                 if (sr.GetInt32(0) != 1)
                 {
-                    FastConsole.PrintError(Language.t("数据库错误或不匹配当前版本. 按下 [Enter] 覆盖数据库 (危险) 或者退出 EasyCraft 手动备份并检查数据库"));
+                    FastConsole.PrintError(
+                        Language.t("数据库错误或不匹配当前版本. 按下 [Enter] 覆盖数据库 (危险) 或者退出 EasyCraft 手动备份并检查数据库"));
                     Console.ReadKey();
                     CreateNew();
                 }
@@ -61,6 +59,7 @@ namespace EasyCraft
                 DB.Close();
                 CreateNew();
             }
+
             sr.Close();
         }
 
@@ -69,7 +68,7 @@ namespace EasyCraft
             try
             {
                 if (!File.Exists(Environment.CurrentDirectory + "/data/db/db.db"))
-                    System.IO.File.Create(Environment.CurrentDirectory + "/data/db/db.db");
+                    File.Create(Environment.CurrentDirectory + "/data/db/db.db");
                 if (DB != null)
                     DB.Close();
                 throw new Exception("No Database File Founded");

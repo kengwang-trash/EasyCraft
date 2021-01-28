@@ -1,7 +1,5 @@
-﻿using EasyCraft.Core;
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
+using EasyCraft.Core;
 using EasyCraft.PluginBase.Structs;
 
 namespace EasyCraft.PluginBase
@@ -11,18 +9,13 @@ namespace EasyCraft.PluginBase
         public static object Handle(dynamic input)
         {
             string pluginid = input.pluginid;
-            if (PluginBase.plugins.ContainsKey(pluginid) && PluginBase.plugins[pluginid].key == input.key && PluginBase.plugins[pluginid].enabled)
-            {
+            if (PluginBase.plugins.ContainsKey(pluginid) && PluginBase.plugins[pluginid].key == input.key &&
+                PluginBase.plugins[pluginid].enabled)
                 return Process(input.pluginid, input.type, input.data);
-            }
-            else
-            {
-                return null;
-            }
             return null;
         }
 
-        private static object Process(string pluginid, string method, Dictionary<string,string> data)
+        private static object Process(string pluginid, string method, Dictionary<string, string> data)
         {
             switch (method)
             {
@@ -49,8 +42,8 @@ namespace EasyCraft.PluginBase
                     {
                         if (ServerManager.servers.ContainsKey(int.Parse(data["sid"])))
                         {
-                            Server s = ServerManager.servers[int.Parse(data["sid"])];
-                            return (object)new ServerBasicInfo()
+                            var s = ServerManager.servers[int.Parse(data["sid"])];
+                            return new ServerBasicInfo
                             {
                                 Core = s.Core,
                                 Expiretime = s.Expiretime,
@@ -62,29 +55,28 @@ namespace EasyCraft.PluginBase
                                 Running = s.Running
                             };
                         }
-                        else
-                        {
-                            return null;
-                        }
+
+                        return null;
                     }
+
                     break;
                 case "Server.SendCommand":
                     if (PluginBase.CheckPluginAuth(pluginid, "Server.SendCommand"))
                     {
                         if (ServerManager.servers.ContainsKey(int.Parse(data["sid"])))
                         {
-                            Server s = ServerManager.servers[int.Parse(data["sid"])];
-                            if (s.process == null || s.process.HasExited == true) return false;
+                            var s = ServerManager.servers[int.Parse(data["sid"])];
+                            if (s.process == null || s.process.HasExited) return false;
                             s.Send(data["cmd"]);
-                            return (object)true;
+                            return true;
                         }
-                        else
-                        {
-                            return (object)true;
-                        }
+
+                        return true;
                     }
+
                     break;
             }
+
             return null;
         }
     }

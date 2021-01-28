@@ -1,34 +1,29 @@
-﻿using EasyCraft.Core;
-using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Collections.Generic;
+using EasyCraft.Core;
 
 namespace EasyCraft.Web.Classes
 {
-    class User
+    internal class User
     {
-        public readonly bool islogin = false;
-        public readonly int uid;
-        public readonly string name;
+        private static readonly Dictionary<int, int> PermissonTable = new Dictionary<int, int>();
         public readonly string auth;
         public readonly string email;
-        public readonly int type = 0;
+        public readonly bool islogin;
+        public readonly string name;
         public readonly string qq;
-        private static Dictionary<int, int> PermissonTable = new Dictionary<int, int>();
+        public readonly int type;
+        public readonly int uid;
 
         public User(string auth)
         {
             if (auth == "rawobj") return;
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM user WHERE auth = $auth";
             c.Parameters.AddWithValue("$auth", auth);
-            SQLiteDataReader r = c.ExecuteReader();
+            var r = c.ExecuteReader();
             if (!r.HasRows)
             {
                 islogin = false;
-                return;
             }
             else
             {
@@ -45,17 +40,16 @@ namespace EasyCraft.Web.Classes
 
         public User(string username, string password)
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM user WHERE username = $username AND password = $password ";
             c.Parameters.AddWithValue("$username", username);
-            string pwmd5 = Functions.MD5(password);
+            var pwmd5 = Functions.MD5(password);
             c.Parameters.AddWithValue("$password", pwmd5);
-            SQLiteDataReader r = c.ExecuteReader();
+            var r = c.ExecuteReader();
             if (!r.HasRows)
             {
                 islogin = false;
                 FastConsole.PrintWarning(string.Format(Language.t("用户 {0} 登录失败."), username));
-                return;
             }
             else
             {
@@ -64,7 +58,7 @@ namespace EasyCraft.Web.Classes
                 uid = r.GetInt32(0);
                 name = r.GetString(1);
                 email = r.GetString(3);
-                auth = Functions.MD5(Functions.GetRandomString(15) + pwmd5);
+                auth = Functions.MD5(Functions.GetRandomString() + pwmd5);
                 type = r.GetInt32(5);
                 qq = r.GetString(6);
                 FastConsole.PrintSuccess(string.Format(Language.t("用户 {0} 成功登录."), username));
@@ -73,7 +67,7 @@ namespace EasyCraft.Web.Classes
 
         public void UpdateAuth()
         {
-            SQLiteCommand co = Database.DB.CreateCommand();
+            var co = Database.DB.CreateCommand();
             co.CommandText = "UPDATE user SET auth = $auth WHERE uid = $uid ";
             co.Parameters.AddWithValue("$auth", auth);
             co.Parameters.AddWithValue("$uid", uid);
@@ -82,7 +76,7 @@ namespace EasyCraft.Web.Classes
 
         public static User Register(string username, string password, string email, string qq = null)
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             if (!string.IsNullOrEmpty(qq))
             {
                 c.CommandText =
@@ -96,57 +90,47 @@ namespace EasyCraft.Web.Classes
             }
 
             c.Parameters.AddWithValue("$username", username);
-            string pwmd5 = Functions.MD5(password);
+            var pwmd5 = Functions.MD5(password);
             c.Parameters.AddWithValue("$password", pwmd5);
             c.Parameters.AddWithValue("$email", email);
-            
+
             if (c.ExecuteNonQuery() != 0)
-            {
                 return new User(username, password);
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public static int GetUid(string username)
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM `user` WHERE `username` = $username ";
             c.Parameters.AddWithValue("$username", username);
-            SQLiteDataReader r = c.ExecuteReader();
+            var r = c.ExecuteReader();
             if (r.HasRows)
             {
                 r.Read();
                 return r.GetInt32(0);
             }
-            else
-            {
-                return -1;
-            }
+
+            return -1;
         }
 
         public bool CheckUserAbility(int PermissonID)
         {
             if (!PermissonTable.ContainsKey(PermissonID)) return false;
-            return PermissonTable[PermissonID] <= this.type;
+            return PermissonTable[PermissonID] <= type;
         }
 
         public static void RefreshPermissonTable()
         {
             PermissonTable.Clear();
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT `pid`,`usertype` FROM `permission`";
-            SQLiteDataReader r = c.ExecuteReader();
-            while (r.Read())
-            {
-                PermissonTable[r.GetInt32(0)] = r.GetInt32(1);
-            }
+            var r = c.ExecuteReader();
+            while (r.Read()) PermissonTable[r.GetInt32(0)] = r.GetInt32(1);
         }
     }
 
-    enum UserType
+    internal enum UserType
     {
         none,
         registered,
@@ -155,7 +139,7 @@ namespace EasyCraft.Web.Classes
         admin
     }
 
-    enum Permisson
+    internal enum Permisson
     {
         CreateServer, //创建服务器
         EditServer, //编辑服务器信息
@@ -170,6 +154,6 @@ namespace EasyCraft.Web.Classes
         UseFTP, //使用FTP
         SeeAllServer, //查看全部服务器
         KillServer, //强制关闭服务器
-        KillServerAll, //强制关闭服务器目录下的所有进程 (danger)
+        KillServerAll //强制关闭服务器目录下的所有进程 (danger)
     }
 }

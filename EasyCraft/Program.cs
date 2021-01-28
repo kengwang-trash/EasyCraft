@@ -1,18 +1,17 @@
-﻿using EasyCraft.Core;
+﻿using System;
+using EasyCraft.Core;
 using EasyCraft.Web;
 using SharpFtpServer;
-using System;
-using System.Linq;
 
 namespace EasyCraft
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             FastConsole.Init();
             Console.WriteLine(
-@" =================================================
+                @" =================================================
    _____                 ____            __ _   
   | ____|__ _ ___ _   _ / ___|_ __ __ _ / _| |_ 
   |  _| / _` / __| | | | |   | '__/ _` | |_| __|
@@ -22,13 +21,12 @@ namespace EasyCraft
  ============= Version : V " + EasyCraftInfo.VersionOut + @"  ==============
  ============= Copyright Kengwang ==============
 ");
-            int argc = args.Length;
+            var argc = args.Length;
             FastConsole.logLevel = FastConsoleLogLevel.all;
-            for (int i = 0; i < argc; i++)
-            {
+            for (var i = 0; i < argc; i++)
                 if (args[i] == "--loglevel")
                 {
-                    string l = args[i + 1];
+                    var l = args[i + 1];
                     switch (l)
                     {
                         case "all":
@@ -48,7 +46,7 @@ namespace EasyCraft
                             break;
                     }
                 }
-            }
+
             FastConsole.PrintInfo("Loading Language Pack");
             Language.LoadLanguagePack();
             FastConsole.PrintInfo(Language.t("加载配置表中"));
@@ -77,15 +75,14 @@ namespace EasyCraft
             Schedule.LoadSchedule();
             Schedule.StartTrigger();
             FastConsole.PrintInfo(Language.t("正在开启 FTP 服务器"));
-            FtpServer.server = new SharpFtpServer.FtpServer();
+            FtpServer.server = new FtpServer();
             FtpServer.server.Start();
             FastConsole.PrintInfo(Language.t("正在开启 HTTP 服务器"));
             HTTPServer.StartListen();
             Settings.LoadStarted();
             Console.CancelKeyPress += ExitEasyCraft;
-            string c = "";
+            string c;
             while ((c = Console.ReadLine()) != "exit")
-            {
                 try
                 {
                     CommandPhrase.PhraseCommand(c);
@@ -94,7 +91,7 @@ namespace EasyCraft
                 {
                     FastConsole.PrintError("Command Error: " + e.Message);
                 }
-            }
+
             ExitEasyCraft(null, null);
         }
 
@@ -102,10 +99,7 @@ namespace EasyCraft
         {
             FastConsole.PrintInfo("关闭 EasyCraft 中");
             FastConsole.PrintTrash("关闭所有服务器中");
-            foreach (var server in ServerManager.servers)
-            {
-                server.Value.Stop();
-            }
+            foreach (var server in ServerManager.servers) server.Value.Stop();
             FastConsole.PrintTrash("停止定时任务中");
             HTTPServer.StopListen();
             FtpServer.server.Stop();

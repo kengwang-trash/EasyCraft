@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using EasyCraft.Web.Classes;
+using Newtonsoft.Json;
 
 namespace EasyCraft.Core
 {
-
-    class EasyCraftInfo
+    internal class EasyCraftInfo
     {
         public static readonly string SoftName = "EasyCraft";
         public static readonly string SoftNameZh = "易开服";
@@ -24,28 +20,26 @@ namespace EasyCraft.Core
         public static readonly string Copyright = "EasyCraft Team 2021,Made with Love by Kengwang";
     }
 
-    class Settings
+    internal class Settings
     {
-        static SettingsFile sf = new SettingsFile();
-        
-        public readonly static string release = "Personal";
+        private static SettingsFile sf = new SettingsFile();
+
+        public static readonly string release = "Personal";
 
         //$info="Build by Azure DevOps on $(Agent.OS)\r\nBuild Time: $(Get-Date)\r\nBuild ID: $(Build.BuildNumber)\r\nCommit: $(Build.SourceVersion)\r\nCopyright Kengwang $(Get-Date -Format 'yyyy')"
-        public readonly static string BUILDINFO = string.Format("{0} {1} V{2}\r\nBuild by {3} on {4}\r\nBuild Time: {5}\r\nBuild ID: {6}\r\nCommit: {7}\r\nCopyright {8}", EasyCraftInfo.SoftName, EasyCraftInfo.SoftNameZh, EasyCraftInfo.VersionFull, EasyCraftInfo.Builder, EasyCraftInfo.BuildOS, EasyCraftInfo.BuildTime, EasyCraftInfo.BuildID, EasyCraftInfo.CommitID, EasyCraftInfo.Copyright);
+        public static readonly string BUILDINFO = string.Format(
+            "{0} {1} V{2}\r\nBuild by {3} on {4}\r\nBuild Time: {5}\r\nBuild ID: {6}\r\nCommit: {7}\r\nCopyright {8}",
+            EasyCraftInfo.SoftName, EasyCraftInfo.SoftNameZh, EasyCraftInfo.VersionFull, EasyCraftInfo.Builder,
+            EasyCraftInfo.BuildOS, EasyCraftInfo.BuildTime, EasyCraftInfo.BuildID, EasyCraftInfo.CommitID,
+            EasyCraftInfo.Copyright);
 
         public static int httpport
         {
-            
             get
             {
                 if (sf.HTTP != null && sf.HTTP.port != 0)
-                {
                     return sf.HTTP.port;
-                }
-                else
-                {
-                    return 80;
-                }
+                return 80;
             }
         }
 
@@ -54,13 +48,8 @@ namespace EasyCraft.Core
             get
             {
                 if (sf.FTP != null && sf.FTP.port != 0)
-                {
                     return sf.FTP.port;
-                }
-                else
-                {
-                    return 21;
-                }
+                return 21;
             }
         }
 
@@ -68,15 +57,10 @@ namespace EasyCraft.Core
         {
             get
             {
-                if (sf.FTP != null && !string.IsNullOrEmpty(sf.FTP.remote_addr))
-                {
-                    return sf.FTP.remote_addr;
-                }
-                else
-                {
-                    FastConsole.PrintWarning(Language.t("FTP 远端地址未设置! FTP 被动模式可能无法运行!"));
-                    return "0.0.0.0";
-                }
+                if (sf.FTP != null && !string.IsNullOrEmpty(sf.FTP.remote_addr)) return sf.FTP.remote_addr;
+
+                FastConsole.PrintWarning(Language.t("FTP 远端地址未设置! FTP 被动模式可能无法运行!"));
+                return "0.0.0.0";
             }
         }
 
@@ -85,18 +69,13 @@ namespace EasyCraft.Core
             get
             {
                 if (sf != null && !string.IsNullOrEmpty(sf.key))
-                {
                     return sf.key;
-                }
-                else
-                {
-                    return "No KEY";
-                }
+                return "No KEY";
             }
             set
             {
                 sf.key = key;
-                File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
+                File.WriteAllText("easycraft.conf", JsonConvert.SerializeObject(sf));
             }
         }
 
@@ -106,7 +85,7 @@ namespace EasyCraft.Core
             {
                 if (File.Exists("easycraft.conf"))
                 {
-                    sf = Newtonsoft.Json.JsonConvert.DeserializeObject<SettingsFile>(File.ReadAllText("easycraft.conf"));
+                    sf = JsonConvert.DeserializeObject<SettingsFile>(File.ReadAllText("easycraft.conf"));
                 }
                 else
                 {
@@ -118,41 +97,37 @@ namespace EasyCraft.Core
                     while (true)
                     {
                         Console.WriteLine(Language.t("HTTP 监听端口 [80]:"));
-                        string line = Console.ReadLine();
+                        var line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line)) line = "80";
-                        int port = 0;
+                        var port = 0;
                         if (int.TryParse(line, out port))
                         {
                             sf.HTTP.port = port;
                             break;
                         }
-                        else
-                        {
-                            FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
-                        }
+
+                        FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
                     }
 
                     while (true)
                     {
                         Console.WriteLine(Language.t("FTP 监听端口 [21]:"));
-                        string line = Console.ReadLine();
+                        var line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line)) line = "21";
-                        int port = 0;
+                        var port = 0;
                         if (int.TryParse(line, out port))
                         {
                             sf.FTP.port = port;
                             break;
                         }
-                        else
-                        {
-                            FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
-                        }
+
+                        FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
                     }
 
                     while (true)
                     {
                         Console.WriteLine(Language.t("服务器远端IP <用户可以通过此 IP 访问服务器>:"));
-                        string line = Console.ReadLine();
+                        var line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line))
                         {
                             FastConsole.PrintWarning(Language.t("输入错误,请重新输入"));
@@ -167,20 +142,19 @@ namespace EasyCraft.Core
                     while (true)
                     {
                         Console.WriteLine(Language.t("授权密钥 [若无请留空]:"));
-                        string line = Console.ReadLine();
+                        var line = Console.ReadLine();
                         if (string.IsNullOrEmpty(line))
                         {
                             sf.key = "none";
                             break;
                         }
-                        else
-                        {
-                            sf.key = line;
-                            break;
-                        }
+
+                        sf.key = line;
+                        break;
                     }
+
                     FastConsole.PrintSuccess(Language.t("安装完成,正在保存配置文件"));
-                    File.WriteAllText("easycraft.conf", Newtonsoft.Json.JsonConvert.SerializeObject(sf));
+                    File.WriteAllText("easycraft.conf", JsonConvert.SerializeObject(sf));
                     LoadConfig();
                 }
             }
@@ -192,13 +166,10 @@ namespace EasyCraft.Core
 
         public static void LoadDatabase()
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT * FROM settings";
-            SQLiteDataReader render = c.ExecuteReader();
-            while (render.Read())
-            {
-                SettingsDatabase.annoucement = render.GetString(0);
-            }
+            var render = c.ExecuteReader();
+            while (render.Read()) SettingsDatabase.annoucement = render.GetString(0);
 
             User.RefreshPermissonTable();
         }
@@ -207,9 +178,9 @@ namespace EasyCraft.Core
         {
             if (File.Exists("data/tools/startup.list"))
             {
-                foreach (string cmd in File.ReadAllLines("data/tools/startup.list"))
+                foreach (var cmd in File.ReadAllLines("data/tools/startup.list"))
                 {
-                    Process process = new Process();
+                    var process = new Process();
                     process.StartInfo.FileName = "cmd";
                     process.StartInfo.WorkingDirectory = "data/tools/";
                     process.StartInfo.RedirectStandardInput = true;
@@ -231,12 +202,12 @@ namespace EasyCraft.Core
         }
     }
 
-    class SettingsDatabase
+    internal class SettingsDatabase
     {
         public static string annoucement = "";
     }
 
-    class SettingsFile
+    internal class SettingsFile
     {
         public HTTPConf HTTP { get; set; }
         public FTPConf FTP { get; set; }
@@ -244,18 +215,18 @@ namespace EasyCraft.Core
         public string key { get; set; }
     }
 
-    class HTTPConf
+    internal class HTTPConf
     {
         public int port { get; set; }
         public bool https { get; set; } //Not Support yet
     }
 
-    class AdvancedConfig
+    internal class AdvancedConfig
     {
         public bool usesandboxie { get; set; } //Not Support yet
     }
 
-    class FTPConf
+    internal class FTPConf
     {
         public int port { get; set; }
         public string remote_addr { get; set; }

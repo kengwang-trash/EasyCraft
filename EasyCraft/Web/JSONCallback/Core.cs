@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace EasyCraft.Web.JSONCallback
 {
-    class CoreStruct
+    internal class CoreStruct
     {
         public string id { get; set; }
         public string name { get; set; }
@@ -14,7 +12,7 @@ namespace EasyCraft.Web.JSONCallback
         public Dictionary<string, CoreServerPropertiesArgument> serverproperties { get; set; }
     }
 
-    class CoreStartConfig
+    internal class CoreStartConfig
     {
         public string os { get; set; }
         public bool usecmd { get; set; }
@@ -24,12 +22,12 @@ namespace EasyCraft.Web.JSONCallback
         public string argument { get; set; }
     }
 
-    class CoreFirstStartConfig
+    internal class CoreFirstStartConfig
     {
         public bool copyfiles { get; set; }
     }
 
-    class CoreServerPropertiesArgument
+    internal class CoreServerPropertiesArgument
     {
         public string name { get; set; }
         public bool show { get; set; }

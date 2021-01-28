@@ -1,16 +1,13 @@
-﻿using EasyCraft.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace EasyCraft.Web.JSONCallback
 {
-    class LogBack : Callback
+    internal class LogBack : Callback
     {
         public LogBackData data { get; set; }
     }
 
-    class LogBackData
+    internal class LogBackData
     {
         public bool starting { get; set; }
         public long lastlogid { get; set; }

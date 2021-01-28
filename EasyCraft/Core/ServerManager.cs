@@ -1,32 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
-using System.IO;
-using System.Text;
 
 namespace EasyCraft.Core
 {
-    class ServerManager
+    internal class ServerManager
     {
         public static Dictionary<int, Server> servers = new Dictionary<int, Server>();
 
         public static void LoadServers()
         {
-            SQLiteCommand c = Database.DB.CreateCommand();
+            var c = Database.DB.CreateCommand();
             c.CommandText = "SELECT id FROM server";
-            SQLiteDataReader render = c.ExecuteReader();
+            var render = c.ExecuteReader();
             while (render.Read())
             {
-                int id = render.GetInt32(0);
+                var id = render.GetInt32(0);
                 try
                 {
-                    Server s = new Server(id);
+                    var s = new Server(id);
                     servers[render.GetInt32(0)] = s;
                 }
                 catch (Exception e)
                 {
                     FastConsole.PrintWarning(string.Format(Language.t("服务器 {0} 加载错误: {1}"), id.ToString(), e.Message));
-                }                
+                }
             }
         }
     }

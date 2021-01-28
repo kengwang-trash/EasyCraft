@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EasyCraft.Web.JSONCallback
+﻿namespace EasyCraft.Web.JSONCallback
 {
-    class UserLogin : Callback
-    {        public LoginUserInfo data { get; set; }
+    internal class UserLogin : Callback
+    {
+        public LoginUserInfo data { get; set; }
     }
-    class LoginUserInfo
+
+    internal class LoginUserInfo
     {
         public int uid { get; set; }
 

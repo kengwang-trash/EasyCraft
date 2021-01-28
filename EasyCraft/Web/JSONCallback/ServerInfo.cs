@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EasyCraft.Web.JSONCallback
+﻿namespace EasyCraft.Web.JSONCallback
 {
-    class ServerInfo : Callback
+    internal class ServerInfo : Callback
     {
-        public ServerInfoData data  { get; set; }
+        public ServerInfoData data { get; set; }
     }
 
-    class ServerInfoData
+    internal class ServerInfoData
     {
         public int id { get; set; }
         public string name { get; set; }
