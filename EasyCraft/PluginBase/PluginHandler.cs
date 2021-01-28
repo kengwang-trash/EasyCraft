@@ -43,7 +43,7 @@ namespace EasyCraft.PluginBase
                         if (ServerManager.servers.ContainsKey(int.Parse(data["sid"])))
                         {
                             var s = ServerManager.servers[int.Parse(data["sid"])];
-                            return new ServerBasicInfo
+                            return (object)new ServerBasicInfo
                             {
                                 Core = s.Core,
                                 Expiretime = s.Expiretime,
@@ -68,6 +68,21 @@ namespace EasyCraft.PluginBase
                             var s = ServerManager.servers[int.Parse(data["sid"])];
                             if (s.process == null || s.process.HasExited) return false;
                             s.Send(data["cmd"]);
+                            return true;
+                        }
+
+                        return true;
+                    }
+
+                    break;
+                case "Server.AddOutput":
+                    if (PluginBase.CheckPluginAuth(pluginid, "Server.AddOutput"))
+                    {
+                        if (ServerManager.servers.ContainsKey(int.Parse(data["sid"])))
+                        {
+                            var s = ServerManager.servers[int.Parse(data["sid"])];
+                            if (s.process == null || s.process.HasExited) return false;
+                            s.PrintLog(data["output"]);
                             return true;
                         }
 

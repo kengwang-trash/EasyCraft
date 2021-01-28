@@ -3,6 +3,8 @@
   <component name="ContentModelStore">
     <e p="C:\Users\yushi\AppData\local\JetBrains\Rider2020.3\extResources" t="IncludeRecursive" />
     <e p="C:\Users\yushi\AppData\local\JetBrains\Rider2020.3\resharper-host\local\Transient\Rider\v203\SolutionCaches\_EasyCraft.1519478332.00" t="ExcludeRecursive" />
+    <e p="C:\Users\yushi\AppData\Roaming\JetBrains\Rider2020.3\consoles\db" t="IncludeRecursive" />
+    <e p="C:\Users\yushi\AppData\Roaming\JetBrains\Rider2020.3\extensions" t="IncludeRecursive" />
     <e p="D:\Workspace\EasyCraft\Main\EasyCraft" t="IncludeFlat">
       <e p="EasyCraft" t="IncludeRecursive">
         <e p="app.manifest" t="Include" />
@@ -34,8 +36,8 @@
         </e>
         <e p="nuget.config" t="Include" />
         <e p="obj" t="ExcludeRecursive">
-          <e p="Windows-Debug" t="Include">
-            <e p="netcoreapp3.1" t="Include">
+          <e p="Windows-Release" t="Include">
+            <e p="net5.0" t="Include">
               <e p="EasyCraft.AssemblyInfo.cs" t="Include" />
             </e>
           </e>

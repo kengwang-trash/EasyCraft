@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <Configurations>Windows-Release;Windows-Debug;Linux-Debug;Linux-Release</Configurations>
     <Authors>EasyCraft Panel Team</Authors>
     <Description>A Minecraft Server Panel</Description>

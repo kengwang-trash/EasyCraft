@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -55,7 +57,7 @@ namespace EasyCraft.Core
 
         public static void CheckUpdate()
         {
-#if !DEBUG
+#if FALSE
             try
             {
                 if (Settings.release == "Personal") Settings.key = "none";
@@ -78,7 +80,7 @@ namespace EasyCraft.Core
                     type = System.Reflection.Assembly.GetExecutingAssembly().Location.EndsWith(".dll") ? "dll" : "exe";
 
                 }
-                if (Process.GetProcessesByName("ollydbg").Length != 0)
+                if (Process.GetProcessesByName("dnspy").Length != 0)
                 {
                     throw new Exception("Please Exit Debugger");
                 }

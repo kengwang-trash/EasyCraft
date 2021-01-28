@@ -129,7 +129,7 @@ namespace EasyCraft.Core
             PrintLog(Language.t("成功清理日志缓存"));
         }
 
-        private void PrintLog(string message)
+        public void PrintLog(string message)
         {
             if (message == null) return;
             var l = new ServerLog();
