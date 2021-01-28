@@ -42,7 +42,7 @@ namespace EasyCraft.Core
         public string World = "world";
         public DateTime Expiretime = DateTime.MaxValue;
 
-        Process process = null;
+        public Process process = null;
         string lastcore = "";
         string serverdir = "";
 
@@ -400,10 +400,20 @@ namespace EasyCraft.Core
 
                 try
                 {
-                    process.Start();
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
-                    PrintLog(Language.t("服务器已开启"));
+                    //这个时候为什么不问问插件呢?
+                    if (PluginBase.PluginBase.BroadcastEvent("ServerWillStart", new object[] {Id, process}))
+                    {
+                        process.Start();
+                        process.BeginOutputReadLine();
+                        process.BeginErrorReadLine();
+                        PluginBase.PluginBase.BroadcastEvent("ServerStarted", new object[] {Id});
+                        PrintLog(Language.t("服务器已开启"));  
+                    }
+                    else
+                    {
+                        PrintLog(Language.t("服务器被插件禁止开启"));
+                    }
+
                 }
                 catch (Exception e)
                 {

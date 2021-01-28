@@ -43,6 +43,10 @@
         <e p="PluginBase" t="Include">
           <e p="PluginBase.cs" t="Include" />
           <e p="PluginHandler.cs" t="Include" />
+          <e p="Structs" t="Include">
+            <e p="PluginInfo.cs" t="Include" />
+            <e p="ServerBasicInfo.cs" t="Include" />
+          </e>
         </e>
         <e p="Program.cs" t="Include" />
         <e p="publish-lin.sh" t="Include" />

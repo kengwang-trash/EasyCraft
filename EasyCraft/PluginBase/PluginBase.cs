@@ -15,7 +15,7 @@ namespace EasyCraft.PluginBase
     public class PluginBase
     {
         public static Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
-        public static Dictionary<string, string[]> hooks = new Dictionary<string, string[]>();
+        public static Dictionary<string, List<string>> hooks = new Dictionary<string, List<string>>();
 
         public static void LoadPlugins()
         {
@@ -27,14 +27,24 @@ namespace EasyCraft.PluginBase
             {
                 plugindb.Add(render.GetString(0), render.GetBoolean(1));
             }
+
             foreach (string file in Directory.EnumerateFiles("data/plugin/", "*.dll").ToList())
             {
                 try
                 {
                     Plugin p = new Plugin();
-                    p.assembly = Assembly.LoadFrom(file);
+                    if (File.Exists(Path.ChangeExtension(file, "pdb")))
+                    {//可载入调试文件
+                        p.assembly = Assembly.Load(File.ReadAllBytes(file),File.ReadAllBytes(Path.ChangeExtension(file, "pdb")));
+                    }
+                    else
+                    {
+                        p.assembly = Assembly.LoadFrom(file);
+                    }
                     string key = Functions.GetRandomString(20, true, true, true, true);
-                    dynamic info = p.assembly.GetType("EasyCraftPlugin.Plugin").GetMethod("Initialize").Invoke(null, new object[] { Assembly.GetExecutingAssembly().GetType("EasyCraft.PluginBase.PluginHandler"), key });
+                    dynamic info = p.assembly.GetType("EasyCraftPlugin.Plugin").GetMethod("Initialize").Invoke(null,
+                        new object[]
+                            {Assembly.GetExecutingAssembly().GetType("EasyCraft.PluginBase.PluginHandler"), key});
                     p.id = info.id;
                     p.name = info.name;
                     p.author = info.author;
@@ -44,8 +54,10 @@ namespace EasyCraft.PluginBase
                     p.hooks = info.hooks;
                     foreach (string pHook in p.hooks)
                     {
-                        hooks[pHook].Append(p.id);
+                        if (!hooks.ContainsKey(pHook)) hooks[pHook] = new List<string>();
+                        hooks[pHook].Add(p.id);
                     }
+
                     p.enabled = (plugindb.ContainsKey(p.id) && plugindb[p.id]);
                     p.path = Path.GetFullPath(file);
                     plugins[p.id] = p;
@@ -60,6 +72,33 @@ namespace EasyCraft.PluginBase
                     FastConsole.PrintWarning(string.Format(Language.t("加载插件 {0} 失败: {1}"), file, e.Message));
                 }
             }
+        }
+
+        public static bool BroadcastEvent(string eventid, object[] paratmers)
+        {
+            if (!hooks.ContainsKey(eventid)) return true;
+            bool finalret = true;
+            foreach (string s in hooks[eventid])
+            {
+                try
+                {
+                    bool ret = (bool) plugins[s].assembly.GetType("EasyCraftPlugin.Plugin").GetMethod(eventid)
+                        .Invoke(null, paratmers);
+                    finalret = (ret && finalret);
+                }
+                catch (Exception e)
+                {
+                    FastConsole.PrintWarning(string.Format(Language.t("插件 [{0}] 执行 {1} 时出错: {2}"), s, eventid,
+                        e.Message));
+                }
+            }
+
+            return finalret;
+        }
+
+        public static bool CheckPluginAuth(string pid, string authid)
+        {
+            return (plugins[pid].enabled && plugins[pid].auth.Contains(authid));
         }
     }
 
