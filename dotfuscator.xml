@@ -9,25 +9,28 @@
   <input>
     <loadpaths />
     <asmlist>
-      <inputassembly refid="37561cd1-4f9c-4522-97f7-a5a89b418d7d">
+      <inputassembly refid="20c76aaf-aff9-4d5c-b32a-4f083af07845">
         <option>honoroas</option>
         <option>stripoa</option>
         <option>library</option>
         <option>transformxaml</option>
-        <file dir="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\bin\Windows-Release\netcoreapp3.1" name="EasyCraft.dll" />
+        <file dir="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\bin\Windows-Release\net5.0" name="EasyCraft.dll" />
       </inputassembly>
     </asmlist>
   </input>
   <output>
     <file dir="${configdir}\Dotfuscated" />
   </output>
-  <renaming scheme="unprintable">
+  <renaming>
     <option>enhancedOI</option>
     <option>randomizeRenaming</option>
     <option>xmlserialization</option>
     <excludelist>
-      <namespace name="EasyCraft.PluginBase" />
       <namespace name="EasyCraft.Web.JSONCallback" />
+      <type name="EasyCraft.PluginBase.PluginHandler">
+        <method name="Handle" signature="object(object)" />
+        <method name="Process" signature="object(string, string, System.Collections.Generic.Dictionary`2&lt;string,string&gt;)" />
+      </type>
     </excludelist>
     <mapping>
       <mapoutput overwrite="false">
@@ -43,12 +46,14 @@
       <referencerule rulekey="{494EA3BA-B947-44B5-BEE8-A11CC85AAF9B}" />
     </referencerulelist>
   </renaming>
-  <controlflow level="high">
-    <excludelist>
-      <namespace name="EasyCraft.PluginBase" />
-    </excludelist>
-  </controlflow>
-  <stringencrypt />
+  <controlflow level="high" />
+  <stringencrypt>
+    <includelist>
+      <assembly>
+        <file dir="" name="EasyCraft.dll" />
+      </assembly>
+    </includelist>
+  </stringencrypt>
   <removal>
     <option>disable</option>
     <triggerlist>
@@ -58,7 +63,19 @@
     </triggerlist>
     <referencerulelist />
   </removal>
-  <sos />
+  <premark>
+    <option>disable</option>
+    <assemblylist>
+      <assembly>
+        <file dir="" name="EasyCraft.dll" />
+      </assembly>
+    </assemblylist>
+    <encoding name="6bit-a" />
+  </premark>
+  <signing />
+  <sos>
+    <option>disable</option>
+  </sos>
   <smartobfuscation>
     <smartobfuscationreport verbosity="all" overwrite="false" />
   </smartobfuscation>

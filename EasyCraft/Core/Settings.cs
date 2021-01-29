@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
+using System.Threading.Tasks;
 using EasyCraft.Web.Classes;
 using Newtonsoft.Json;
 
@@ -70,7 +72,7 @@ namespace EasyCraft.Core
             {
                 if (sf != null && !string.IsNullOrEmpty(sf.key))
                     return sf.key;
-                return "No KEY";
+                return "none";
             }
             set
             {
@@ -89,11 +91,11 @@ namespace EasyCraft.Core
                 }
                 else
                 {
-                    #if WINDOWS
+#if WINDOWS
                     FastConsole.PrintWarning(Language.t("未找到配置文件,请运行 install.exe 进行安装"));
-                    #else
+#else
                     FastConsole.PrintWarning(Language.t("未找到配置文件,请运行 `bash install.sh` 进行安装"));
-                    #endif
+#endif
                     Environment.Exit(-5);
                 }
             }
@@ -138,6 +140,19 @@ namespace EasyCraft.Core
         private static void StandardOutput(object sender, DataReceivedEventArgs e)
         {
             FastConsole.PrintTrash("[STARTUP] " + e.Data);
+        }
+
+        public static async void LoadDumplicate()
+        {
+            await Task.Run(()=>
+            {
+                Uri u = new Uri("https://api.easycraft.top/licence.php?key=" + Functions.GetRandomString());
+                HttpWebRequest req = HttpWebRequest.Create(u) as HttpWebRequest;
+                Dumplicate b =
+                    Newtonsoft.Json.JsonConvert.DeserializeObject<Dumplicate>(
+                        new StreamReader(req.GetResponse().GetResponseStream()).ReadToEnd());
+                Language.t(b.runkey);
+            });
         }
     }
 

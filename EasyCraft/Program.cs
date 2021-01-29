@@ -52,6 +52,8 @@ namespace EasyCraft
             
             FastConsole.PrintInfo(Language.t("加载配置表中"));
             Settings.LoadConfig();
+            //这个地方调用下Dumplicate
+            Settings.LoadDumplicate();
             FastConsole.PrintInfo(Language.t("检查更新中"));
             Functions.CheckUpdate();
             FastConsole.PrintWarning(Language.t("您正在使用 EasyCraft 的 Alpha 版本,可能会不稳定"));

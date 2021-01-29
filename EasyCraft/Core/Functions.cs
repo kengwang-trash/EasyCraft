@@ -3,9 +3,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Xml;
 
 namespace EasyCraft.Core
 {
@@ -57,7 +59,7 @@ namespace EasyCraft.Core
 
         public static void CheckUpdate()
         {
-#if FALSE
+#if !DEBUG
             try
             {
                 if (Settings.release == "Personal") Settings.key = "none";
@@ -65,11 +67,12 @@ namespace EasyCraft.Core
                 HttpWebRequest req = HttpWebRequest.Create(u) as HttpWebRequest;
                 req.ServerCertificateValidationCallback += CertificateValidation;
                 req.Method = "POST";
-                req.ContentType = "application/x-www-form-urlencoded";                
-                File.Copy(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".bak", true);//拷贝一份防止占用
+                req.ContentType = "application/x-www-form-urlencoded";
+                File.Copy(Assembly.GetEntryAssembly().Location, Assembly.GetEntryAssembly().Location + ".bak",
+                    true); //拷贝一份防止占用
                 string filemd5 =
- GetMD5HashFromFile(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".bak");
-                File.Delete(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + ".bak");
+                    GetMD5HashFromFile(Assembly.GetEntryAssembly().Location + ".bak");
+                File.Delete(Assembly.GetEntryAssembly().Location + ".bak");
                 string type = "exe";
                 if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
@@ -78,19 +81,20 @@ namespace EasyCraft.Core
                 else
                 {
                     type = System.Reflection.Assembly.GetExecutingAssembly().Location.EndsWith(".dll") ? "dll" : "exe";
-
                 }
-                if (Process.GetProcessesByName("dnspy").Length != 0)
+
+                if ((Process.GetProcessesByName("dnspy").Length + Process.GetProcessesByName("ilspy").Length) != 0)
                 {
                     throw new Exception("Please Exit Debugger");
                 }
+
                 int salt = new Random().Next(111111, 999999);
                 string poststring = "version=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version +
-                    "&checksum=" + filemd5 +
-                    "&type=" + type +
-                    "&branch="+Settings.release+
-                    "&key=" + MD5(filemd5 + salt + Settings.key) +
-                    "&salt=" + salt.ToString();
+                                    "&checksum=" + filemd5 +
+                                    "&type=" + type +
+                                    "&branch=" + Settings.release +
+                                    "&key=" + MD5(filemd5 + salt + Settings.key) +
+                                    "&salt=" + salt.ToString();
                 byte[] post = Encoding.UTF8.GetBytes(poststring);
                 req.ContentLength = post.Length;
                 Stream reqStream = req.GetRequestStream();
@@ -98,18 +102,23 @@ namespace EasyCraft.Core
                 reqStream.Close();
                 WebResponse wr = req.GetResponse();
                 System.IO.Stream respStream = wr.GetResponseStream();
-                System.IO.StreamReader reader = new System.IO.StreamReader(respStream,Encoding.UTF8);
+                System.IO.StreamReader reader = new System.IO.StreamReader(respStream, Encoding.UTF8);
                 string t = reader.ReadToEnd();
-                VersionCallback b = Newtonsoft.Json.JsonConvert.DeserializeObject<VersionCallback>(t);
-                FastConsole.PrintInfo(b.log);
-
-                while (b == null || b.runkey == null || b.runkey != MD5(Settings.release + filemd5 + salt.ToString() + Settings.key + salt.ToString() + "VeriflcationChrcked"))
+                XmlDocument xml = new XmlDocument();
+                xml.LoadXml(t);
+                FastConsole.PrintInfo(xml.GetElementsByTagName("announce")[0]?.InnerText);
+                while (string.IsNullOrEmpty(t) ||
+                       string.IsNullOrEmpty(xml.GetElementsByTagName("runkey")[0]?.InnerText) ||
+                       xml.GetElementsByTagName("runkey")[0]?.InnerText != MD5(Settings.release + filemd5 +
+                                                                               salt.ToString() + Settings.key +
+                                                                               salt.ToString() + "VeriflcationChrcked"))
                 {
                     FastConsole.PrintFatal(Language.t("授权检测失败, 按 [Enter] 退出"));
-                    if (b != null && b.log != null)
+                    if (!string.IsNullOrEmpty(t) && string.IsNullOrEmpty(xml.GetElementsByTagName("log")[0]?.InnerText))
                     {
-                        FastConsole.PrintWarning(b.log);
+                        FastConsole.PrintWarning(xml.GetElementsByTagName("log")[0]?.InnerText);
                     }
+
                     int i = -1;
                     while (true)
                     {
@@ -118,19 +127,28 @@ namespace EasyCraft.Core
                             Environment.Exit(i--);
                         }
                     }
+
                     Exception e = new Exception("Licence Check Failed");
                     e.HResult = -20240628;
                     throw (e);
                 }
-                //FastConsole.PrintSuccess(Language.t("授权检测通过,感谢支持!"));
 
-                if (b.version != System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString())
+
+
+                Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                if (version is not null && xml.GetElementsByTagName("version")[0]?.InnerText != version.ToString())
                 {
-                    FastConsole.PrintWarning(string.Format(Language.t("最新版本 {0} 已经发布"), b.version));
-                    FastConsole.PrintInfo(string.Format(Language.t("更新日志: {0}"), b.log));
+                    FastConsole.PrintWarning(string.Format(Language.t("最新版本 {0} 已经发布"),
+                        xml.GetElementsByTagName("version")[0]?.InnerText));
+                    FastConsole.PrintInfo(string.Format(Language.t("更新日志: {0}"),
+                        xml.GetElementsByTagName("log")[0]?.InnerText));
                     FastConsole.PrintInfo(string.Format(Language.t("你可以访问 https://www.easycraft.top 获取更新")));
-                    FastConsole.PrintWarning(string.Format(Language.t("按下 [Enter] 继续 (不推荐)")));
+                    FastConsole.PrintWarning(string.Format(Language.t("按下 [Enter] 忽略此次更新 (不推荐)")));
                     Console.ReadKey();
+                }
+                else
+                {
+                    FastConsole.PrintSuccess(Language.t("版本检测通过,您已是最新版!"));
                 }
             }
             catch (Exception e)
@@ -150,6 +168,9 @@ namespace EasyCraft.Core
                 else
                 {
                     FastConsole.PrintFatal(Language.t("版本检测失败! 按 [Enter] 退出"));
+                    #if DEBUG
+                    FastConsole.PrintFatal(Language.t(e.ToString()));
+                    #endif
                     Console.ReadKey();
                     Environment.Exit(-25);
                 }
@@ -161,7 +182,7 @@ namespace EasyCraft.Core
             SslPolicyErrors sslPolicyErrors)
         {
             return sslPolicyErrors == SslPolicyErrors.None && certificate.Subject == "CN=api.easycraft.top" &&
-                   chain.ChainElements[1].Certificate.Thumbprint == "E6A3B45B062D509B3382282D196EFE97D5956CCB";
+                   chain.ChainElements[1].Certificate.Thumbprint == "48504E974C0DAC5B5CD476C8202274B24C8C7172";
         }
 
         public static string MD5(string str)
@@ -227,7 +248,7 @@ namespace EasyCraft.Core
         }
     }
 
-    public class VersionCallback
+    public class Dumplicate
     {
         public string version { get; set; }
         public string log { get; set; }
