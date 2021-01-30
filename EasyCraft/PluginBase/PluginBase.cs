@@ -9,8 +9,15 @@ namespace EasyCraft.PluginBase
 {
     public class PluginBase
     {
-        public static Dictionary<string, Plugin> plugins = new Dictionary<string, Plugin>();
-        public static Dictionary<string, List<string>> hooks = new Dictionary<string, List<string>>();
+        public static Dictionary<string, Plugin> plugins = new();
+
+        public static Dictionary<string, List<KeyValuePair<string, int>>> hooks = new();
+        /* hooks={
+          "OnServerStart":[
+            {"co.kengwang.ecplugin.example": 1000}
+          ]
+         }
+        */
 
         public static void LoadPlugins()
         {
@@ -43,8 +50,8 @@ namespace EasyCraft.PluginBase
                     p.hooks = info.hooks;
                     foreach (var pHook in p.hooks)
                     {
-                        if (!hooks.ContainsKey(pHook)) hooks[pHook] = new List<string>();
-                        hooks[pHook].Add(p.id);
+                        if (!hooks.ContainsKey(pHook.Key)) hooks[pHook.Key] = new List<KeyValuePair<string, int>>();
+                        hooks[pHook.Key].Add(new KeyValuePair<string, int>(p.id, pHook.Value));
                     }
 
                     p.enabled = plugindb.ContainsKey(p.id) && plugindb[p.id];
@@ -60,6 +67,11 @@ namespace EasyCraft.PluginBase
                 {
                     FastConsole.PrintWarning(string.Format(Language.t("加载插件 {0} 失败: {1}"), file, e.Message));
                 }
+
+            foreach (string hooksKey in hooks.Keys)
+            {
+                hooks[hooksKey] = hooks[hooksKey].OrderBy((x) => x.Value).ToList();
+            }
         }
 
         public static bool BroadcastEvent(string eventid, object[] paratmers)
@@ -69,7 +81,7 @@ namespace EasyCraft.PluginBase
             foreach (var s in hooks[eventid])
                 try
                 {
-                    var ret = (bool) plugins[s].assembly.GetType("EasyCraftPlugin.Plugin").GetMethod(eventid)
+                    var ret = (bool) plugins[s.Key].assembly.GetType("EasyCraftPlugin.Plugin").GetMethod(eventid)
                         .Invoke(null, paratmers);
                     finalret = ret && finalret;
                 }
@@ -98,7 +110,7 @@ namespace EasyCraft.PluginBase
         public string link;
         public string path;
         public string key;
-        public string[] hooks;
+        public Dictionary<string, int> hooks;
         public string[] auth;
         public bool enabled;
     }

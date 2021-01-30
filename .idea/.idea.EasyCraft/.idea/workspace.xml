@@ -23,9 +23,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +49,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BC542A5C-3AD0-4C34-A080-02E941B52719/3c/9d52be72/List`1.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/E4290DF5-C4DC-422E-9FF2-C0749E898257/8/CSharpArgumentInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/647FAEDF-A0C0-4C01-B79E-04471FFD80DF/ab/d9d59dd8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/647FAEDF-A0C0-4C01-B79E-04471FFD80DF/97/e20a47dc/FileStream.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/733BABFB-C66D-4DCE-9765-65A8B62ECF22/59/11c1558b/HttpListener.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BC542A5C-3AD0-4C34-A080-02E941B52719/aa/292f37bc/TargetInvocationException.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -59,7 +61,6 @@
       <option value="$PROJECT_DIR$/EasyCraft/Web/JSONCallback/Core.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/Structs/ServerBasicInfo.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/Structs/PluginInfo.cs" />
-      <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" />
       <option value="$PROJECT_DIR$/../../Plugin/ExamplePlugin/EasyCraftPlugin/EasyCraftPlugin/Dep.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/FTP/ClientConnection.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginHandler.cs" />
@@ -69,6 +70,7 @@
       <option value="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1iJKXSDoHdQ9d2Vhcs4phgRPvu0" />
@@ -79,7 +81,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="sqlite" />
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.34991798" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.34994584" />
     <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -167,7 +169,7 @@
       <workItem from="1611896817202" duration="1119000" />
       <workItem from="1611912091111" duration="2799000" />
       <workItem from="1611982190531" duration="682000" />
-      <workItem from="1611983616216" duration="1207000" />
+      <workItem from="1611983616216" duration="3703000" />
     </task>
     <servers />
   </component>
@@ -190,24 +192,5 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/EasyCraft/Program.cs</url>
-          <line>57</line>
-          <properties documentPath="D:\Workspace\EasyCraft\Main\EasyCraft\EasyCraft\Program.cs" initialLine="57" containingFunctionPresentation="method 'Main'">
-            <startOffsets>
-              <option value="2170" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2194" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
