@@ -47,6 +47,7 @@ namespace EasyCraft.PluginBase
                     p.link = info.link;
                     p.key = key;
                     p.auth = info.auth;
+                    p.version = info.version;
                     p.hooks = info.hooks;
                     foreach (var pHook in p.hooks)
                     {
@@ -108,6 +109,7 @@ namespace EasyCraft.PluginBase
         public string author;
         public string description;
         public string link;
+        public string version;
         public string path;
         public string key;
         public Dictionary<string, int> hooks;

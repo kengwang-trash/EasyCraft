@@ -26,7 +26,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/PluginBase/PluginBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Resources/defdb.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,9 +46,13 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/../../Plugin/ExamplePlugin/EasyCraftPlugin/EasyCraftPlugin/Dep.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BC542A5C-3AD0-4C34-A080-02E941B52719/3c/9d52be72/List`1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Workspace/EasyCraft/Main/EasyCraft/EasyCraft/Core/Settings.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Workspace/EasyCraft/Main/EasyCraft/EasyCraft/Core/Settings.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Workspace/EasyCraft/Main/EasyCraft/EasyCraft/Core/Settings.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/E4290DF5-C4DC-422E-9FF2-C0749E898257/8/CSharpArgumentInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/647FAEDF-A0C0-4C01-B79E-04471FFD80DF/ab/d9d59dd8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/647FAEDF-A0C0-4C01-B79E-04471FFD80DF/97/e20a47dc/FileStream.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/Workspace/EasyCraft/Main/EasyCraft/EasyCraft/Core/Settings.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/733BABFB-C66D-4DCE-9765-65A8B62ECF22/59/11c1558b/HttpListener.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BC542A5C-3AD0-4C34-A080-02E941B52719/aa/292f37bc/TargetInvocationException.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
@@ -99,9 +102,9 @@
   </component>
   <component name="RunManager">
     <configuration name="EasyCraft" type="DotNetProject" factoryName=".NET Project" singleton="false">
-      <option name="EXE_PATH" value="$PROJECT_DIR$/EasyCraft/bin/Debug/netcoreapp3.1/EasyCraft.dll" />
+      <option name="EXE_PATH" value="$PROJECT_DIR$/EasyCraft/bin/Windows-Debug/net5.0/EasyCraft.dll" />
       <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/EasyCraft/bin/Debug/netcoreapp3.1" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/EasyCraft/bin/Windows-Debug/net5.0" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
@@ -111,8 +114,9 @@
       <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
       <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
       <option name="PROJECT_KIND" value="DotNetCore" />
-      <option name="PROJECT_TFM" value=".NETCoreApp,Version=v3.1" />
+      <option name="PROJECT_TFM" value="net5.0" />
       <method v="2">
+        <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_VersionUpdate" />
         <option name="Build" />
       </method>
     </configuration>
@@ -169,7 +173,7 @@
       <workItem from="1611896817202" duration="1119000" />
       <workItem from="1611912091111" duration="2799000" />
       <workItem from="1611982190531" duration="682000" />
-      <workItem from="1611983616216" duration="3703000" />
+      <workItem from="1611983616216" duration="7106000" />
     </task>
     <servers />
   </component>
