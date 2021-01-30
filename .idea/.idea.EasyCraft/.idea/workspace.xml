@@ -24,10 +24,8 @@
   <component name="ChangeListManager">
     <list default="true" id="60c12007-9966-4bde-8bbf-aa85e32483a9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.EasyCraft/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/EasyCraft/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dotfuscator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/dotfuscator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +67,8 @@
       <option value="$PROJECT_DIR$/EasyCraft/Program.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Core/Settings.cs" />
       <option value="$PROJECT_DIR$/EasyCraft/Core/Functions.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Web/WebSocketListener.cs" />
+      <option value="$PROJECT_DIR$/EasyCraft/Web/HTTPServer.cs" />
     </changedPaths>
   </component>
   <component name="ProjectId" id="1iJKXSDoHdQ9d2Vhcs4phgRPvu0" />
@@ -165,7 +165,9 @@
       <workItem from="1611889857588" duration="1287000" />
       <workItem from="1611892606560" duration="4035000" />
       <workItem from="1611896817202" duration="1119000" />
-      <workItem from="1611912091111" duration="918000" />
+      <workItem from="1611912091111" duration="2799000" />
+      <workItem from="1611982190531" duration="682000" />
+      <workItem from="1611983616216" duration="1207000" />
     </task>
     <servers />
   </component>

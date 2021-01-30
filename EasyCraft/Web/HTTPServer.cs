@@ -65,7 +65,7 @@ namespace EasyCraft.Web
                     }
                     else
                     {
-                        responseString = "{\"code\":-5000,\"message\":\"500 Internal Server Error\"}";
+                        responseString = "{\"code\":-500,\"message\":\"500 Internal Server Error\"}";
                     }
 
                     var buff = Encoding.UTF8.GetBytes(responseString);

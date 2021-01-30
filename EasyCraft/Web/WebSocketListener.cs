@@ -72,7 +72,7 @@ namespace EasyCraft.Web
         public static int FindNextAvailableTCPPort(int startPort)
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix) return startPort;
-            var port = startPort;
+            var pport = startPort;
             var isAvailable = true;
             var ipGlobalProperties =
                 IPGlobalProperties.GetIPGlobalProperties();
@@ -83,22 +83,22 @@ namespace EasyCraft.Web
             {
                 if (!isAvailable)
                 {
-                    port++;
+                    pport++;
                     isAvailable = true;
                 }
 
                 foreach (var endPoint in endPoints)
                 {
-                    if (endPoint.Port != port) continue;
+                    if (endPoint.Port != pport) continue;
                     isAvailable = false;
                     break;
                 }
-            } while (!isAvailable && port < IPEndPoint.MaxPort);
+            } while (!isAvailable && pport < IPEndPoint.MaxPort);
 
             if (!isAvailable)
                 throw new ApplicationException("Not able to find a free TCP port.");
 
-            return port;
+            return pport;
         }
     }
 }
