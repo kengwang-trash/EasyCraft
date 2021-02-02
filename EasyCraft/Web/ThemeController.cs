@@ -92,7 +92,7 @@ namespace EasyCraft.Web
                 linephrase:
                 try
                 {
-                    phraseidx = line.IndexOf("{", lastphraseidx);
+                    phraseidx = line.IndexOf("{", lastphraseidx, StringComparison.Ordinal);
                     if (phraseidx == -1)
                     {
                         //这行不需要编译
@@ -102,17 +102,22 @@ namespace EasyCraft.Web
                     else
                     {
                         var phrasecod = "";
-                        if (line.Length <= phraseidx + 4)
-                            phrasecod = "none";
+                        var endidx = line.IndexOf('}',phraseidx);
+                        if (endidx != -1)
+                        {
+                            phrasecod = line.Substring(phraseidx, endidx - phraseidx+1);
+                        }
                         else
-                            phrasecod = line.Substring(phraseidx, 4);
+                        {
+                            phrasecod = "none";
+                        }
 
-                        if ((inifcond != 0 && !canprint[inifcond] || inforcond && noobjtofor) && phrasecod != "{end" &&
-                            phrasecod != "{els" && phrasecod != "{bre")
+                        if ((inifcond != 0 && !canprint[inifcond] || inforcond && noobjtofor) && phrasecod != "{endif}" &&
+                            phrasecod!="{else}" && phrasecod != "{break}")
                         {
                             //假如说if不允许就真滴不允许了,后面放心大胆写
                             //假如里面有if则可能会误判else,则需要判断内部是否有if,有的话需要inifcond++=false
-                            if (phrasecod == "{if:")
+                            if (phrasecod.StartsWith("{if:"))
                             {
                                 inifcond++;
                                 canprint[inifcond] = false;
@@ -126,7 +131,7 @@ namespace EasyCraft.Web
                         if (!(inifcond != 0 && !canprint[inifcond]))
                             rettext += line.Substring(lastphraseidx, phraseidx - lastphraseidx);
 
-                        if (phrasecod == "{end")
+                        if (phrasecod=="{endif}")
                         {
                             //if结束,允许print
                             inifcond--;
@@ -135,7 +140,7 @@ namespace EasyCraft.Web
                             goto linephrase;
                         }
 
-                        if (phrasecod == "{els")
+                        if (phrasecod == "{else}")
                         {
                             if (inifcond == 0) throw new Exception("Unexpected endif without if statement start");
                             //使用父IF语句的输出状态
@@ -149,7 +154,7 @@ namespace EasyCraft.Web
 
                         //正式开始啦~ ^_^
                         //////////////////////// INCLUDE 语法开始 /////////////////////////
-                        if (phrasecod == "{inc")
+                        if (phrasecod.StartsWith("{include:"))
                         {
                             var includelidx = line.IndexOf("}", phraseidx);
                             var spacestart = line.IndexOf(" ", phraseidx);
@@ -184,7 +189,7 @@ namespace EasyCraft.Web
 
                         ///////////////////////   IF    语法开始  ////////////////////////
 
-                        if (phrasecod == "{if:")
+                        if (phrasecod.StartsWith("{if:"))
                         {
                             inifcond++;
                             var iflidx = line.IndexOf("}", phraseidx);
@@ -200,7 +205,7 @@ namespace EasyCraft.Web
                         ///////////////////////   IF    语法结束  ////////////////////////
 
                         /////////////////////  VAR 变量输出语法开始 ////////////////////////
-                        if (phrasecod == "{var")
+                        if (phrasecod.StartsWith("{var."))
                         {
                             var varlidx = line.IndexOf("}", phraseidx) + 1;
                             var varname = line.Substring(phraseidx + 1, varlidx - phraseidx - 2);
@@ -212,7 +217,7 @@ namespace EasyCraft.Web
                         /////////////////////  VAR 变量输出语法结束 ////////////////////////
 
                         //////////////////////  SET 定义变量开始   /////////////////////////
-                        if (phrasecod == "{set")
+                        if (phrasecod.StartsWith("{set:"))
                         {
                             var eqidx = line.IndexOf("=", phraseidx);
                             var setlidx = line.IndexOf("}", phraseidx) + 1;
@@ -230,7 +235,7 @@ namespace EasyCraft.Web
 
 
                         //////////////////////  FOREACH 循环开始   ////////////////////////
-                        if (phrasecod == "{for")
+                        if (phrasecod.StartsWith("{foreach:"))
                         {
                             var forlidx = line.IndexOf("}", phraseidx) + 1;
                             forvarname = line.Substring(phraseidx + 9, forlidx - phraseidx - 10);
@@ -253,7 +258,7 @@ namespace EasyCraft.Web
                             goto linephrase;
                         }
 
-                        if (phrasecod == "{bre")
+                        if (phrasecod == "{break}")
                         {
                             //if结束,允许print
                             if (forlist == null || forlist.Count <= foritemid + 1)
@@ -280,7 +285,7 @@ namespace EasyCraft.Web
 
                         //////////////////////  INIT 内置变量加载   ////////////////////////
 
-                        if (phrasecod == "{ini")
+                        if (phrasecod.StartsWith("{init:"))
                         {
                             var inilidx = line.IndexOf("}", phraseidx) + 1;
                             var initname = line.Substring(phraseidx + 6, inilidx - phraseidx - 7);
