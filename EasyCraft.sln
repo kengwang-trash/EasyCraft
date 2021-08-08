@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyCraft", "EasyCraft\EasyCraft.csproj", "{2F387B79-DDC1-4553-A598-FC3E000D3BAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F387B79-DDC1-4553-A598-FC3E000D3BAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F387B79-DDC1-4553-A598-FC3E000D3BAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F387B79-DDC1-4553-A598-FC3E000D3BAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F387B79-DDC1-4553-A598-FC3E000D3BAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
