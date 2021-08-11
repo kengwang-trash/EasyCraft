@@ -2,7 +2,7 @@
 
 namespace EasyCraft.Base.User
 {
-    public struct UserBase
+    public class UserBase
     {
         public UserInfoBase UserInfo;
         public UserRequestBase UserRequest;

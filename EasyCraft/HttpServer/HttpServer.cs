@@ -21,11 +21,6 @@ namespace EasyCraft.HttpServer
         {
             _host = WebHost.CreateDefaultBuilder()
                 .SuppressStatusMessages(true)
-                .ConfigureServices(t=>
-                {
-                    t.AddDistributedMemoryCache();
-                    t.AddSession();
-                })
                 .ConfigureLogging(t => t.SetMinimumLevel(LogLevel.None))
                 .UseKestrel()
                 .ConfigureKestrel(t => t.Listen(IPAddress.Loopback, port))
@@ -38,17 +33,18 @@ namespace EasyCraft.HttpServer
 
     public class HttpServerStartUp
     {
-        
         public void Configure(IApplicationBuilder app)
         {
-            app.UseSession();
             app.Run(Handler);
         }
-        
+
         public async Task<bool> Handler(HttpContext context)
         {
             context.Response.Headers["Server"] = $"{Common.SOFT_NAME} {Common.VERSIONSHORT}";
-            context.Response.Headers["Content-Type"] = "text/plain;charset=utf-8;";
+            context.Response.Headers["Access-Control-Allow-Methods"] = "*";
+            context.Response.Headers["Access-Control-Allow-Headers"] = "*";
+            context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
+            context.Response.Headers["Access-Control-Allow-Origin"] = "http://localhost:8080";
             try
             {
                 //先把版权信息加上
@@ -61,6 +57,7 @@ namespace EasyCraft.HttpServer
             {
                 await context.Response.WriteAsync("发生错误 " + e.ToString(), Encoding.UTF8);
             }
+
             return true;
         }
     }
