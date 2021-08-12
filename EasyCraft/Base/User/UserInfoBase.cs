@@ -33,16 +33,19 @@ namespace EasyCraft.Base.User
         public static UserInfoBase Null = new UserInfoBase()
         {
             Id = -1,
-            Name = "null"
+            Name = "null",
+            Type = UserType.Everyone
         };
     }
 
     public enum UserType
     {
-        None,
+        Everyone,
         Registered,
         Technician,
         Admin,
-        SuperUser
+        SuperUser,
+        Plugin,
+        Nobody
     }
 }

@@ -4,7 +4,7 @@ using EasyCraft.Utils;
 
 namespace EasyCraft.Base.User
 {
-    public class UserManager
+    public static class UserManager
     {
         public static readonly Dictionary<int, UserBase> Users = new();
         

@@ -8,18 +8,34 @@ using Newtonsoft.Json;
 
 namespace EasyCraft.HttpServer.Api
 {
+    public struct HttpApi
+    {
+        public UserType MinUserType;
+
+        public delegate ApiReturnBase Func(HttpContext context);
+
+        public Func ApiFunc;
+
+        public HttpApi(Func func, UserType minuser = UserType.Everyone)
+        {
+            MinUserType = minuser;
+            ApiFunc = func;
+        }
+    }
+
     public static class ApiHandler
     {
-        public delegate ApiReturnBase HttpApi(HttpContext context);
-
         public static Dictionary<string, HttpApi> Apis = new();
 
         public static void InitializeApis()
         {
             Apis = new Dictionary<string, HttpApi>()
             {
-                { "/login", HttpApis.ApiLogin },
-                { "/login/status", HttpApis.ApiLoginStatus }
+                { "/login", new HttpApi(HttpApis.ApiLogin) },
+                { "/login/status", new HttpApi(HttpApis.ApiLoginStatus) },
+                { "/logout", new HttpApi(HttpApis.ApiLogout) },
+                { "/version", new HttpApi(HttpApis.ApiVersion) },
+                { "/servers", new HttpApi(HttpApis.ApiServers, UserType.Registered) }
             };
         }
 
@@ -33,10 +49,29 @@ namespace EasyCraft.HttpServer.Api
             }
             else
             {
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(Apis[apistr](context)));
+                var api = Apis[apistr];
+                if (GetCurrentUser(context).UserInfo.Type >= api.MinUserType)
+                {
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(api.ApiFunc(context)));
+                }
+                else
+                {
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(ApiReturnBase.PermissionDenied));
+                }
             }
 
             return true;
+        }
+
+        public static UserBase GetCurrentUser(HttpContext context)
+        {
+            var auth = context.Request.Headers["Authorization"];
+            UserBase nowUser;
+            if (!UserManager.AuthToUid.ContainsKey(auth))
+                nowUser = UserBase.Null;
+            else
+                nowUser = UserManager.Users[UserManager.AuthToUid[auth]];
+            return nowUser;
         }
     }
 }

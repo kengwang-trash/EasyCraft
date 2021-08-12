@@ -35,7 +35,7 @@ namespace EasyCraft.Database
                 return false;
             }
         }
-
+        
         public static SqliteCommand CreateCommand(string comm, IEnumerable<SqliteParameter> parameters = null)
         {
             var ans = Db.CreateCommand();

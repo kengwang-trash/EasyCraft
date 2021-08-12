@@ -32,6 +32,7 @@ namespace EasyCraft
                 .WriteTo.File("/logs/log-.log", LogEventLevel.Information, rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(theme: SystemConsoleTheme.Colored)
                 .CreateLogger();
+            Database.Database.Connect();
             while (!Database.Database.isConnected)
             {
                 Console.Write("请输入数据库密码: ".Translate());
