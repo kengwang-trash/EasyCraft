@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 
 namespace EasyCraft.Utils
 {
     public static class Translation
     {
-        public static Dictionary<string, string> TransList = new Dictionary<string, string>();
+        public static Dictionary<string, string> TransList = new();
 
         public static void LoadTranslation()
         {

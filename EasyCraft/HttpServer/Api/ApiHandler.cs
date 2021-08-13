@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using EasyCraft.Base.User;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +27,7 @@ namespace EasyCraft.HttpServer.Api
 
         public static void InitializeApis()
         {
-            Apis = new Dictionary<string, HttpApi>()
+            Apis = new Dictionary<string, HttpApi>
             {
                 { "/login", new HttpApi(HttpApis.ApiLogin) },
                 { "/login/status", new HttpApi(HttpApis.ApiLoginStatus) },
@@ -51,13 +49,9 @@ namespace EasyCraft.HttpServer.Api
             {
                 var api = Apis[apistr];
                 if (GetCurrentUser(context).UserInfo.Type >= api.MinUserType)
-                {
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(api.ApiFunc(context)));
-                }
                 else
-                {
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(ApiReturnBase.PermissionDenied));
-                }
             }
 
             return true;

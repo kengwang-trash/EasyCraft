@@ -2,12 +2,12 @@
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using EasyCraft.HttpServer.Api;
 using EasyCraft.Utils;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
@@ -40,7 +40,7 @@ namespace EasyCraft.HttpServer
 
         public async Task<bool> Handler(HttpContext context)
         {
-            context.Response.Headers["Server"] = $"{Common.SOFT_NAME} {Common.VERSIONSHORT}";
+            context.Response.Headers["Server"] = $"{Common.SoftName} {Common.VersionShort}";
             context.Response.Headers["Access-Control-Allow-Methods"] = "*";
             context.Response.Headers["Access-Control-Allow-Headers"] = "*";
             context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
@@ -49,13 +49,13 @@ namespace EasyCraft.HttpServer
             {
                 //先把版权信息加上
                 if (context.Request.Path.StartsWithSegments("/api"))
-                    await Api.ApiHandler.HandleApi(context);
+                    await ApiHandler.HandleApi(context);
                 else
                     await context.Response.WriteAsync("欢迎使用 EasyCraft", Encoding.UTF8);
             }
             catch (Exception e)
             {
-                await context.Response.WriteAsync("发生错误 " + e.ToString(), Encoding.UTF8);
+                await context.Response.WriteAsync("发生错误 " + e, Encoding.UTF8);
             }
 
             return true;

@@ -18,9 +18,9 @@ namespace EasyCraft.HttpServer.Api
             if (!context.Request.Form.ContainsKey("username") || !context.Request.Form.ContainsKey("password"))
                 return ApiReturnBase.IncompleteParameters;
             var user =
-                UserManager.Users.Values.FirstOrDefault((t => t.UserInfo.Name == context.Request.Form["username"]));
+                UserManager.Users.Values.FirstOrDefault(t => t.UserInfo.Name == context.Request.Form["username"]);
             if (user == null)
-                return new ApiReturnBase()
+                return new ApiReturnBase
                 {
                     Status = false,
                     Code = (int)ApiErrorCode.UserNotFound,
@@ -28,7 +28,7 @@ namespace EasyCraft.HttpServer.Api
                 };
             if (user.UserInfo.Password !=
                 context.Request.Form["password"].ToString().GetMD5())
-                return new ApiReturnBase()
+                return new ApiReturnBase
                 {
                     Status = false,
                     Code = (int)ApiErrorCode.Unauthorized,
@@ -38,7 +38,7 @@ namespace EasyCraft.HttpServer.Api
                 UserManager.AuthToUid.Remove(user.UserRequest.Auth);
             user.UserRequest.Auth = Utils.Utils.CreateRandomString();
             UserManager.AuthToUid[user.UserRequest.Auth] = user.UserInfo.Id;
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -51,16 +51,14 @@ namespace EasyCraft.HttpServer.Api
         {
             var auth = context.Request.Headers["Authorization"].ToString();
             if (auth == null || auth == "null" || !UserManager.AuthToUid.ContainsKey(auth))
-            {
-                return new ApiReturnBase()
+                return new ApiReturnBase
                 {
                     Status = false,
                     Code = (int)ApiErrorCode.Unauthorized,
                     Msg = "未登录".Translate()
                 };
-            }
 
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -73,18 +71,16 @@ namespace EasyCraft.HttpServer.Api
         {
             var auth = context.Request.Headers["Authorization"].ToString();
             if (auth is null or "null" || !UserManager.AuthToUid.ContainsKey(auth))
-            {
-                return new ApiReturnBase()
+                return new ApiReturnBase
                 {
                     Status = false,
                     Code = (int)ApiErrorCode.Unauthorized,
                     Msg = "未登录".Translate()
                 };
-            }
 
             UserManager.Users[UserManager.AuthToUid[auth]].UserRequest.Auth = "null";
             UserManager.AuthToUid.Remove(auth);
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -94,16 +90,16 @@ namespace EasyCraft.HttpServer.Api
 
         public static ApiReturnBase ApiVersion(HttpContext _)
         {
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = new Dictionary<string, string>()
+                Data = new Dictionary<string, string>
                 {
-                    { "version", Common.VERSIONFULL },
-                    { "vername", Common.VERSIONNAME },
-                    { "vershort", Common.VERSIONSHORT },
+                    { "version", Common.VersionFull },
+                    { "vername", Common.VersionName },
+                    { "vershort", Common.VersionShort },
                     { "ApiVer", Version }
                 }
             };
@@ -112,7 +108,7 @@ namespace EasyCraft.HttpServer.Api
         public static ApiReturnBase ApiServers(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,

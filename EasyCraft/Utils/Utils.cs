@@ -13,7 +13,7 @@ namespace EasyCraft.Utils
         {
             return dic.Select(t => new SqliteParameter(t.Key, t.Value));
         }
-        
+
         // 我觉得全大写好看点
         // ReSharper disable once InconsistentNaming
         public static string GetMD5(this string str)
@@ -30,7 +30,7 @@ namespace EasyCraft.Utils
                 pwd = pwd + s[i].ToString("x2");
             return pwd;
         }
-        
+
         /// <summary>
         ///     生成随机字符串
         /// </summary>

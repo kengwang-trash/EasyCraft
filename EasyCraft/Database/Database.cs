@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
+﻿using System.Collections.Generic;
 using EasyCraft.Utils;
 using Microsoft.Data.Sqlite;
 using Serilog;
@@ -10,23 +7,23 @@ namespace EasyCraft.Database
 {
     internal class Database
     {
-        public static string password;
-        public static SqliteConnection Db = new SqliteConnection();
+        public static string Password;
+        private static SqliteConnection _db = new();
 
-        public static bool isConnected;
+        public static bool IsConnected;
 
         public static bool Connect()
         {
             try
             {
-                Db = new SqliteConnection(new SqliteConnectionStringBuilder
+                _db = new SqliteConnection(new SqliteConnectionStringBuilder
                 {
                     DataSource = "data/database.db",
                     Mode = SqliteOpenMode.ReadWriteCreate,
-                    Password = password,
+                    Password = Password
                 }.ToString());
-                Db.Open();
-                isConnected = true;
+                _db.Open();
+                IsConnected = true;
                 return true;
             }
             catch (SqliteException e)
@@ -35,10 +32,10 @@ namespace EasyCraft.Database
                 return false;
             }
         }
-        
+
         public static SqliteCommand CreateCommand(string comm, IEnumerable<SqliteParameter> parameters = null)
         {
-            var ans = Db.CreateCommand();
+            var ans = _db.CreateCommand();
             ans.CommandText = comm;
             if (parameters != null)
                 ans.Parameters.AddRange(parameters);

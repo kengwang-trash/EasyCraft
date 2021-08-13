@@ -6,20 +6,20 @@ using System.Reflection;
 using System.Threading.Tasks;
 using EasyCraft.Utils;
 using Serilog;
+#pragma warning disable 1998
 
 namespace EasyCraft.PluginBase
 {
     internal static class PluginController
     {
         internal static Dictionary<string, Plugin> Plugins = new();
-        private static Dictionary<string, Dictionary<string, int>> EventHookers = new();
+        private static readonly Dictionary<string, Dictionary<string, int>> EventHookers = new();
 
         public static void LoadPlugins()
         {
             if (!Directory.Exists(Directory.GetCurrentDirectory() + "/data/plugins")) return;
-            foreach (string file in
+            foreach (var file in
                 Directory.EnumerateFiles(Directory.GetCurrentDirectory() + "/data/plugins", "*.dll"))
-            {
                 try
                 {
                     // 1 - 载入 Assembly , 我们不用文件方便后期动态加载
@@ -48,32 +48,29 @@ namespace EasyCraft.PluginBase
                         },
                         Enable = false,
                         Dll = type,
-                        Key = key,
+                        Key = key
                     };
                     // 3 - 加载相关 EventHooker
                     Plugins[ret["PluginInfo"]["id"]].EventHookers = ret["Hooks"];
                     foreach (var plh in ret["Hooks"])
                     {
                         if (!EventHookers.ContainsKey(plh.Key))
-                            EventHookers[plh.Key] = new();
-                        EventHookers[plh.Key][ret["PluginInfo"]["id"]] = Int32.Parse(plh.Value);
+                            EventHookers[plh.Key] = new Dictionary<string, int>();
+                        EventHookers[plh.Key][ret["PluginInfo"]["id"]] = int.Parse(plh.Value);
                     }
 
                     // 4 - 载入申请权限 - 目前完全允许
-                    Plugins[ret["PluginInfo"]["id"]].Auth = ret["Request"].ToDictionary(t => t.Key, t => true);
+                    Plugins[ret["PluginInfo"]["id"]].Auth = ret["Request"].ToDictionary(t => t.Key, _ => true);
                 }
                 catch (Exception e)
                 {
                     Log.Warning("插件 {0} 加载失败: {1}".Translate(), Path.GetFileName(file), e.Message);
                 }
-            }
 
             // 5 - 对 EventHooker 进行排序方便调用
             foreach (var evtkey in EventHookers.Keys)
-            {
                 EventHookers[evtkey] =
                     EventHookers[evtkey].OrderBy(t => t.Value).ToDictionary(t => t.Key, t => t.Value);
-            }
 
             // 6 - 这时才加载插件 API
             PluginHandler.InitPluginHandleApi();
@@ -85,7 +82,6 @@ namespace EasyCraft.PluginBase
             // 不要回答! 不要回答! 不要回答!
             var ret = new Dictionary<string, object>();
             foreach (var kvp in EventHookers[eventId])
-            {
                 try
                 {
                     ret[kvp.Key] = Plugins[kvp.Key].Dll.GetMethod(eventId)?.Invoke(null, paratmers);
@@ -94,7 +90,6 @@ namespace EasyCraft.PluginBase
                 {
                     Log.Warning("调用插件 {0} 中 {1} 出错: {3}".Translate(), kvp.Key, eventId, e.Message);
                 }
-            }
 
             return ret;
         }

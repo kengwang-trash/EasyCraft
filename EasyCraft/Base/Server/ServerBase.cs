@@ -5,9 +5,8 @@ namespace EasyCraft.Base.Server
 {
     public class ServerBase
     {
-        [JsonProperty("id")] public int Id;
-
         [JsonProperty("baseInfo")] public ServerBaseInfo BaseInfo;
+        [JsonProperty("id")] public int Id;
 
         [JsonProperty("startInfo")] public ServerStartInfo StartInfo;
 

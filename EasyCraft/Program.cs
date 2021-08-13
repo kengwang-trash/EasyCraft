@@ -10,9 +10,9 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace EasyCraft
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.CancelKeyPress += ExitEasyCraft;
             Console.WriteLine(@"
@@ -23,7 +23,7 @@ namespace EasyCraft
 |_____\__,_|___/\__, |\____|_|  \__,_|_|  \__|
                 |___/");
             Console.WriteLine(@"
-== Version " + Common.VERSIONFULL + "  (" + Common.VERSIONNAME + @") ==
+== Version " + Common.VersionFull + "  (" + Common.VersionName + @") ==
  == Developed by EasyCraft Team ==
   ==    Under GPL v3 Licence   ==");
             Console.WriteLine("Loading Language Pack");
@@ -34,10 +34,10 @@ namespace EasyCraft
                 .WriteTo.Console(theme: SystemConsoleTheme.Colored)
                 .CreateLogger();
             Database.Database.Connect();
-            while (!Database.Database.isConnected)
+            while (!Database.Database.IsConnected)
             {
                 Console.Write("请输入数据库密码: ".Translate());
-                Database.Database.password = Console.ReadLine();
+                Database.Database.Password = Console.ReadLine();
                 Log.Information("正在尝试连接数据库".Translate());
                 Database.Database.Connect();
             }
@@ -53,17 +53,18 @@ namespace EasyCraft
             Log.Information("加载 API 成功, 共 {0} 条".Translate(), ApiHandler.Apis.Count);
 
             Log.Information("加载插件中".Translate());
-            PluginBase.PluginController.LoadPlugins();
-            Log.Information("加载插件完成, 共 {0} 个".Translate(), PluginBase.PluginController.Plugins.Count);
-            
+            PluginController.LoadPlugins();
+            Log.Information("加载插件完成, 共 {0} 个".Translate(), PluginController.Plugins.Count);
+
             Log.Information("启用插件中".Translate());
             PluginController.EnablePlugins();
 
             Log.Information("正在开启 HTTP 服务器".Translate());
             HttpServer.HttpServer.StartHttpServer();
-            string input = String.Empty;
+            var input = string.Empty;
             while ((input = Console.ReadLine()) != "exit")
             {
+                Log.Information("你输入了 {0}", input);
             }
 
             ExitEasyCraft(null, null);

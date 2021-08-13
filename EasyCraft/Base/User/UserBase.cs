@@ -4,21 +4,21 @@ namespace EasyCraft.Base.User
 {
     public class UserBase
     {
+        public static UserBase Null = new()
+        {
+            UserInfo = UserInfoBase.Null,
+            UserRequest = UserRequestBase.Null
+        };
+
         public UserInfoBase UserInfo;
         public UserRequestBase UserRequest;
 
         public static UserBase CreateFromSqliteDataReader(SqliteDataReader reader)
         {
-            return new UserBase()
+            return new UserBase
             {
                 UserInfo = UserInfoBase.CreateFromSqliteReader(reader)
             };
         }
-
-        public static UserBase Null = new UserBase()
-        {
-            UserInfo = UserInfoBase.Null,
-            UserRequest = UserRequestBase.Null
-        };
     }
 }

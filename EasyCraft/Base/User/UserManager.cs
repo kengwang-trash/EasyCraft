@@ -7,7 +7,7 @@ namespace EasyCraft.Base.User
     public static class UserManager
     {
         public static readonly Dictionary<int, UserBase> Users = new();
-        
+
         //空间换时间
         public static readonly Dictionary<string, int> AuthToUid = new();
 
@@ -16,10 +16,7 @@ namespace EasyCraft.Base.User
             Users.Clear();
             var reader = Database.Database.CreateCommand("SELECT id, name, password, type, email FROM users")
                 .ExecuteReader();
-            while (reader.Read())
-            {
-                Users[reader.GetInt32(0)] = UserBase.CreateFromSqliteDataReader(reader);
-            }
+            while (reader.Read()) Users[reader.GetInt32(0)] = UserBase.CreateFromSqliteDataReader(reader);
         }
 
         public static bool CheckUserNameOccupy(string username)
@@ -31,7 +28,7 @@ namespace EasyCraft.Base.User
         {
             var reader = Database.Database.CreateCommand(
                 "INSERT INTO users (name, password, type, email) VALUES ( $name , $password , $type , $email ); SELECT id, name, password, type, email FROM users WHERE id = last_insert_rowid(); ",
-                new Dictionary<string, object>()
+                new Dictionary<string, object>
                 {
                     { "$name", info.Name },
                     { "$password", info.Password },

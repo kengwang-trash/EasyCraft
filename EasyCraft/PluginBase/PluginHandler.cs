@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using EasyCraft.Utils;
-using Serilog;
 
 namespace EasyCraft.PluginBase
 {
     public class PluginHandler
     {
-        private delegate object PluginHandleApi(object obj);
-
-        private static Dictionary<string, PluginHandleApi> Apis = new();
+        private static Dictionary<string, PluginHandleApi> _apis = new();
 
         public static void InitPluginHandleApi()
         {
-            Apis = new()
+            _apis = new Dictionary<string, PluginHandleApi>
             {
                 { "FastConsole.PrintInfo", o => PluginApis.FastConsole(2, o.ToString()) },
                 { "FastConsole.PrintTrash", o => PluginApis.FastConsole(0, o.ToString()) },
                 { "FastConsole.PrintWarning", o => PluginApis.FastConsole(3, o.ToString()) },
                 { "FastConsole.PrintError", o => PluginApis.FastConsole(4, o.ToString()) },
-                { "FastConsole.PrintFatal", o => PluginApis.FastConsole(5, o.ToString()) },
+                { "FastConsole.PrintFatal", o => PluginApis.FastConsole(5, o.ToString()) }
             };
         }
 
@@ -30,43 +27,41 @@ namespace EasyCraft.PluginBase
             {
                 if (!PluginController.Plugins[input["id"].ToString()].Auth.ContainsKey(input["func"].ToString()) ||
                     !PluginController.Plugins[input["id"].ToString()].Auth[input["func"].ToString()])
-                {
-                    return new()
+                    return new Dictionary<string, object>
                     {
                         { "status", false },
                         { "code", -401 },
                         { "message", "没有调用此 API 的权限".Translate() },
                         { "data", null }
                     };
-                }
 
                 if (input["key"].ToString() != PluginController.Plugins[input["id"].ToString()].Key)
-                    return new()
+                    return new Dictionary<string, object>
                     {
                         { "status", false },
                         { "code", -400 },
                         { "message", "不正确的 Key".Translate() },
                         { "data", null }
                     };
-                if (!Apis.ContainsKey(input["func"].ToString()))
-                    return new()
+                if (!_apis.ContainsKey(input["func"].ToString()))
+                    return new Dictionary<string, object>
                     {
                         { "status", false },
                         { "code", -501 },
                         { "message", "调用了未知的 API".Translate() },
                         { "data", null }
                     };
-                return new()
+                return new Dictionary<string, object>
                 {
                     { "status", true },
                     { "code", 200 },
                     { "message", "成功" },
-                    { "data", Apis[input["func"].ToString()].Invoke(input["data"]) }
+                    { "data", _apis[input["func"].ToString()].Invoke(input["data"]) }
                 };
             }
             catch (Exception e)
             {
-                return new()
+                return new Dictionary<string, object>
                 {
                     { "status", false },
                     { "code", -500 },
@@ -75,5 +70,7 @@ namespace EasyCraft.PluginBase
                 };
             }
         }
+
+        private delegate object PluginHandleApi(object obj);
     }
 }
