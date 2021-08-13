@@ -2,6 +2,7 @@
 using EasyCraft.Base.Server;
 using EasyCraft.Base.User;
 using EasyCraft.HttpServer.Api;
+using EasyCraft.PluginBase;
 using EasyCraft.Utils;
 using Serilog;
 using Serilog.Events;
@@ -50,6 +51,13 @@ namespace EasyCraft
             Log.Information("加载 API 中".Translate());
             ApiHandler.InitializeApis();
             Log.Information("加载 API 成功, 共 {0} 条".Translate(), ApiHandler.Apis.Count);
+
+            Log.Information("加载插件中".Translate());
+            PluginBase.PluginController.LoadPlugins();
+            Log.Information("加载插件完成, 共 {0} 个".Translate(), PluginBase.PluginController.Plugins.Count);
+            
+            Log.Information("启用插件中".Translate());
+            PluginController.EnablePlugins();
 
             Log.Information("正在开启 HTTP 服务器".Translate());
             HttpServer.HttpServer.StartHttpServer();
