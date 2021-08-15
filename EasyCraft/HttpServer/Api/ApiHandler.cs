@@ -32,8 +32,9 @@ namespace EasyCraft.HttpServer.Api
                 { "/login", new HttpApi(HttpApis.ApiLogin) },
                 { "/login/status", new HttpApi(HttpApis.ApiLoginStatus) },
                 { "/logout", new HttpApi(HttpApis.ApiLogout) },
+                { "/register", new HttpApi(HttpApis.ApiRegister) },
                 { "/version", new HttpApi(HttpApis.ApiVersion) },
-                { "/servers", new HttpApi(HttpApis.ApiServers, UserType.Registered) }
+                { "/servers", new HttpApi(HttpApis.ApiServers, UserType.Registered) },
             };
         }
 
@@ -60,6 +61,7 @@ namespace EasyCraft.HttpServer.Api
         public static UserBase GetCurrentUser(HttpContext context)
         {
             var auth = context.Request.Headers["Authorization"];
+            if (string.IsNullOrEmpty(auth)) return UserBase.Null;
             UserBase nowUser;
             if (!UserManager.AuthToUid.ContainsKey(auth))
                 nowUser = UserBase.Null;

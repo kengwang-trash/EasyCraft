@@ -81,6 +81,7 @@ namespace EasyCraft.PluginBase
         {
             // 不要回答! 不要回答! 不要回答!
             var ret = new Dictionary<string, object>();
+            if (!EventHookers.ContainsKey(eventId)) return ret;
             foreach (var kvp in EventHookers[eventId])
                 try
                 {

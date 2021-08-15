@@ -7,15 +7,8 @@ namespace EasyCraft.Base.Core
     {
         public string Id;
         public CoreInfoBase Info;
-        public CoreStartInfo Start;
+        public CoreStartSimpleInfo Start;
         public Dictionary<string,CoreConfigInfo> ConfigInfo;
-    }
-
-    public class CoreStartInfo
-    {
-        public int Type;
-        public CoreStartSimpleInfo SimpleInfo;
-        public CoreConfigInfo ConfigInfo;
     }
 
     public class CoreStartSimpleInfo

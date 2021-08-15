@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.User;
 using EasyCraft.Utils;
@@ -9,13 +10,14 @@ namespace EasyCraft.HttpServer.Api
 {
     public static class HttpApis
     {
-        public static string Version = "1.0.0 alpha";
+        public static int Version = 1;
 
         public static ApiReturnBase ApiLogin(HttpContext context)
         {
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
-            if (!context.Request.Form.ContainsKey("username") || !context.Request.Form.ContainsKey("password"))
+            if (string.IsNullOrEmpty(context.Request.Form["username"]) ||
+                string.IsNullOrEmpty(context.Request.Form["password"]))
                 return ApiReturnBase.IncompleteParameters;
             var user =
                 UserManager.Users.Values.FirstOrDefault(t => t.UserInfo.Name == context.Request.Form["username"]);
@@ -23,7 +25,7 @@ namespace EasyCraft.HttpServer.Api
                 return new ApiReturnBase
                 {
                     Status = false,
-                    Code = (int)ApiErrorCode.UserNotFound,
+                    Code = (int)ApiReturnCode.UserNotFound,
                     Msg = "用户不存在".Translate()
                 };
             if (user.UserInfo.Password !=
@@ -31,7 +33,7 @@ namespace EasyCraft.HttpServer.Api
                 return new ApiReturnBase
                 {
                     Status = false,
-                    Code = (int)ApiErrorCode.Unauthorized,
+                    Code = (int)ApiReturnCode.Unauthorized,
                     Msg = "登录失败, 密码错误"
                 };
             if (user.UserRequest.Auth != null)
@@ -54,7 +56,7 @@ namespace EasyCraft.HttpServer.Api
                 return new ApiReturnBase
                 {
                     Status = false,
-                    Code = (int)ApiErrorCode.Unauthorized,
+                    Code = (int)ApiReturnCode.Unauthorized,
                     Msg = "未登录".Translate()
                 };
 
@@ -74,7 +76,7 @@ namespace EasyCraft.HttpServer.Api
                 return new ApiReturnBase
                 {
                     Status = false,
-                    Code = (int)ApiErrorCode.Unauthorized,
+                    Code = (int)ApiReturnCode.Unauthorized,
                     Msg = "未登录".Translate()
                 };
 
@@ -95,7 +97,7 @@ namespace EasyCraft.HttpServer.Api
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = new Dictionary<string, string>
+                Data = new Dictionary<string, object>
                 {
                     { "version", Common.VersionFull },
                     { "vername", Common.VersionName },
@@ -114,6 +116,59 @@ namespace EasyCraft.HttpServer.Api
                 Code = 200,
                 Msg = "成功获取",
                 Data = ServerManager.Servers.Values.Where(t => t.BaseInfo.Owner == nowUser.UserInfo.Id)
+            };
+        }
+
+        public static ApiReturnBase ApiRegister(HttpContext context)
+        {
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["username"]) ||
+                string.IsNullOrEmpty(context.Request.Form["password"]) ||
+                string.IsNullOrEmpty(context.Request.Form["repassword"]) ||
+                string.IsNullOrEmpty(context.Request.Form["email"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (UserManager.CheckUserNameOccupy(context.Request.Form["username"]))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.UserNameOccupied,
+                    Msg = "用户名被占用".Translate()
+                };
+            if (context.Request.Form["password"] != context.Request.Form["repassword"])
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PasswordNotIdentical,
+                    Msg = "两次密码不一致".Translate()
+                };
+            if (!Regex.IsMatch(context.Request.Form["password"], @"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]*).{6,18}$"))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.IncorrectPasswordFormat,
+                    Msg = "密码应为6-18位字母,数字,特殊符号的组合".Translate()
+                };
+            int ret = UserManager.AddUser(new UserInfoBase
+            {
+                Email = context.Request.Form["email"],
+                Name = context.Request.Form["username"],
+                Password = context.Request.Form["password"].ToString().GetMD5(),
+                Type = UserType.Registered
+            });
+            if (ret == -1)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.RequestFailed,
+                    Msg = "注册失败"
+                };
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "注册成功".Translate(),
+                Data = UserManager.Users[ret]
             };
         }
     }

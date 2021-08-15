@@ -21,30 +21,34 @@ namespace EasyCraft.HttpServer.Api
         public object Data { get; set; }
 
         public static ApiReturnBase ApiNotFound = new()
-            { Status = false, Code = (int)ApiErrorCode.NotFound, Msg = "所请求 API 未提供".Translate() };
+            { Status = false, Code = (int)ApiReturnCode.NotFound, Msg = "所请求 API 未提供".Translate() };
 
         public static ApiReturnBase PermissionDenied = new()
-            { Status = false, Code = (int)ApiErrorCode.PermissionDenied, Msg = "权限不足".Translate() };
+            { Status = false, Code = (int)ApiReturnCode.PermissionDenied, Msg = "权限不足".Translate() };
 
         public static ApiReturnBase InternalError = new()
-            { Status = false, Code = (int)ApiErrorCode.InternalError, Msg = "内部错误".Translate() };
+            { Status = false, Code = (int)ApiReturnCode.InternalError, Msg = "内部错误".Translate() };
 
         public static ApiReturnBase ApiNotImplemented = new()
-            { Status = false, Code = (int)ApiErrorCode.NotImplemented, Msg = "API 未实现".Translate() };
+            { Status = false, Code = (int)ApiReturnCode.NotImplemented, Msg = "API 未实现".Translate() };
 
         public static ApiReturnBase IncompleteParameters = new()
-            { Status = false, Code = (int)ApiErrorCode.IncompleteParameters, Msg = "参数不全".Translate() };
+            { Status = false, Code = (int)ApiReturnCode.IncompleteParameters, Msg = "参数不全".Translate() };
     }
 
-    public enum ApiErrorCode
+    public enum ApiReturnCode
     {
         None,
         PermissionDenied,
         IncompleteParameters,
+        RequestFailed,
         UserNotFound,
         ServerExpired,
         CoreNotFound,
         PluginReject,
+        UserNameOccupied,
+        PasswordNotIdentical,
+        IncorrectPasswordFormat,
 
         // 下方遵循 HTTP 响应码
         // Refer https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status

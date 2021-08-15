@@ -2,6 +2,7 @@
 using EasyCraft.Base.Core;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.User;
+using EasyCraft.Command;
 using EasyCraft.HttpServer.Api;
 using EasyCraft.PluginBase;
 using EasyCraft.Utils;
@@ -11,8 +12,9 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace EasyCraft
 {
-    internal class Program
+    internal static class Program
     {
+        // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
             Console.CancelKeyPress += ExitEasyCraft;
@@ -71,11 +73,16 @@ namespace EasyCraft
             while ((input = Console.ReadLine()) != "exit")
             {
                 Log.Information("你输入了 {0}", input);
+                if (input == null)
+                    continue;
+                var l = input.Split(' ');
+                if (CommandManager.Apis.ContainsKey(l[0]))
+                    CommandManager.Apis[l[0]].Invoke(input);
             }
 
             ExitEasyCraft(null, null);
         }
-
+        
         private static void ExitEasyCraft(object sender, ConsoleCancelEventArgs e)
         {
             Log.Information("正在关闭 EasyCraft".Translate());

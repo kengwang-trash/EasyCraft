@@ -28,56 +28,56 @@ namespace EasyCraft.Base.Core
                     }
 
                     // 别看了, 这个 lambda 我也看晕了
-                    var core = new CoreBase
+                    if (json != null && json["info"] != null)
                     {
-                        Id = json["id"].ToString(),
-                        Info = new()
+                        var core = new CoreBase
                         {
                             Id = json["id"].ToString(),
-                            Device = json["info"]["device"].ToObject<int>(),
-                            Branch = json["info"]["branch"].ToString(),
-                            Name = json["info"]["name"].ToString(),
-                        },
-                        Start = new CoreStartInfo()
-                        {
-                            Type = json["startinfo"]["type"].ToObject<int>(),
-                            SimpleInfo = new CoreStartSimpleInfo()
+                            Info = new()
+                            {
+                                Id = json["id"].ToString(),
+                                Device = json["info"]["device"]?.ToObject<int>() ?? 0,
+                                Branch = json["info"]["branch"]?.ToString() ?? "未知分支".Translate(),
+                                Name = json["info"]["name"]?.ToString() ?? "未知核心".Translate(),
+                            },
+                            Start = new CoreStartSimpleInfo()
                             {
                                 Program = json["startinfo"]["program"].ToString(),
                                 Parameter = json["startinfo"]["param"].ToString()
-                            }
-                        },
-                        ConfigInfo =
-                            (json["configs"]?.ToObject<Dictionary<string, JToken>>() ??
-                             new Dictionary<string, JToken>()).ToDictionary(k => k.Key,
-                                keyValuePair => new CoreConfigInfo()
-                                {
-                                    Name = keyValuePair.Value["name"]?.ToString(),
-                                    Type = keyValuePair.Value["type"]?.ToString(),
-                                    Required = keyValuePair.Value["required"]?.ToObject<bool>() ?? false,
-                                    Known = (keyValuePair.Value["known"])!.Select(t =>
-                                        new CoreConfigKnownItem
-                                        {
-                                            Key = t["key"].ToString(),
-                                            Name = t["name"].ToString(),
-                                            Type = t["type"].ToObject<int>(),
-                                            Visible = t["visible"]?.ToObject<bool>() ?? true,
-                                            Force = t["force"]?.ToObject<bool>() ?? false,
-                                            Value = t["value"]?.ToObject<string>() ?? String.Empty,
-                                            Selection = (t["selection"]?.ToObject<List<JToken>>() ?? new List<JToken>())
-                                                .Select(
-                                                    token => new CoreConfigKnownItemSelection
-                                                    {
-                                                        Display = token["display"].ToString(),
-                                                        Value = token["value"].ToString()
-                                                    }).ToList()
-                                        }
-                                    ).ToList()
-                                })
-                    };
+                            },
+                            ConfigInfo =
+                                (json["configs"]?.ToObject<Dictionary<string, JToken>>() ??
+                                 new Dictionary<string, JToken>()).ToDictionary(k => k.Key,
+                                    keyValuePair => new CoreConfigInfo()
+                                    {
+                                        Name = keyValuePair.Value["name"]?.ToString(),
+                                        Type = keyValuePair.Value["type"]?.ToString(),
+                                        Required = keyValuePair.Value["required"]?.ToObject<bool>() ?? false,
+                                        Known = (keyValuePair.Value["known"])!.Select(t =>
+                                            new CoreConfigKnownItem
+                                            {
+                                                Key = t["key"].ToString(),
+                                                Name = t["name"].ToString(),
+                                                Type = t["type"].ToObject<int>(),
+                                                Visible = t["visible"]?.ToObject<bool>() ?? true,
+                                                Force = t["force"]?.ToObject<bool>() ?? false,
+                                                Value = t["value"]?.ToObject<string>() ?? String.Empty,
+                                                Selection = (t["selection"]?.ToObject<List<JToken>>() ??
+                                                             new List<JToken>())
+                                                    .Select(
+                                                        token => new CoreConfigKnownItemSelection
+                                                        {
+                                                            Display = token["display"].ToString(),
+                                                            Value = token["value"].ToString()
+                                                        }).ToList()
+                                            }
+                                        ).ToList()
+                                    })
+                        };
 
 
-                    Cores[json["id"].ToString()] = core;
+                        Cores[json["id"].ToString()] = core;
+                    }
                 }
                 catch (Exception e)
                 {

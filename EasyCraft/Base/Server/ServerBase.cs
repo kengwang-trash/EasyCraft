@@ -8,7 +8,6 @@ using EasyCraft.HttpServer.Api;
 using EasyCraft.Utils;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace EasyCraft.Base.Server
 {
@@ -18,6 +17,8 @@ namespace EasyCraft.Base.Server
         [JsonProperty("baseInfo")] public ServerBaseInfo BaseInfo;
         [JsonProperty("id")] public int Id;
         [JsonProperty("startInfo")] public ServerStartInfo StartInfo;
+        [JsonProperty("statusInfo")] public ServerStatusInfo StatusInfo;
+
         [JsonIgnore] public string ServerDir => Directory.GetCurrentDirectory() + "/data/servers/" + Id + "/";
         [JsonIgnore] public CoreBase Core => CoreManager.Cores[StartInfo.Core];
 
@@ -26,6 +27,7 @@ namespace EasyCraft.Base.Server
             Id = reader.GetInt32(0);
             BaseInfo = ServerBaseInfo.CreateFromSqlReader(reader);
             StartInfo = ServerStartInfo.CreateFromSqliteById(reader.GetInt32(0));
+            StatusInfo = new();
         }
 
         public void LoadConfigFile()
@@ -36,6 +38,7 @@ namespace EasyCraft.Base.Server
                     File.Create(ServerDir + "/" + kvConfigInfo.Key);
                 else
                     continue;
+                WriteConfigFile(kvConfigInfo.Key);
             }
         }
 
@@ -56,6 +59,11 @@ namespace EasyCraft.Base.Server
             var configInfo = Core.ConfigInfo[filename];
             if (configInfo == null)
                 return;
+            if (vals == null)
+            {
+                vals = new Dictionary<string, string>();
+            }
+
             switch (configInfo.Type)
             {
                 case "properties":
@@ -72,16 +80,23 @@ namespace EasyCraft.Base.Server
                         var knownItem = configInfo.Known.FirstOrDefault(t => t.Key == kvp[0]);
                         if (knownItem != null)
                         {
+                            string value = "";
+                            if (vals.ContainsKey(kvp[0]))
+                            {
+                                value = vals[kvp[0]];
+                            }
+
                             if (knownItem.Force)
                             {
-                                var list = kvp.ToList();
-                                list.RemoveAt(0);
-                                sb.AppendLine(kvp[0] + "=" + PhraseServerVar(string.Join('=', list)));
+                                value = knownItem.Value;
                             }
+
+                            sb.AppendLine(kvp[0] + "=" + value);
                         }
                         else
                         {
                             sb.AppendLine(s);
+                            // ReSharper disable once RedundantJumpStatement
                             continue;
                         }
                     }
@@ -99,21 +114,21 @@ namespace EasyCraft.Base.Server
             // 首先检查是否到期
             if (BaseInfo.Expired)
             {
-                Log.Warning("服务器已于 {0} 到期.".Translate(), BaseInfo.ExpireTime);
+                StatusInfo.OnConsoleOutput("服务器已于 {0} 到期.".Translate(BaseInfo.ExpireTime.ToString("s")));
                 return new ServerStartException
                 {
-                    Code = (int)ApiErrorCode.ServerExpired,
-                    Message = "服务器已于 {0} 到期.".Translate(BaseInfo.ExpireTime)
+                    Code = (int)ApiReturnCode.ServerExpired,
+                    Message = "服务器已于 {0} 到期.".Translate(BaseInfo.ExpireTime.ToString("s"))
                 };
             }
 
             // 再检查开服核心是否存在
             if (!CoreManager.Cores.ContainsKey(StartInfo.Core))
             {
-                Log.Warning("服务器核心 {0} 不存在.".Translate(), StartInfo.Core);
+                StatusInfo.OnConsoleOutput("服务器核心 {0} 不存在.".Translate(StartInfo.Core));
                 return new ServerStartException
                 {
-                    Code = (int)ApiErrorCode.CoreNotFound,
+                    Code = (int)ApiReturnCode.CoreNotFound,
                     Message = "服务器核心 {0} 不存在.".Translate(StartInfo.Core)
                 };
             }
@@ -126,17 +141,33 @@ namespace EasyCraft.Base.Server
                 .Where(t => !(bool)t.Value).ToArray();
             if (ret.Length != 0)
             {
-                Log.Warning("服务器被插件 {0} 拒绝开启.".Translate(), ret[0].Key);
+                StatusInfo.OnConsoleOutput("服务器被插件 {0} 拒绝开启.".Translate(ret[0].Key));
                 return new ServerStartException
                 {
-                    Code = (int)ApiErrorCode.PluginReject,
+                    Code = (int)ApiReturnCode.PluginReject,
                     Message = "服务器被插件 {0} 拒绝开启.".Translate(ret[0].Key)
                 };
             }
 
             // 检查结束, 先进行开服前准备
-            LoadConfigFile();
 
+            // 先检查是否更换核心
+            if (StartInfo.LastCore != StartInfo.Core)
+            {
+                StatusInfo.OnConsoleOutput("你的核心已更换, 正在加载核心文件".Translate(),
+                    false);
+                Utils.Utils.DirectoryCopy(Directory.GetCurrentDirectory() + "/data/cores/" + StartInfo.Core + "/files",
+                    ServerDir);
+            }
+
+            StatusInfo.OnConsoleOutput("正在加载配置项".Translate(),
+                false);
+            LoadConfigFile();
+            
+            StatusInfo.OnConsoleOutput("正在尝试调用开服器".Translate(),
+                false);
+            // TODO: 调用开服器
+            
             return new ServerStartException()
             {
                 Code = 200,

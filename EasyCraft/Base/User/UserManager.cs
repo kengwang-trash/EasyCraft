@@ -19,9 +19,10 @@ namespace EasyCraft.Base.User
             while (reader.Read()) Users[reader.GetInt32(0)] = UserBase.CreateFromSqliteDataReader(reader);
         }
 
+        // 如有占用返回 True
         public static bool CheckUserNameOccupy(string username)
         {
-            return Users.Values.All(t => t.UserInfo.Name != username);
+            return Users.Values.Any(t => t.UserInfo.Name == username);
         }
 
         public static int AddUser(UserInfoBase info)

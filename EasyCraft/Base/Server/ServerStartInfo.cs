@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.Data.Sqlite;
-using Newtonsoft.Json;
+﻿using Microsoft.Data.Sqlite;
 
 namespace EasyCraft.Base.Server
 {
     public class ServerStartInfo
     {
+        public int Id;
         public string Core;
         public string LastCore;
         public string World;
@@ -20,10 +19,19 @@ namespace EasyCraft.Base.Server
             reader.Read();
             return new ServerStartInfo
             {
+                Id = reader.GetInt32(0),
                 Core = reader.GetString(1),
                 LastCore = reader.GetString(2),
                 World = reader.GetString(3)
             };
+        }
+
+        public void SyncToDatabase(int id)
+        {
+            Database.Database
+                .CreateCommand(
+                    "UPDATE server_start SET ( core , lastcore , world ) = ( $core , $lastcore , $world ) WHERE id = $id")
+                .ExecuteNonQuery();
         }
     }
 
