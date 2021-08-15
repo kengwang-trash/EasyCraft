@@ -4,11 +4,12 @@ using Newtonsoft.Json;
 
 namespace EasyCraft.Base.Server
 {
-    public struct ServerBaseInfo
+    public class ServerBaseInfo
     {
         [JsonProperty("id")] public int Id;
         [JsonProperty("name")] public string Name;
         [JsonProperty("owner")] public int Owner;
+        [JsonProperty("player")] public int Player;
         [JsonProperty("expireTime")] public DateTime ExpireTime;
         [JsonProperty("expired")] public bool Expired => ExpireTime < DateTime.Now;
 
@@ -28,14 +29,15 @@ namespace EasyCraft.Base.Server
                 Port = reader.GetInt32(4),
                 Ram = reader.GetInt32(5),
                 AutoStart = reader.GetBoolean(6),
-                Status = (ServerStatus)reader.GetInt32(7)
+                Status = (ServerStatus)reader.GetInt32(7),
+                Player = reader.GetInt32(8)
             };
         }
 
         public void RefreshInfo()
         {
             var cmd = Database.Database.CreateCommand(
-                "SELECT id,name,owner,expire,port,ram,autostart,status WHERE id = $id ");
+                "SELECT id,name,owner,expire,port,ram,autostart,status,player WHERE id = $id ");
             cmd.Parameters.AddWithValue("$id", Id);
             var reader = cmd.ExecuteReader();
             reader.Read();
@@ -47,6 +49,7 @@ namespace EasyCraft.Base.Server
             Ram = reader.GetInt32(5);
             AutoStart = reader.GetBoolean(6);
             Status = (ServerStatus)reader.GetInt32(7);
+            Player = reader.GetInt32(8);
         }
     }
 

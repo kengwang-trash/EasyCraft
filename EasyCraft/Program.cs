@@ -1,4 +1,5 @@
 ﻿using System;
+using EasyCraft.Base.Core;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.User;
 using EasyCraft.HttpServer.Api;
@@ -45,6 +46,11 @@ namespace EasyCraft
             Log.Information("连接到数据库成功!".Translate());
             Log.Information("加载用户中".Translate());
             UserManager.LoadUsers();
+
+            Log.Information("加载核心中".Translate());
+            CoreManager.LoadCores();
+            Log.Information("加载核心成功, 共 {0} 个".Translate(), CoreManager.Cores.Count);
+
             Log.Information("加载服务器中".Translate());
             ServerManager.LoadServers();
 
@@ -61,7 +67,7 @@ namespace EasyCraft
 
             Log.Information("正在开启 HTTP 服务器".Translate());
             HttpServer.HttpServer.StartHttpServer();
-            var input = string.Empty;
+            string input;
             while ((input = Console.ReadLine()) != "exit")
             {
                 Log.Information("你输入了 {0}", input);

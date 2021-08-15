@@ -15,7 +15,7 @@ namespace EasyCraft.PluginBase
         [JsonIgnore] public string Key;
     }
 
-    public struct PluginInfo
+    public class PluginInfo
     {
         public string Id;
         public string Name;

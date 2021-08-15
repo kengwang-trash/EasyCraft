@@ -77,14 +77,14 @@ namespace EasyCraft.PluginBase
         }
 
 
-        public static async Task<Dictionary<string, object>> BroadcastEventAsync(string eventId, object[] paratmers)
+        public static async Task<Dictionary<string, object>> BroadcastEventAsync(string eventId, object[] parameters)
         {
             // 不要回答! 不要回答! 不要回答!
             var ret = new Dictionary<string, object>();
             foreach (var kvp in EventHookers[eventId])
                 try
                 {
-                    ret[kvp.Key] = Plugins[kvp.Key].Dll.GetMethod(eventId)?.Invoke(null, paratmers);
+                    ret[kvp.Key] = Plugins[kvp.Key].Dll.GetMethod(eventId)?.Invoke(null, parameters);
                 }
                 catch (Exception e)
                 {

@@ -2,7 +2,7 @@
 
 namespace EasyCraft.Base.User
 {
-    public struct UserRequestBase
+    public class UserRequestBase
     {
         public bool IsLogin;
         [JsonProperty("auth")] public string Auth;

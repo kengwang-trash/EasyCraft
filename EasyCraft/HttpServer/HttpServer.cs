@@ -44,7 +44,7 @@ namespace EasyCraft.HttpServer
             context.Response.Headers["Access-Control-Allow-Methods"] = "*";
             context.Response.Headers["Access-Control-Allow-Headers"] = "*";
             context.Response.Headers["Access-Control-Allow-Credentials"] = "true";
-            context.Response.Headers["Access-Control-Allow-Origin"] = "http://localhost:8080";
+            context.Response.Headers["Access-Control-Allow-Origin"] = "*";
             try
             {
                 //先把版权信息加上

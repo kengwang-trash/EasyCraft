@@ -4,7 +4,7 @@ using Serilog;
 
 namespace EasyCraft.Base.Server
 {
-    public class ServerManager
+    public static class ServerManager
     {
         public static readonly Dictionary<int, ServerBase> Servers = new();
 
@@ -12,7 +12,7 @@ namespace EasyCraft.Base.Server
         {
             Servers.Clear();
             var cmd = Database.Database.CreateCommand(
-                "SELECT id,name,owner,expire,port,ram,autostart,status FROM servers");
+                "SELECT id,name,owner,expire,port,ram,autostart,status,player FROM servers");
             var reader = cmd.ExecuteReader();
             while (reader.Read())
                 try

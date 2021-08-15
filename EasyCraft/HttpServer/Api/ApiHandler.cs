@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace EasyCraft.HttpServer.Api
 {
-    public struct HttpApi
+    public class HttpApi
     {
         public UserType MinUserType;
 
