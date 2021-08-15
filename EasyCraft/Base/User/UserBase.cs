@@ -17,7 +17,8 @@ namespace EasyCraft.Base.User
         {
             return new UserBase
             {
-                UserInfo = UserInfoBase.CreateFromSqliteReader(reader)
+                UserInfo = UserInfoBase.CreateFromSqliteReader(reader),
+                UserRequest = UserRequestBase.Null
             };
         }
     }

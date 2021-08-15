@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Serilog;
 
 namespace EasyCraft.Base.Server
 {
     public class ServerStatusInfo
     {
-        public ServerStatusCode IsRunning;
-        public readonly List<ServerConsoleMessage> ConsoleMessages = new();
+        [JsonProperty("status")] public ServerStatusCode Status;
+        [JsonIgnore] public readonly List<ServerConsoleMessage> ConsoleMessages = new();
 
         public void OnConsoleOutput(string content, bool error = true, DateTime time = default)
         {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyCraft.Base.Core;
+using EasyCraft.Base.User;
 using EasyCraft.HttpServer.Api;
 using EasyCraft.Utils;
 using Microsoft.Data.Sqlite;
@@ -18,6 +19,8 @@ namespace EasyCraft.Base.Server
         [JsonProperty("id")] public int Id;
         [JsonProperty("startInfo")] public ServerStartInfo StartInfo;
         [JsonProperty("statusInfo")] public ServerStatusInfo StatusInfo;
+
+        public static List<ServerConfigItem> ConfigItems = new();
 
         [JsonIgnore] public string ServerDir => Directory.GetCurrentDirectory() + "/data/servers/" + Id + "/";
         [JsonIgnore] public CoreBase Core => CoreManager.Cores[StartInfo.Core];
@@ -107,7 +110,6 @@ namespace EasyCraft.Base.Server
             File.WriteAllText(ServerDir + "/" + filename, sb.ToString());
         }
 
-
         public async Task<ServerStartException> Start()
         {
             // 开启服务器
@@ -163,16 +165,110 @@ namespace EasyCraft.Base.Server
             StatusInfo.OnConsoleOutput("正在加载配置项".Translate(),
                 false);
             LoadConfigFile();
-            
+
             StatusInfo.OnConsoleOutput("正在尝试调用开服器".Translate(),
                 false);
             // TODO: 调用开服器
-            
+
             return new ServerStartException()
             {
                 Code = 200,
                 Message = "成功开服".Translate()
             };
         }
+
+        public async Task<List<ServerConfigItem>> GetServerConfigItems(UserBase user)
+        {
+            // 首先是 EasyCraft 默认提供的
+            var ret = new List<ServerConfigItem>()
+            {
+                new()
+                {
+                    Display = "服务器名称",
+                    Id = "name",
+                    Type = "text",
+                    Editable = user.UserInfo.Type > UserType.Technician,
+                    Value = BaseInfo.Name
+                },
+                new()
+                {
+                    Display = "总玩家数",
+                    Id = "player",
+                    Type = "number",
+                    Editable = user.UserInfo.Type > UserType.Technician,
+                    Value = BaseInfo.Player
+                },
+                new()
+                {
+                    Display = "到期时间",
+                    Id = "expireTime",
+                    Type = "date",
+                    Editable = user.UserInfo.Type > UserType.Technician,
+                    Value = BaseInfo.ExpireTime.ToString("yyyy-MM-dd")
+                },
+                new()
+                {
+                    Display = "端口",
+                    Id = "port",
+                    Type = "number",
+                    Editable = user.UserInfo.Type > UserType.Technician,
+                    Value = BaseInfo.Port
+                },
+                new()
+                {
+                    Display = "最大内存",
+                    Id = "ram",
+                    Type = "number",
+                    Editable = user.UserInfo.Type > UserType.Technician,
+                    Value = BaseInfo.Ram
+                },
+                new()
+                {
+                    Display = "自动开启",
+                    Id = "autoStart",
+                    Type = "toggle",
+                    Editable = user.UserInfo.Type > UserType.Technician,
+                    Value = BaseInfo.AutoStart
+                },
+                new ()
+                {
+                    Display = "核心",
+                    Id = "core",
+                    Type = "select",
+                    Editable = true,
+                    Value = StartInfo.Core
+                },
+                new ()
+                {
+                    Display = "默认世界",
+                    Id = "world",
+                    Type = "text",
+                    Editable = true,
+                    Value = StartInfo.World
+                }
+            };
+
+            // 然后询问插件们有没有要追加的
+            // 来了, 又是一个贼长的 LINQ
+            ret.AddRange((await PluginBase.PluginController.BroadcastEventAsync("OnGetServerConfigItems",
+                new object[] { Id, user.UserInfo.Id , ret })).Values.Cast<Dictionary<string, string>>().Select(t =>
+                new ServerConfigItem
+                {
+                    Display = t["display"],
+                    Id = t["id"],
+                    Type = t["type"],
+                    Editable = t["editable"] == "true"
+                }));
+            return ret;
+        }
+    }
+
+    public class ServerConfigItem
+    {
+        [JsonProperty("display")] public string Display;
+        [JsonProperty("id")] public string Id;
+        [JsonProperty("type")] public string Type;
+        [JsonProperty("editable")] public bool Editable;
+        [JsonProperty("value")] public object Value;
     }
 }

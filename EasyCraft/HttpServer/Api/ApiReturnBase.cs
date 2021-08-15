@@ -49,6 +49,7 @@ namespace EasyCraft.HttpServer.Api
         UserNameOccupied,
         PasswordNotIdentical,
         IncorrectPasswordFormat,
+        
 
         // 下方遵循 HTTP 响应码
         // Refer https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Status

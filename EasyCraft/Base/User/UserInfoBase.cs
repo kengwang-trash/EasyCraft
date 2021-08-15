@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Collections.Generic;
+using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 
 namespace EasyCraft.Base.User
@@ -31,6 +32,21 @@ namespace EasyCraft.Base.User
                 Type = (UserType)reader.GetInt32(3),
                 Email = reader.GetString(4)
             };
+        }
+
+        public void SyncToDatabase()
+        {
+            Database.Database.CreateCommand(
+                    "UPDATE users SET (name,password,type,email) = ( $name , $password , $type , $email ) WHERE id = $id",
+                    new Dictionary<string, object>()
+                    {
+                        { "$name", Name },
+                        { "$password", Password },
+                        { "$type", Type },
+                        { "$email", Email },
+                        { "$id", Id }
+                    })
+                .ExecuteNonQuery();
         }
     }
 

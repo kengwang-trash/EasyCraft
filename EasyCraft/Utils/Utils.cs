@@ -59,7 +59,7 @@ namespace EasyCraft.Utils
             for (var i = 0; i < length; i++) s += str.Substring(r.Next(0, str.Length - 1), 1);
             return s;
         }
-        
+
         public static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs = true)
         {
             // Get the subdirectories for the specified directory.
@@ -73,9 +73,9 @@ namespace EasyCraft.Utils
             }
 
             DirectoryInfo[] dirs = dir.GetDirectories();
-        
+
             // If the destination directory doesn't exist, create it.       
-            Directory.CreateDirectory(destDirName);        
+            Directory.CreateDirectory(destDirName);
 
             // Get the files in the directory and copy them to the new location.
             FileInfo[] files = dir.GetFiles();
@@ -94,6 +94,16 @@ namespace EasyCraft.Utils
                     DirectoryCopy(subdir.FullName, tempPath);
                 }
             }
+        }
+
+        public static string ToReadableTimeOutput(this DateTime time)
+        {
+            return time.ToString("yyyy-MM-dd HH:mm:ss");
+        }
+
+        public static string ToLocalTimeOutput(this DateTime time)
+        {
+            return time.ToString("F");
         }
     }
 }

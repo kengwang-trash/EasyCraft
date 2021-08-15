@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.User;
 using EasyCraft.Utils;
@@ -12,7 +14,7 @@ namespace EasyCraft.HttpServer.Api
     {
         public static int Version = 1;
 
-        public static ApiReturnBase ApiLogin(HttpContext context)
+        public static async Task<ApiReturnBase> ApiLogin(HttpContext context)
         {
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
@@ -49,7 +51,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static ApiReturnBase ApiLoginStatus(HttpContext context)
+        public static async Task<ApiReturnBase> ApiLoginStatus(HttpContext context)
         {
             var auth = context.Request.Headers["Authorization"].ToString();
             if (auth == null || auth == "null" || !UserManager.AuthToUid.ContainsKey(auth))
@@ -69,7 +71,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static ApiReturnBase ApiLogout(HttpContext context)
+        public static async Task<ApiReturnBase> ApiLogout(HttpContext context)
         {
             var auth = context.Request.Headers["Authorization"].ToString();
             if (auth is null or "null" || !UserManager.AuthToUid.ContainsKey(auth))
@@ -90,7 +92,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static ApiReturnBase ApiVersion(HttpContext _)
+        public static async Task<ApiReturnBase> ApiVersion(HttpContext _)
         {
             return new ApiReturnBase
             {
@@ -107,19 +109,58 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static ApiReturnBase ApiServers(HttpContext context)
+        public static async Task<ApiReturnBase> ApiServers(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
+            var data = ServerManager.Servers.Values.ToList();
+            int page = 0;
+            if (context.Request.HasFormContentType)
+                int.TryParse(context.Request.Form["page"], out page);
+            if (nowUser.UserInfo.Type < UserType.Technician)
+                data = data.Where(t => t.BaseInfo.Owner == nowUser.UserInfo.Id).ToList();
+            data = data.GetRange(page * 10, Math.Min(10, data.Count - page * 10));
             return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = ServerManager.Servers.Values.Where(t => t.BaseInfo.Owner == nowUser.UserInfo.Id)
+                Data = data
             };
         }
 
-        public static ApiReturnBase ApiRegister(HttpContext context)
+        public static async Task<ApiReturnBase> ApiServer(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            int id;
+            if (!int.TryParse(context.Request.Form["id"], out id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            return new ApiReturnBase
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = ServerManager.Servers[id]
+            };
+        }
+
+        public static async Task<ApiReturnBase> ApiRegister(HttpContext context)
         {
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
@@ -169,6 +210,81 @@ namespace EasyCraft.HttpServer.Api
                 Code = 200,
                 Msg = "注册成功".Translate(),
                 Data = UserManager.Users[ret]
+            };
+        }
+
+        public static async Task<ApiReturnBase> ChangePassword(HttpContext context)
+        {
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["username"]) ||
+                string.IsNullOrEmpty(context.Request.Form["newpassword"]) ||
+                string.IsNullOrEmpty(context.Request.Form["oldpassword"]))
+                return ApiReturnBase.IncompleteParameters;
+            var user = UserManager.Users.Values.FirstOrDefault(t =>
+                t.UserInfo.Name == context.Request.Form["username"]);
+            if (user == null)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "用户名不存在".Translate()
+                };
+            if (context.Request.Form["oldpassword"].ToString().GetMD5() != user.UserInfo.Password)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.Unauthorized,
+                    Msg = "初始密码错误".Translate()
+                };
+
+            if (!Regex.IsMatch(context.Request.Form["newpassword"], @"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]*).{6,18}$"))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.IncorrectPasswordFormat,
+                    Msg = "密码应为6-18位字母,数字,特殊符号的组合".Translate()
+                };
+            user.UserInfo.Password = context.Request.Form["newpassword"].ToString().GetMD5();
+            user.UserInfo.SyncToDatabase();
+            _ = ApiLogout(context);
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Msg = "成功修改密码".Translate(),
+                Code = 200
+            };
+        }
+
+        public static async Task<ApiReturnBase> ApiServerBaseColumns(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            int id;
+            if (!int.TryParse(context.Request.Form["id"], out id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = await ServerManager.Servers[id].GetServerConfigItems(nowUser)
             };
         }
     }

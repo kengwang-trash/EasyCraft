@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using EasyCraft.Utils;
 using Microsoft.Data.Sqlite;
 using Serilog;
@@ -40,6 +41,11 @@ namespace EasyCraft.Database
             if (parameters != null)
                 ans.Parameters.AddRange(parameters);
             return ans;
+        }
+
+        public static SqliteCommand CreateCommand(string comm, Dictionary<string, object> parameters)
+        {
+            return CreateCommand(comm, parameters.Select(t => new SqliteParameter(t.Key, t.Value)));
         }
     }
 }

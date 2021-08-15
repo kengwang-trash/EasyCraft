@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using System.Collections.Generic;
+using Microsoft.Data.Sqlite;
 
 namespace EasyCraft.Base.Server
 {
@@ -26,11 +27,18 @@ namespace EasyCraft.Base.Server
             };
         }
 
-        public void SyncToDatabase(int id)
+        public void SyncToDatabase()
         {
             Database.Database
                 .CreateCommand(
-                    "UPDATE server_start SET ( core , lastcore , world ) = ( $core , $lastcore , $world ) WHERE id = $id")
+                    "UPDATE server_start SET ( core , lastcore , world ) = ( $core , $lastcore , $world ) WHERE id = $id",
+                    new Dictionary<string, object>()
+                    {
+                        { "$core", Core },
+                        { "$lastcore", LastCore },
+                        { "$world", World },
+                        { "$id", Id }
+                    })
                 .ExecuteNonQuery();
         }
     }

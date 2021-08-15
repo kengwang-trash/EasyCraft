@@ -11,6 +11,7 @@ namespace EasyCraft.Base.Server
         [JsonProperty("owner")] public int Owner;
         [JsonProperty("player")] public int Player;
         [JsonProperty("expireTime")] public DateTime ExpireTime;
+        [JsonProperty("expireTimeRaw")] public string ExpireTimeRaw => ExpireTime.ToString("s");
         [JsonProperty("expired")] public bool Expired => ExpireTime < DateTime.Now;
 
         [JsonProperty("port")] public int Port;
