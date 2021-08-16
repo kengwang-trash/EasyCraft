@@ -6,7 +6,7 @@ using Serilog;
 
 namespace EasyCraft.Database
 {
-    internal class Database
+    public class Database
     {
         public static string Password;
         private static SqliteConnection _db = new();

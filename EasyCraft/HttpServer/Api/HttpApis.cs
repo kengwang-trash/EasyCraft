@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EasyCraft.Base.Core;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.User;
 using EasyCraft.Utils;
@@ -12,9 +13,9 @@ namespace EasyCraft.HttpServer.Api
 {
     public static class HttpApis
     {
-        public static int Version = 1;
+        private static int Version = 1;
 
-        public static async Task<ApiReturnBase> ApiLogin(HttpContext context)
+        public static ApiReturnBase ApiLogin(HttpContext context)
         {
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
@@ -51,7 +52,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static async Task<ApiReturnBase> ApiLoginStatus(HttpContext context)
+        public static ApiReturnBase ApiLoginStatus(HttpContext context)
         {
             var auth = context.Request.Headers["Authorization"].ToString();
             if (auth == null || auth == "null" || !UserManager.AuthToUid.ContainsKey(auth))
@@ -71,7 +72,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static async Task<ApiReturnBase> ApiLogout(HttpContext context)
+        public static ApiReturnBase ApiLogout(HttpContext context)
         {
             var auth = context.Request.Headers["Authorization"].ToString();
             if (auth is null or "null" || !UserManager.AuthToUid.ContainsKey(auth))
@@ -92,7 +93,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static async Task<ApiReturnBase> ApiVersion(HttpContext _)
+        public static ApiReturnBase ApiVersion(HttpContext _)
         {
             return new ApiReturnBase
             {
@@ -102,14 +103,16 @@ namespace EasyCraft.HttpServer.Api
                 Data = new Dictionary<string, object>
                 {
                     { "version", Common.VersionFull },
+                    // ReSharper disable once StringLiteralTypo
                     { "vername", Common.VersionName },
+                    // ReSharper disable once StringLiteralTypo
                     { "vershort", Common.VersionShort },
                     { "ApiVer", Version }
                 }
             };
         }
 
-        public static async Task<ApiReturnBase> ApiServers(HttpContext context)
+        public static ApiReturnBase ApiServers(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
             var data = ServerManager.Servers.Values.ToList();
@@ -128,15 +131,14 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static async Task<ApiReturnBase> ApiServer(HttpContext context)
+        public static ApiReturnBase ApiServer(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
             if (string.IsNullOrEmpty(context.Request.Form["id"]))
                 return ApiReturnBase.IncompleteParameters;
-            int id;
-            if (!int.TryParse(context.Request.Form["id"], out id) || !ServerManager.Servers.ContainsKey(id))
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
                 return new ApiReturnBase
                 {
                     Status = false,
@@ -159,8 +161,39 @@ namespace EasyCraft.HttpServer.Api
                 Data = ServerManager.Servers[id]
             };
         }
+        
+        public static ApiReturnBase ApiServerInfoStart(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            return new ApiReturnBase
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = ServerManager.Servers[id].StartInfo
+            };
+        }
 
-        public static async Task<ApiReturnBase> ApiRegister(HttpContext context)
+        public static ApiReturnBase ApiRegister(HttpContext context)
         {
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
@@ -213,7 +246,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static async Task<ApiReturnBase> ChangePassword(HttpContext context)
+        public static ApiReturnBase ChangePassword(HttpContext context)
         {
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
@@ -258,19 +291,18 @@ namespace EasyCraft.HttpServer.Api
 
         public static async Task<ApiReturnBase> ApiServerBaseColumns(HttpContext context)
         {
-            var nowUser = ApiHandler.GetCurrentUser(context);
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
             if (string.IsNullOrEmpty(context.Request.Form["id"]))
                 return ApiReturnBase.IncompleteParameters;
-            int id;
-            if (!int.TryParse(context.Request.Form["id"], out id) || !ServerManager.Servers.ContainsKey(id))
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
                 return new ApiReturnBase
                 {
                     Status = false,
                     Code = (int)ApiReturnCode.NotFound,
                     Msg = "服务器未找到".Translate(),
                 };
+            var nowUser = ApiHandler.GetCurrentUser(context);
             if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
                 nowUser.UserInfo.Type < UserType.Technician)
                 return new ApiReturnBase
@@ -285,6 +317,21 @@ namespace EasyCraft.HttpServer.Api
                 Code = 200,
                 Msg = "成功获取",
                 Data = await ServerManager.Servers[id].GetServerConfigItems(nowUser)
+            };
+        }
+
+        public static ApiReturnBase ApiCoresBranches(HttpContext context)
+        {
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["device"]))
+                return ApiReturnBase.IncompleteParameters;
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = CoreManager.Cores.Values.Select(t=>t.Info.Branch).ToHashSet()
             };
         }
     }

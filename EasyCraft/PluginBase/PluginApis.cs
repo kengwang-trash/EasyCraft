@@ -2,7 +2,7 @@
 
 namespace EasyCraft.PluginBase
 {
-    internal class PluginApis
+    public class PluginApis
     {
         public static object FastConsole(int type, string message)
         {

@@ -5,10 +5,10 @@ using Newtonsoft.Json;
 namespace EasyCraft.PluginBase
 {
     [JsonObject(MemberSerialization.OptOut)]
-    internal class Plugin
+    public class Plugin
     {
         [JsonProperty("Auth")] public Dictionary<string, bool> Auth;
-        [JsonIgnore] public Type Dll;
+        [JsonIgnore] public Type Type;
         [JsonProperty("enable")] public bool Enable;
         [JsonProperty("eventHookers")] public Dictionary<string, string> EventHookers;
         [JsonProperty("pluginInfo")] public PluginInfo Info;

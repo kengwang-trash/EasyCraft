@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyCraft.Base.Core;
+using EasyCraft.Base.Starter;
 using EasyCraft.Base.User;
 using EasyCraft.HttpServer.Api;
 using EasyCraft.Utils;
@@ -135,11 +137,19 @@ namespace EasyCraft.Base.Server
                 };
             }
 
-            // TODO: 再进行开服器校验
-            // Write Your Here
+            // 再进行开服器校验
+            if (!StarterManager.Starters.ContainsKey(StartInfo.Starter))
+            {
+                StatusInfo.OnConsoleOutput("服务器所需开服器 {0} 不存在.".Translate(StartInfo.Starter));
+                return new ServerStartException
+                {
+                    Code = (int)ApiReturnCode.CoreNotFound,
+                    Message = "服务器所需开服器 {0} 不存在.".Translate(StartInfo.Starter)
+                };
+            }
 
             // 在广播到插件 - 此处事件广播位点可以提出更改
-            var ret = (await PluginBase.PluginController.BroadcastEventAsync("OnServerStart", new object[] { Id }))
+            var ret = (await PluginBase.PluginController.BroadcastEventAsync("OnServerWillStart", new object[] { Id }))
                 .Where(t => !(bool)t.Value).ToArray();
             if (ret.Length != 0)
             {
@@ -156,25 +166,84 @@ namespace EasyCraft.Base.Server
             // 先检查是否更换核心
             if (StartInfo.LastCore != StartInfo.Core)
             {
-                StatusInfo.OnConsoleOutput("你的核心已更换, 正在加载核心文件".Translate(),
-                    false);
+                StatusInfo.OnConsoleOutput("你的核心已更换, 正在加载核心文件".Translate());
                 Utils.Utils.DirectoryCopy(Directory.GetCurrentDirectory() + "/data/cores/" + StartInfo.Core + "/files",
                     ServerDir);
+                StartInfo.LastCore = StartInfo.Core;
+                StartInfo.SyncToDatabase();
             }
 
-            StatusInfo.OnConsoleOutput("正在加载配置项".Translate(),
-                false);
+            StatusInfo.OnConsoleOutput("正在加载配置项".Translate());
             LoadConfigFile();
 
-            StatusInfo.OnConsoleOutput("正在尝试调用开服器".Translate(),
-                false);
-            // TODO: 调用开服器
+            StatusInfo.OnConsoleOutput("正在尝试调用开服器".Translate());
+            bool? status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStart")
+                ?.Invoke(null, new object[]
+                {
+                    this,
+                    PhraseServerVar(ServerDir + "/" + Core.Start.Program),
+                    PhraseServerVar(Core.Start.Parameter)
+                });
+            if (status is not true)
+            {
+                StatusInfo.OnConsoleOutput("开服器返回错误, 无法开服".Translate());
+                return new ServerStartException()
+                {
+                    Code = 200,
+                    Message = "开服器返回错误, 无法开服".Translate()
+                };
+            }
 
+            _ = PluginBase.PluginController.BroadcastEventAsync("OnServerWillStart", new object[] { Id });
             return new ServerStartException()
             {
                 Code = 200,
                 Message = "成功开服".Translate()
             };
+        }
+
+        public bool Stop()
+        {
+            try
+            {
+                // 在广播到插件 - 此处事件广播位点可以提出更改
+                _ = PluginBase.PluginController.BroadcastEventAsync("OnServerWillStop", new object[] { Id });
+                bool? status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStop")
+                    ?.Invoke(null, new object[]
+                    {
+                        this
+                    });
+                return status is true;
+            }
+            catch (Exception e)
+            {
+                StatusInfo.OnConsoleOutput("关闭服务器失败: {0}".Translate(e.Message));
+                return false;
+            }
+        }
+
+        public void RequestInput(string content)
+        {
+            // 进行开服器校验
+            if (!StarterManager.Starters.ContainsKey(StartInfo.Starter))
+            {
+                StatusInfo.OnConsoleOutput("服务器所需开服器 {0} 不存在.".Translate(StartInfo.Starter));
+                return;
+            }
+
+            if (StatusInfo.Status != 2)
+            {
+                StatusInfo.OnConsoleOutput("当前服务器状态不允许输入指令".Translate());
+                return;
+            }
+
+            bool? status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStart")
+                ?.Invoke(null, new object[]
+                {
+                    this,
+                    content
+                });
+            if (status is not true) StatusInfo.OnConsoleOutput("指令输入失败".Translate());
         }
 
         public async Task<List<ServerConfigItem>> GetServerConfigItems(UserBase user)
@@ -230,15 +299,7 @@ namespace EasyCraft.Base.Server
                     Editable = user.UserInfo.Type > UserType.Technician,
                     Value = BaseInfo.AutoStart
                 },
-                new ()
-                {
-                    Display = "核心",
-                    Id = "core",
-                    Type = "select",
-                    Editable = true,
-                    Value = StartInfo.Core
-                },
-                new ()
+                new()
                 {
                     Display = "默认世界",
                     Id = "world",
@@ -251,7 +312,7 @@ namespace EasyCraft.Base.Server
             // 然后询问插件们有没有要追加的
             // 来了, 又是一个贼长的 LINQ
             ret.AddRange((await PluginBase.PluginController.BroadcastEventAsync("OnGetServerConfigItems",
-                new object[] { Id, user.UserInfo.Id , ret })).Values.Cast<Dictionary<string, string>>().Select(t =>
+                new object[] { Id, user.UserInfo.Id, ret })).Values.Cast<Dictionary<string, string>>().Select(t =>
                 new ServerConfigItem
                 {
                     Display = t["display"],

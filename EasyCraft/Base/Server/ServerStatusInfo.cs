@@ -7,10 +7,14 @@ namespace EasyCraft.Base.Server
 {
     public class ServerStatusInfo
     {
-        [JsonProperty("status")] public ServerStatusCode Status;
+        /// <summary>
+        /// 开服状态
+        /// 0 - Stopped    1 - Starting     2 - Started     3 - Stopping
+        /// </summary>
+        [JsonProperty("status")] public int Status;
         [JsonIgnore] public readonly List<ServerConsoleMessage> ConsoleMessages = new();
 
-        public void OnConsoleOutput(string content, bool error = true, DateTime time = default)
+        public void OnConsoleOutput(string content, bool error = false, DateTime time = default)
         {
             ConsoleMessages.Add(new ServerConsoleMessage(content, error, time));
             if (error)
@@ -32,13 +36,5 @@ namespace EasyCraft.Base.Server
             Content = content;
             Error = error;
         }
-    }
-
-    public enum ServerStatusCode
-    {
-        Stopped,
-        Starting,
-        Started,
-        Stopping
     }
 }

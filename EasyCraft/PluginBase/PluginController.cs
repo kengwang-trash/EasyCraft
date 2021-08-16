@@ -10,7 +10,7 @@ using Serilog;
 
 namespace EasyCraft.PluginBase
 {
-    internal static class PluginController
+    public static class PluginController
     {
         internal static Dictionary<string, Plugin> Plugins = new();
         private static readonly Dictionary<string, Dictionary<string, int>> EventHookers = new();
@@ -47,7 +47,7 @@ namespace EasyCraft.PluginBase
                             Link = ret["PluginInfo"]["link"]
                         },
                         Enable = false,
-                        Dll = type,
+                        Type = type,
                         Key = key
                     };
                     // 3 - 加载相关 EventHooker
@@ -85,7 +85,7 @@ namespace EasyCraft.PluginBase
             foreach (var kvp in EventHookers[eventId])
                 try
                 {
-                    ret[kvp.Key] = Plugins[kvp.Key].Dll.GetMethod(eventId)?.Invoke(null, parameters);
+                    ret[kvp.Key] = Plugins[kvp.Key].Type.GetMethod(eventId)?.Invoke(null, parameters);
                 }
                 catch (Exception e)
                 {

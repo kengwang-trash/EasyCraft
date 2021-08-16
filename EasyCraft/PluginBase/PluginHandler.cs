@@ -4,7 +4,8 @@ using EasyCraft.Utils;
 
 namespace EasyCraft.PluginBase
 {
-    public class PluginHandler
+    // 请不要将此类设置为 internal - 插件们还要用
+    public static class PluginHandler
     {
         private static Dictionary<string, PluginHandleApi> _apis = new();
 
@@ -25,8 +26,8 @@ namespace EasyCraft.PluginBase
         {
             try
             {
-                if (!PluginController.Plugins[input["id"].ToString()].Auth.ContainsKey(input["func"].ToString()) ||
-                    !PluginController.Plugins[input["id"].ToString()].Auth[input["func"].ToString()])
+                if (!PluginController.Plugins[input["id"].ToString() ?? throw new Exception("参数不全".Translate())].Auth.ContainsKey(input["func"].ToString() ?? throw new Exception("参数不全".Translate())) ||
+                    !PluginController.Plugins[input["id"].ToString() ?? throw new Exception("参数不全".Translate())].Auth[input["func"].ToString() ?? throw new Exception("参数不全".Translate())])
                     return new Dictionary<string, object>
                     {
                         { "status", false },
@@ -43,7 +44,7 @@ namespace EasyCraft.PluginBase
                         { "message", "不正确的 Key".Translate() },
                         { "data", null }
                     };
-                if (!_apis.ContainsKey(input["func"].ToString()))
+                if (!_apis.ContainsKey(input["func"].ToString() ?? throw new Exception("参数不全".Translate())))
                     return new Dictionary<string, object>
                     {
                         { "status", false },
@@ -56,7 +57,7 @@ namespace EasyCraft.PluginBase
                     { "status", true },
                     { "code", 200 },
                     { "message", "成功" },
-                    { "data", _apis[input["func"].ToString()].Invoke(input["data"]) }
+                    { "data", _apis[input["func"].ToString() ?? throw new Exception("参数不全".Translate())].Invoke(input["data"]) }
                 };
             }
             catch (Exception e)

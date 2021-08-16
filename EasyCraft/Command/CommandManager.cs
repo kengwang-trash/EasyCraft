@@ -12,6 +12,14 @@ namespace EasyCraft.Command
             {"start", full =>
             {
                 ServerManager.Servers?[int.Parse(full.Replace("start ", ""))].Start();
+            }},
+            {"stop", full =>
+            {
+                ServerManager.Servers?[int.Parse(full.Replace("stop ", ""))].Stop();
+            }},
+            {"hapi", full =>
+            {
+                if (full=="hapi reload") HttpServer.Api.ApiHandler.InitializeApis();
             }}
         };
     }
