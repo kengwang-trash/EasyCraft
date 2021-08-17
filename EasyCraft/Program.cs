@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using EasyCraft.Base.Core;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.Starter;
@@ -7,6 +8,7 @@ using EasyCraft.Command;
 using EasyCraft.HttpServer.Api;
 using EasyCraft.PluginBase;
 using EasyCraft.Utils;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -37,6 +39,18 @@ namespace EasyCraft
                 .WriteTo.File("/logs/log-.log", LogEventLevel.Information, rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(theme: SystemConsoleTheme.Colored)
                 .CreateLogger();
+
+            Common.Configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("easycraft.json", true, true)
+#if DEBUG
+                .AddJsonFile("easycraft.development.json", true, true)
+#else
+                .AddJsonFile("easycraft.production.json", true, true)
+#endif
+                .Build();
+
+            Database.Database.Password = Common.Configuration["Database_Password"];
             Database.Database.Connect();
             while (!Database.Database.IsConnected)
             {
@@ -47,6 +61,10 @@ namespace EasyCraft
             }
 
             Log.Information("连接到数据库成功!".Translate());
+
+            Log.Information("加载权限表中".Translate());
+            Permission.LoadPermissions();
+
             Log.Information("加载用户中".Translate());
             UserManager.LoadUsers();
 

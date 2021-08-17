@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,15 +21,23 @@ namespace EasyCraft.HttpServer
 
         public static void StartHttpServer(int port = 80)
         {
-            _host = WebHost.CreateDefaultBuilder()
-                .SuppressStatusMessages(true)
-                .ConfigureLogging(t => t.SetMinimumLevel(LogLevel.None))
-                .UseKestrel()
-                .ConfigureKestrel(t => t.Listen(IPAddress.Loopback, port))
-                .UseStartup<HttpServerStartUp>()
-                .Build();
-            _host.RunAsync();
-            Log.Information("HTTP 服务器成功开启在 {0} 端口".Translate(), port);
+            if (!int.TryParse(Common.Configuration["HttpPort"], out port)) port = 80;
+            try
+            {
+                _host = WebHost.CreateDefaultBuilder()
+                    .SuppressStatusMessages(true)
+                    .ConfigureLogging(t => t.SetMinimumLevel(LogLevel.None))
+                    .UseKestrel()
+                    .ConfigureKestrel(t => t.Listen(IPAddress.Any, port))
+                    .UseStartup<HttpServerStartUp>()
+                    .Build();
+                _host.RunAsync();
+                Log.Information("HTTP 服务器成功开启在 {0} 端口".Translate(), port);
+            }
+            catch (Exception e)
+            {
+                Log.Information("HTTP 服务器开启在 {0} 端口失败: {1}".Translate(), port, e);
+            }
         }
     }
 
@@ -52,7 +61,11 @@ namespace EasyCraft.HttpServer
                 if (context.Request.Path.StartsWithSegments("/api"))
                     await ApiHandler.HandleApi(context);
                 else
+                {
+                    //await context.Response.Body.WriteAsync(
+                    //    File.ReadAllBytes(Directory.GetCurrentDirectory() + "/front/" + context.Request.Path));
                     await context.Response.WriteAsync("欢迎使用 EasyCraft", Encoding.UTF8);
+                }
             }
             catch (Exception e)
             {

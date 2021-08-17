@@ -637,6 +637,7 @@ namespace EasyCraft.HttpServer.Api
                     Msg = "权限不足".Translate(),
                 };
             ServerManager.Servers[id].StatusInfo.ConsoleMessages.Clear();
+            ServerManager.Servers[id].StatusInfo.OnConsoleOutput("成功清理所有日志");
             return new ApiReturnBase
             {
                 Status = true,
@@ -673,6 +674,78 @@ namespace EasyCraft.HttpServer.Api
                 Status = true,
                 Code = 200,
                 Msg = "成功发送".Translate(),
+            };
+        }
+
+        public static ApiReturnBase ApiServerStartInfoUpdate(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["serverId"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["serverId"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            if (nowUser.UserInfo.Can(PermissionId.ChangeCore))
+            {
+                ServerManager.Servers[id].StartInfo.Core = context.Request.Form["Core"];
+            }
+
+            if (nowUser.UserInfo.Can(PermissionId.ChangeStarter))
+            {
+                ServerManager.Servers[id].StartInfo.Starter = context.Request.Form["Starter"];
+            }
+
+            ServerManager.Servers[id].StartInfo.SyncToDatabase();
+            return new ApiReturnBase
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功修改".Translate(),
+            };
+        }
+
+        public static ApiReturnBase ApiServerConfigsList(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = ServerManager.Servers[id].Core.ConfigInfo
             };
         }
     }

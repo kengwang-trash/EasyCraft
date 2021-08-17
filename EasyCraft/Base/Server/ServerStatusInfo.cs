@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Serilog;
 
@@ -15,11 +16,11 @@ namespace EasyCraft.Base.Server
 
         [JsonIgnore] public readonly List<ServerConsoleMessage> ConsoleMessages = new();
 
-        private int logid = 0;
+        private int _logid;
 
         public void OnConsoleOutput(string content, bool error = false, DateTime time = default)
         {
-            ConsoleMessages.Add(new ServerConsoleMessage(content, logid++, error, time));
+            ConsoleMessages.Add(new ServerConsoleMessage(content, _logid++, error, time));
             if (error)
                 Log.Warning(content);
             else

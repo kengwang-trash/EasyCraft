@@ -8,7 +8,8 @@ namespace EasyCraft.Base.Core
         [JsonProperty("id")] public string Id;
         [JsonProperty("info")] public CoreInfoBase Info;
         [JsonIgnore] public CoreStartSimpleInfo Start;
-        [JsonIgnore] public Dictionary<string, CoreConfigInfo> ConfigInfo;
+        [JsonIgnore] public string CoreConfig;
+        public List<CoreConfigInfo> ConfigInfo => CoreManager.ConfigInfos[CoreConfig];
     }
 
     public class CoreStartSimpleInfo
@@ -25,12 +26,14 @@ namespace EasyCraft.Base.Core
         [JsonProperty("name")] public string Name;
     }
 
+
     public class CoreConfigInfo
     {
-        public string Name;
-        public string Type;
-        public bool Required;
-        public List<CoreConfigKnownItem> Known;
+        [JsonProperty("file")] public string File;
+        [JsonProperty("display")] public string Display;
+        [JsonProperty("type")] public string Type;
+        [JsonIgnore] public bool Required;
+        [JsonIgnore] public List<CoreConfigKnownItem> Known;
     }
 
     public class CoreConfigKnownItem

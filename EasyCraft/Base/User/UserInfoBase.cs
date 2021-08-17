@@ -48,6 +48,11 @@ namespace EasyCraft.Base.User
                     })
                 .ExecuteNonQuery();
         }
+
+        public bool Can(PermissionId pid)
+        {
+            return Permission.PermissionList[pid] <= Type;
+        }
     }
 
     public enum UserType

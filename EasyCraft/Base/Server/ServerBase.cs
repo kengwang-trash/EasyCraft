@@ -39,9 +39,10 @@ namespace EasyCraft.Base.Server
         {
             foreach (var kvConfigInfo in CoreManager.Cores[StartInfo.Core].ConfigInfo)
             {
-                if (!File.Exists(ServerDir + "/" + kvConfigInfo.Key) && kvConfigInfo.Value.Required)
-                    File.Create(ServerDir + "/" + kvConfigInfo.Key);
-                WriteConfigFile(kvConfigInfo.Key);
+                if (!File.Exists(ServerDir + "/" + kvConfigInfo.File) &&
+                    kvConfigInfo.Required)
+                    File.Create(ServerDir + "/" + kvConfigInfo.File);
+                WriteConfigFile(kvConfigInfo.File);
             }
         }
 
@@ -60,13 +61,10 @@ namespace EasyCraft.Base.Server
         public void WriteConfigFile(string filename, Dictionary<string, string> vals = null)
         {
             StringBuilder sb = new();
-            var configInfo = Core.ConfigInfo[filename];
+            var configInfo = Core.ConfigInfo.FirstOrDefault(t => t.File == filename);
             if (configInfo == null)
                 return;
-            if (vals == null)
-            {
-                vals = new Dictionary<string, string>();
-            }
+            vals ??= new Dictionary<string, string>();
 
             switch (configInfo.Type)
             {
@@ -74,7 +72,7 @@ namespace EasyCraft.Base.Server
                     var content = File.ReadAllLines(ServerDir + "/" + filename);
                     foreach (string s in content)
                     {
-                        if (s.StartsWith("#"))
+                        if (s.StartsWith("#") || string.IsNullOrWhiteSpace(s))
                         {
                             sb.AppendLine(s);
                             continue;
@@ -92,6 +90,8 @@ namespace EasyCraft.Base.Server
 
                             if (knownItem.Force)
                             {
+                                if (knownItem.Value == "{{REMOVE}}")
+                                    continue;
                                 value = PhraseServerVar(knownItem.Value);
                             }
 
@@ -163,32 +163,67 @@ namespace EasyCraft.Base.Server
             // 检查结束, 先进行开服前准备
 
             // 先检查是否更换核心
-            if (StartInfo.LastCore != StartInfo.Core)
+            try
             {
-                StatusInfo.OnConsoleOutput("你的核心已更换, 正在加载核心文件".Translate());
-                Utils.Utils.DirectoryCopy(Directory.GetCurrentDirectory() + "/data/cores/" + StartInfo.Core + "/files",
-                    ServerDir);
-                StartInfo.LastCore = StartInfo.Core;
-                StartInfo.SyncToDatabase();
+                if (StartInfo.LastCore != StartInfo.Core)
+                {
+                    StatusInfo.OnConsoleOutput("你的核心已更换, 正在加载核心文件".Translate());
+                    Utils.Utils.DirectoryCopy(
+                        Directory.GetCurrentDirectory() + "/data/cores/" + StartInfo.Core + "/files",
+                        ServerDir);
+                    StartInfo.LastCore = StartInfo.Core;
+                    StartInfo.SyncToDatabase();
+                }
+            }
+            catch (Exception e)
+            {
+                StatusInfo.OnConsoleOutput("更新核心文件时错误: {0}".Translate(e.Message), true);
+                return new ServerStartException
+                {
+                    Code = (int)ApiReturnCode.InternalError,
+                    Message = e.Message
+                };
             }
 
-            StatusInfo.OnConsoleOutput("正在加载配置项".Translate());
-            LoadConfigFile();
+            try
+            {
+                StatusInfo.OnConsoleOutput("正在加载配置项".Translate());
+                LoadConfigFile();
+            }
+            catch (Exception e)
+            {
+                StatusInfo.OnConsoleOutput("加载配置文件错误: {0}".Translate(e.Message), true);
+                return new ServerStartException
+                {
+                    Code = (int)ApiReturnCode.InternalError,
+                    Message = e.Message
+                };
+            }
+
 
             StatusInfo.OnConsoleOutput("正在尝试调用开服器".Translate());
-            bool? status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStart")
-                ?.Invoke(null, new object[]
-                {
-                    this,
-                    PhraseServerVar(ServerDir + "/" + Core.Start.Program),
-                    PhraseServerVar(Core.Start.Parameter)
-                });
+            bool? status;
+            try
+            {
+                status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStart")
+                    ?.Invoke(null, new object[]
+                    {
+                        this,
+                        PhraseServerVar(Core.Start.Program),
+                        PhraseServerVar(Core.Start.Parameter)
+                    });
+            }
+            catch
+            {
+                status = false;
+            }
+
             if (status is not true)
             {
                 StatusInfo.OnConsoleOutput("开服器返回错误, 无法开服".Translate());
                 return new ServerStartException()
                 {
-                    Code = 200,
+                    Code = (int)ApiReturnCode.RequestFailed,
                     Message = "开服器返回错误, 无法开服".Translate()
                 };
             }
@@ -260,6 +295,22 @@ namespace EasyCraft.Base.Server
                 },
                 new()
                 {
+                    Display = "服务器 IP",
+                    Id = "ip",
+                    Type = "text",
+                    Editable = false,
+                    Value = Common.Configuration["ServerIP"]
+                },
+                new()
+                {
+                    Display = "端口",
+                    Id = "port",
+                    Type = "number",
+                    Editable = user.UserInfo.Type > UserType.Technician,
+                    Value = BaseInfo.Port
+                },
+                new()
+                {
                     Display = "总玩家数",
                     Id = "player",
                     Type = "number",
@@ -273,14 +324,6 @@ namespace EasyCraft.Base.Server
                     Type = "date",
                     Editable = user.UserInfo.Type > UserType.Technician,
                     Value = BaseInfo.ExpireTime.ToString("yyyy-MM-dd")
-                },
-                new()
-                {
-                    Display = "端口",
-                    Id = "port",
-                    Type = "number",
-                    Editable = user.UserInfo.Type > UserType.Technician,
-                    Value = BaseInfo.Port
                 },
                 new()
                 {
