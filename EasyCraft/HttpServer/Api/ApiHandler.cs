@@ -59,9 +59,19 @@ namespace EasyCraft.HttpServer.Api
                 { "/version", HttpApi.Create(HttpApis.ApiVersion) },
                 { "/servers", HttpApi.Create(HttpApis.ApiServers, UserType.Registered) },
                 { "/server", HttpApi.Create(HttpApis.ApiServer, UserType.Registered) },
-                { "/server/base/columns", HttpApi.CreateAsync(HttpApis.ApiServerBaseColumns) },
+                { "/server/base/columns", HttpApi.Create(HttpApis.ApiServerBaseColumns, UserType.Registered) },
+                { "/server/plugin/columns", HttpApi.CreateAsync(HttpApis.ApiServerPluginColumns, UserType.Registered) },
                 { "/server/info/start", HttpApi.Create(HttpApis.ApiServerInfoStart, UserType.Registered) },
-                { "/cores/branches", HttpApi.Create(HttpApis.ApiCoresBranches) }
+                { "/cores/branches", HttpApi.Create(HttpApis.ApiCoresBranches, UserType.Registered) },
+                { "/cores/branch/item", HttpApi.Create(HttpApis.ApiCoresBranchItems, UserType.Registered) },
+                { "/starters", HttpApi.Create(HttpApis.ApiStarters, UserType.Registered) },
+                { "/server/console", HttpApi.Create(HttpApis.ApiServerConsole, UserType.Registered) },
+                { "/server/start", HttpApi.CreateAsync(HttpApis.ApiServerStart, UserType.Registered) },
+                { "/server/stop", HttpApi.Create(HttpApis.ApiServerStop, UserType.Registered) },
+                { "/server/status", HttpApi.Create(HttpApis.ApiServerStatus, UserType.Registered) },
+                { "/server/base/info/update", HttpApi.Create(HttpApis.ApiServerBaseInfoUpdate, UserType.Registered) },
+                { "/server/console/clean", HttpApi.Create(HttpApis.ApiServerConsoleClean, UserType.Registered) },
+                { "/server/console/input", HttpApi.Create(HttpApis.ApiServerConsoleInput, UserType.Registered) }
             };
         }
 
@@ -76,15 +86,18 @@ namespace EasyCraft.HttpServer.Api
             else
             {
                 var api = Apis[apiStr];
-                if (GetCurrentUser(context).UserInfo.Type >= api.MinUserType)
+                var nowUser = GetCurrentUser(context);
+                if (nowUser.UserInfo.Type >= api.MinUserType)
                     if (api.IsAsync)
                         await context.Response.WriteAsync(JsonConvert.SerializeObject(await api.ApiFuncAsync(context),
                             new JsonSerializerSettings() { DateFormatString = "yyyy年MM月dd日 HH:mm:ss".Translate() }));
                     else
                         await context.Response.WriteAsync(JsonConvert.SerializeObject(api.ApiFunc(context),
                             new JsonSerializerSettings() { DateFormatString = "yyyy年MM月dd日 HH:mm:ss".Translate() }));
-                else
+                else if (nowUser.UserRequest.IsLogin)
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(ApiReturnBase.PermissionDenied));
+                else
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(ApiReturnBase.NotLogin));
             }
 
             return true;

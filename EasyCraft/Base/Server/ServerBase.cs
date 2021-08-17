@@ -41,14 +41,13 @@ namespace EasyCraft.Base.Server
             {
                 if (!File.Exists(ServerDir + "/" + kvConfigInfo.Key) && kvConfigInfo.Value.Required)
                     File.Create(ServerDir + "/" + kvConfigInfo.Key);
-                else
-                    continue;
                 WriteConfigFile(kvConfigInfo.Key);
             }
         }
 
         public string PhraseServerVar(string origin)
         {
+            if (origin == "{{REMOVE}}") return "";
             return origin
                 .Replace("{{SERVERID}}", Id.ToString())
                 .Replace("{{SERVERDIR}}", ServerDir)
@@ -72,7 +71,7 @@ namespace EasyCraft.Base.Server
             switch (configInfo.Type)
             {
                 case "properties":
-                    var content = File.ReadLines(ServerDir + "/" + filename);
+                    var content = File.ReadAllLines(ServerDir + "/" + filename);
                     foreach (string s in content)
                     {
                         if (s.StartsWith("#"))
@@ -85,15 +84,15 @@ namespace EasyCraft.Base.Server
                         var knownItem = configInfo.Known.FirstOrDefault(t => t.Key == kvp[0]);
                         if (knownItem != null)
                         {
-                            string value = "";
+                            string value = string.Join('=', kvp.ToList().GetRange(1, kvp.Length - 1));
                             if (vals.ContainsKey(kvp[0]))
                             {
-                                value = vals[kvp[0]];
+                                value = PhraseServerVar(vals[kvp[0]]);
                             }
 
                             if (knownItem.Force)
                             {
-                                value = knownItem.Value;
+                                value = PhraseServerVar(knownItem.Value);
                             }
 
                             sb.AppendLine(kvp[0] + "=" + value);
@@ -237,7 +236,7 @@ namespace EasyCraft.Base.Server
                 return;
             }
 
-            bool? status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStart")
+            bool? status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("OnServerInput")
                 ?.Invoke(null, new object[]
                 {
                     this,
@@ -246,7 +245,7 @@ namespace EasyCraft.Base.Server
             if (status is not true) StatusInfo.OnConsoleOutput("指令输入失败".Translate());
         }
 
-        public async Task<List<ServerConfigItem>> GetServerConfigItems(UserBase user)
+        public List<ServerConfigItem> GetServerConfigItems(UserBase user)
         {
             // 首先是 EasyCraft 默认提供的
             var ret = new List<ServerConfigItem>()
@@ -308,19 +307,23 @@ namespace EasyCraft.Base.Server
                     Value = StartInfo.World
                 }
             };
+            return ret;
+        }
 
+        public async Task<List<ServerConfigItem>> GetServerPluginItems(UserBase user)
+        {
             // 然后询问插件们有没有要追加的
             // 来了, 又是一个贼长的 LINQ
-            ret.AddRange((await PluginBase.PluginController.BroadcastEventAsync("OnGetServerConfigItems",
-                new object[] { Id, user.UserInfo.Id, ret })).Values.Cast<Dictionary<string, string>>().Select(t =>
+            var ret = (await PluginBase.PluginController.BroadcastEventAsync("OnGetServerConfigItems",
+                new object[] { Id, user.UserInfo.Id })).Values.Cast<Dictionary<string, string>>().Select(t =>
                 new ServerConfigItem
                 {
                     Display = t["display"],
                     Id = t["id"],
                     Type = t["type"],
                     Editable = t["editable"] == "true"
-                }));
-            return ret;
+                });
+            return ret.ToList();
         }
     }
 

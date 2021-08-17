@@ -12,11 +12,14 @@ namespace EasyCraft.Base.Server
         /// 0 - Stopped    1 - Starting     2 - Started     3 - Stopping
         /// </summary>
         [JsonProperty("status")] public int Status;
+
         [JsonIgnore] public readonly List<ServerConsoleMessage> ConsoleMessages = new();
+
+        private int logid = 0;
 
         public void OnConsoleOutput(string content, bool error = false, DateTime time = default)
         {
-            ConsoleMessages.Add(new ServerConsoleMessage(content, error, time));
+            ConsoleMessages.Add(new ServerConsoleMessage(content, logid++, error, time));
             if (error)
                 Log.Warning(content);
             else
@@ -26,13 +29,15 @@ namespace EasyCraft.Base.Server
 
     public class ServerConsoleMessage
     {
-        public DateTime Time;
-        public string Content;
-        public bool Error;
+        [JsonIgnore] public DateTime Time;
+        [JsonProperty("id")] public int Id;
+        [JsonProperty("c")] public string Content;
+        [JsonProperty("e")] public bool Error;
 
-        public ServerConsoleMessage(string content, bool error = true, DateTime time = default)
+        public ServerConsoleMessage(string content, int logid, bool error = true, DateTime time = default)
         {
             Time = time == default ? DateTime.Now : time;
+            Id = logid;
             Content = content;
             Error = error;
         }

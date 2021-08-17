@@ -5,10 +5,10 @@ namespace EasyCraft.Base.Core
 {
     public class CoreBase
     {
-        public string Id;
-        public CoreInfoBase Info;
-        public CoreStartSimpleInfo Start;
-        public Dictionary<string,CoreConfigInfo> ConfigInfo;
+        [JsonProperty("id")] public string Id;
+        [JsonProperty("info")] public CoreInfoBase Info;
+        [JsonIgnore] public CoreStartSimpleInfo Start;
+        [JsonIgnore] public Dictionary<string, CoreConfigInfo> ConfigInfo;
     }
 
     public class CoreStartSimpleInfo
@@ -22,7 +22,7 @@ namespace EasyCraft.Base.Core
         [JsonProperty("id")] public string Id;
         [JsonProperty("device")] public int Device;
         [JsonProperty("branch")] public string Branch;
-        [JsonProperty("id")] public string Name;
+        [JsonProperty("name")] public string Name;
     }
 
     public class CoreConfigInfo

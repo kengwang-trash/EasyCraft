@@ -26,6 +26,10 @@ namespace EasyCraft.HttpServer.Api
         public static ApiReturnBase PermissionDenied = new()
             { Status = false, Code = (int)ApiReturnCode.PermissionDenied, Msg = "权限不足".Translate() };
 
+        public static ApiReturnBase NotLogin = new()
+            { Status = false, Code = (int)ApiReturnCode.NeedLogin, Msg = "未登录".Translate() };
+
+        
         public static ApiReturnBase InternalError = new()
             { Status = false, Code = (int)ApiReturnCode.InternalError, Msg = "内部错误".Translate() };
 
@@ -49,6 +53,7 @@ namespace EasyCraft.HttpServer.Api
         UserNameOccupied,
         PasswordNotIdentical,
         IncorrectPasswordFormat,
+        NeedLogin,
         
 
         // 下方遵循 HTTP 响应码

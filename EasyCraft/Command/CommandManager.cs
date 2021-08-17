@@ -7,20 +7,25 @@ namespace EasyCraft.Command
     {
         public delegate void CmdApi(string full);
 
-        public static Dictionary<string, CmdApi> Apis = new ()
+        public static Dictionary<string, CmdApi> Apis = new()
         {
-            {"start", full =>
+            { "start", full => { ServerManager.Servers?[int.Parse(full.Replace("start ", ""))].Start(); } },
+            { "stop", full => { ServerManager.Servers?[int.Parse(full.Replace("stop ", ""))].Stop(); } },
             {
-                ServerManager.Servers?[int.Parse(full.Replace("start ", ""))].Start();
-            }},
-            {"stop", full =>
+                "hapi", full =>
+                {
+                    if (full == "hapi reload") HttpServer.Api.ApiHandler.InitializeApis();
+                }
+            },
             {
-                ServerManager.Servers?[int.Parse(full.Replace("stop ", ""))].Stop();
-            }},
-            {"hapi", full =>
-            {
-                if (full=="hapi reload") HttpServer.Api.ApiHandler.InitializeApis();
-            }}
+                "fuck", _ =>
+                {
+                    for (int i = 0; i < 500; i++)
+                    {
+                        ServerManager.Servers[1].StatusInfo.OnConsoleOutput(i.ToString(), i % 5 == 0);
+                    }
+                }
+            }
         };
     }
 }

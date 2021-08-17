@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
 
@@ -51,6 +52,24 @@ namespace EasyCraft.Base.Server
             AutoStart = reader.GetBoolean(6);
             Status = (ServerStatus)reader.GetInt32(7);
             Player = reader.GetInt32(8);
+        }
+
+        public void SyncToDatabase()
+        {
+            Database.Database.CreateCommand(
+                "UPDATE servers SET (name,owner,expire,port,ram,autostart,status,player) = ( $name , $owner , $expire , $port , $ram , $autostart , $status , $player ) WHERE id = $id",
+                new Dictionary<string, object>()
+                {
+                    { "$name", Name },
+                    { "$owner", Owner },
+                    { "$expire", ExpireTime },
+                    { "$port", Port },
+                    { "$ram", Ram },
+                    { "$autostart", AutoStart },
+                    { "$status", Status },
+                    { "$player", Player },
+                    { "$id", Id }
+                }).ExecuteNonQuery();
         }
     }
 

@@ -36,7 +36,7 @@ namespace EasyCraft.PluginBase
                         { "data", null }
                     };
 
-                if (input["key"].ToString() != PluginController.Plugins[input["id"].ToString()].Key)
+                if (input["key"].ToString() != PluginController.Plugins[input["id"].ToString() ?? throw new Exception("参数不全".Translate())].Key)
                     return new Dictionary<string, object>
                     {
                         { "status", false },

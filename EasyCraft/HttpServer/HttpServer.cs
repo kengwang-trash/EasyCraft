@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Serilog;
 
 namespace EasyCraft.HttpServer
@@ -55,7 +56,16 @@ namespace EasyCraft.HttpServer
             }
             catch (Exception e)
             {
-                await context.Response.WriteAsync("发生错误 " + e, Encoding.UTF8);
+                if (!context.Request.Headers.ContainsKey("ReqJson"))
+                    await context.Response.WriteAsync("发生错误: ".Translate() + e, Encoding.UTF8);
+                else
+                    await context.Response.WriteAsync(JsonConvert.SerializeObject(new ApiReturnBase
+                    {
+                        Status = false,
+                        Code = (int)ApiReturnCode.InternalError,
+                        Msg = "发生内部错误".Translate(),
+                        Data = e.Message
+                    }));
             }
 
             return true;

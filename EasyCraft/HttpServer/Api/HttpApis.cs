@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using EasyCraft.Base.Core;
 using EasyCraft.Base.Server;
+using EasyCraft.Base.Starter;
 using EasyCraft.Base.User;
 using EasyCraft.Utils;
 using Microsoft.AspNetCore.Http;
@@ -161,7 +162,7 @@ namespace EasyCraft.HttpServer.Api
                 Data = ServerManager.Servers[id]
             };
         }
-        
+
         public static ApiReturnBase ApiServerInfoStart(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
@@ -184,12 +185,35 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.PermissionDenied,
                     Msg = "权限不足".Translate(),
                 };
+            var info = ServerManager.Servers[id].StartInfo;
             return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = ServerManager.Servers[id].StartInfo
+                Data = new Dictionary<string, object>()
+                {
+                    { "id", info.Id },
+                    { "core", info.Core },
+                    { "world", info.World },
+                    { "starter", info.Starter },
+                    {
+                        "starterInfo",
+                        StarterManager.Starters.ContainsKey(info.Starter) ? StarterManager.Starters[info.Starter] : null
+                    },
+                    { "coreInfo", CoreManager.Cores.ContainsKey(info.Core) ? CoreManager.Cores[info.Core].Info : null }
+                }
+            };
+        }
+
+        public static ApiReturnBase ApiStarters(HttpContext context)
+        {
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = StarterManager.Starters.Values
             };
         }
 
@@ -289,7 +313,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static async Task<ApiReturnBase> ApiServerBaseColumns(HttpContext context)
+        public static ApiReturnBase ApiServerBaseColumns(HttpContext context)
         {
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
@@ -316,7 +340,38 @@ namespace EasyCraft.HttpServer.Api
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = await ServerManager.Servers[id].GetServerConfigItems(nowUser)
+                Data = ServerManager.Servers[id].GetServerConfigItems(nowUser)
+            };
+        }
+
+        public static async Task<ApiReturnBase> ApiServerPluginColumns(HttpContext context)
+        {
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = await ServerManager.Servers[id].GetServerPluginItems(nowUser)
             };
         }
 
@@ -326,12 +381,298 @@ namespace EasyCraft.HttpServer.Api
                 return ApiReturnBase.IncompleteParameters;
             if (string.IsNullOrEmpty(context.Request.Form["device"]))
                 return ApiReturnBase.IncompleteParameters;
+            int.TryParse(context.Request.Form["device"], out var i);
             return new ApiReturnBase()
             {
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = CoreManager.Cores.Values.Select(t=>t.Info.Branch).ToHashSet()
+                Data = CoreManager.Cores.Values.Where(t => t.Info.Device == i).Select(t => t.Info.Branch).ToHashSet()
+            };
+        }
+
+        public static ApiReturnBase ApiCoresBranchItems(HttpContext context)
+        {
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["branch"]))
+                return ApiReturnBase.IncompleteParameters;
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = CoreManager.Cores.Values.Where(t => t.Info.Branch == context.Request.Form["branch"])
+            };
+        }
+
+        public static ApiReturnBase ApiServerConsole(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]) || string.IsNullOrEmpty(context.Request.Form["last"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+
+            int last;
+            int.TryParse(context.Request.Form["last"], out last);
+            var logs = new List<ServerConsoleMessage>();
+            if (last < ServerManager.Servers[id].StatusInfo.ConsoleMessages.Count)
+            {
+                int start = Math.Max(last,
+                    ServerManager.Servers[id].StatusInfo.ConsoleMessages.Count - 100);
+                logs = ServerManager.Servers[id].StatusInfo.ConsoleMessages.GetRange(start,
+                    Math.Min(ServerManager.Servers[id].StatusInfo.ConsoleMessages.Count - start, 100));
+            }
+
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = new Dictionary<string, object>()
+                {
+                    { "lastid", ServerManager.Servers[id].StatusInfo.ConsoleMessages.Count },
+                    { "logs", logs }
+                }
+            };
+        }
+
+        public static async Task<ApiReturnBase> ApiServerStart(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            var ret = await ServerManager.Servers[id].Start();
+            return new ApiReturnBase
+            {
+                Status = ret.Code == 200,
+                Code = ret.Code,
+                Msg = ret.Message
+            };
+        }
+
+        public static ApiReturnBase ApiServerStop(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            var ret = ServerManager.Servers[id].Stop();
+            return new ApiReturnBase()
+            {
+                Status = ret,
+                Code = ret ? 200 : (int)ApiReturnCode.RequestFailed,
+                Msg = ret ? "关闭成功".Translate() : "关闭失败".Translate()
+            };
+        }
+
+        public static ApiReturnBase ApiServerStatus(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = ServerManager.Servers[id].StatusInfo
+            };
+        }
+
+        public static ApiReturnBase ApiServerBaseInfoUpdate(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["serverId"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["serverId"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            foreach (ServerConfigItem configItem in ServerManager.Servers[id].GetServerConfigItems(nowUser))
+            {
+                if (configItem.Editable && context.Request.Form.ContainsKey(configItem.Id))
+                {
+                    switch (configItem.Id)
+                    {
+                        case "name":
+                            ServerManager.Servers[id].BaseInfo.Name = context.Request.Form[configItem.Id];
+                            break;
+                        case "player":
+                            if (int.TryParse(context.Request.Form[configItem.Id], out var player))
+                                ServerManager.Servers[id].BaseInfo.Player = player;
+                            break;
+                        case "expireTime":
+                            if (DateTime.TryParse(context.Request.Form[configItem.Id], out var date))
+                                ServerManager.Servers[id].BaseInfo.ExpireTime = date;
+                            break;
+                        case "port":
+                            if (int.TryParse(context.Request.Form[configItem.Id], out var port))
+                                ServerManager.Servers[id].BaseInfo.Port = port;
+                            break;
+                        case "ram":
+                            if (int.TryParse(context.Request.Form[configItem.Id], out var ram))
+                                ServerManager.Servers[id].BaseInfo.Ram = ram;
+                            break;
+                        case "autoStart":
+                            ServerManager.Servers[id].BaseInfo.AutoStart =
+                                context.Request.Form[configItem.Id] == "true";
+                            break;
+                        case "world":
+                            ServerManager.Servers[id].StartInfo.World = context.Request.Form[configItem.Id];
+                            ServerManager.Servers[id].StartInfo.SyncToDatabase();
+                            break;
+                    }
+                }
+            }
+
+            ServerManager.Servers[id].BaseInfo.SyncToDatabase();
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "修改成功"
+            };
+        }
+
+        public static ApiReturnBase ApiServerConsoleClean(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            ServerManager.Servers[id].StatusInfo.ConsoleMessages.Clear();
+            return new ApiReturnBase
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功清除".Translate(),
+            };
+        }
+
+        public static ApiReturnBase ApiServerConsoleInput(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]) || string.IsNullOrEmpty(context.Request.Form["cmd"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            ServerManager.Servers[id].RequestInput(context.Request.Form["cmd"]);
+            return new ApiReturnBase
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功发送".Translate(),
             };
         }
     }
