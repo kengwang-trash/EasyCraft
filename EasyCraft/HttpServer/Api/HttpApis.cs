@@ -9,6 +9,7 @@ using EasyCraft.Base.Starter;
 using EasyCraft.Base.User;
 using EasyCraft.Utils;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace EasyCraft.HttpServer.Api
 {
@@ -570,7 +571,7 @@ namespace EasyCraft.HttpServer.Api
                 };
             foreach (ServerConfigItem configItem in ServerManager.Servers[id].GetServerConfigItems(nowUser))
             {
-                if (configItem.Editable && context.Request.Form.ContainsKey(configItem.Id))
+                if (!configItem.NoEdit && context.Request.Form.ContainsKey(configItem.Id))
                 {
                     switch (configItem.Id)
                     {
@@ -740,6 +741,27 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.PermissionDenied,
                     Msg = "权限不足".Translate(),
                 };
+            if (!CoreManager.Cores.ContainsKey(ServerManager.Servers[id].StartInfo.Core))
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "核心不存在".Translate(),
+                };
+            }
+
+            if (!CoreManager.ConfigInfos.ContainsKey(ServerManager.Servers[id].Core.CoreConfig))
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "核心配置不存在".Translate(),
+                };
+            }
+
+
             return new ApiReturnBase()
             {
                 Status = true,
@@ -747,6 +769,148 @@ namespace EasyCraft.HttpServer.Api
                 Msg = "成功获取",
                 Data = ServerManager.Servers[id].Core.ConfigInfo
             };
+        }
+
+        public static ApiReturnBase ApiServerConfigContent(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]) ||
+                string.IsNullOrEmpty(context.Request.Form["config"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            if (!CoreManager.Cores.ContainsKey(ServerManager.Servers[id].StartInfo.Core))
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "核心不存在".Translate(),
+                };
+            }
+
+            if (!CoreManager.ConfigInfos.ContainsKey(ServerManager.Servers[id].Core.CoreConfig))
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "核心配置不存在".Translate(),
+                };
+            }
+
+            if (!int.TryParse(context.Request.Form["config"], out int configId) ||
+                ServerManager.Servers[id].Core.ConfigInfo.Count <= configId)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "配置不存在".Translate(),
+                };
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Data = new Dictionary<string, object>()
+                {
+                    { "configInfo", ServerManager.Servers[id].Core.ConfigInfo[configId] },
+                    {
+                        "configValue",
+                        ServerManager.Servers[id]
+                            .GetConfigFileContent(ServerManager.Servers[id].Core.ConfigInfo[configId].File)
+                    }
+                }
+            };
+        }
+
+        public static ApiReturnBase ApiServerConfigContentUpdate(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]) ||
+                string.IsNullOrEmpty(context.Request.Form["config"]) ||
+                string.IsNullOrEmpty(context.Request.Form["values"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            if (!CoreManager.Cores.ContainsKey(ServerManager.Servers[id].StartInfo.Core))
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "核心不存在".Translate(),
+                };
+            }
+
+            if (!CoreManager.ConfigInfos.ContainsKey(ServerManager.Servers[id].Core.CoreConfig))
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "核心配置不存在".Translate(),
+                };
+            }
+
+            if (!int.TryParse(context.Request.Form["config"], out int configId) ||
+                ServerManager.Servers[id].Core.ConfigInfo.Count <= configId)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "配置不存在".Translate(),
+                };
+            try
+            {
+                ServerManager.Servers[id].WriteConfigFile(ServerManager.Servers[id].Core.ConfigInfo[configId].File,
+                    JsonConvert.DeserializeObject<Dictionary<string, string>>(context.Request.Form["values"]));
+                return new ApiReturnBase()
+                {
+                    Status = true,
+                    Code = 200,
+                    Msg = "成功修改"
+                };
+            }
+            catch (Exception e)
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.InternalError,
+                    Msg = "保存失败".Translate(),
+                    Data = e.Message
+                };
+            }
         }
     }
 }

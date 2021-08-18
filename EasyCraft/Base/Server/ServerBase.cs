@@ -35,28 +35,7 @@ namespace EasyCraft.Base.Server
             StatusInfo = new();
         }
 
-        public void LoadConfigFile()
-        {
-            foreach (var kvConfigInfo in CoreManager.Cores[StartInfo.Core].ConfigInfo)
-            {
-                if (!File.Exists(ServerDir + "/" + kvConfigInfo.File) &&
-                    kvConfigInfo.Required)
-                    File.Create(ServerDir + "/" + kvConfigInfo.File);
-                WriteConfigFile(kvConfigInfo.File);
-            }
-        }
-
-        public string PhraseServerVar(string origin)
-        {
-            if (origin == "{{REMOVE}}") return "";
-            return origin
-                .Replace("{{SERVERID}}", Id.ToString())
-                .Replace("{{SERVERDIR}}", ServerDir)
-                .Replace("{{CORE}}", StartInfo.Core)
-                .Replace("{{PORT}}", BaseInfo.Port.ToString())
-                .Replace("{{PLAYER}}", BaseInfo.Player.ToString())
-                .Replace("{{WORLD}}", StartInfo.World);
-        }
+        #region 服务器配置文件
 
         public void WriteConfigFile(string filename, Dictionary<string, string> vals = null)
         {
@@ -110,6 +89,87 @@ namespace EasyCraft.Base.Server
 
             File.WriteAllText(ServerDir + "/" + filename, sb.ToString());
         }
+
+        public void LoadConfigFile()
+        {
+            foreach (var kvConfigInfo in CoreManager.Cores[StartInfo.Core].ConfigInfo)
+            {
+                if (!File.Exists(ServerDir + "/" + kvConfigInfo.File) &&
+                    kvConfigInfo.Required)
+                    File.Create(ServerDir + "/" + kvConfigInfo.File);
+                WriteConfigFile(kvConfigInfo.File);
+            }
+        }
+
+        public List<Dictionary<string, object>> GetConfigFileContent(string filename)
+        {
+            var configInfo = Core.ConfigInfo.FirstOrDefault(t => filename == t.File);
+            var ret = new List<Dictionary<string, object>>();
+            if (configInfo is null) return ret;
+            if (!File.Exists(ServerDir + "/" + filename)) return ret;
+            switch (configInfo.Type)
+            {
+                case "properties":
+                    var content = File.ReadAllLines(ServerDir + "/" + filename);
+                    foreach (string s in content)
+                    {
+                        if (s.StartsWith("#") || string.IsNullOrWhiteSpace(s))
+                        {
+                            continue;
+                        }
+
+                        var kvp = s.Split('=').Select(t => t.Trim()).ToArray();
+                        var knownItem = configInfo.Known.FirstOrDefault(t => t.Key == kvp[0]);
+                        var value = string.Join('=', kvp.ToList().GetRange(1, kvp.Length - 1));
+                        if (knownItem != null)
+                        {
+                            if (knownItem.Visible)
+                            {
+                                if (knownItem.Force) value = PhraseServerVar(knownItem.Value);
+                                ret.Add(new Dictionary<string, object>()
+                                {
+                                    { "key", knownItem.Key },
+                                    { "display", knownItem.Display },
+                                    { "type", knownItem.Type },
+                                    { "value", value },
+                                    { "selection", knownItem.Type == "select" ? knownItem.Selection : null }
+                                });
+                            }
+                        }
+                        else
+                        {
+                            ret.Add(new Dictionary<string, object>()
+                            {
+                                { "key", kvp[0] },
+                                { "display", kvp[0] },
+                                { "type", 1 },
+                                { "value", value },
+                                { "selection", null }
+                            });
+                        }
+                    }
+
+                    break;
+            }
+
+            return ret;
+        }
+
+        #endregion
+
+
+        public string PhraseServerVar(string origin)
+        {
+            if (origin == "{{REMOVE}}") return "";
+            return origin
+                .Replace("{{SERVERID}}", Id.ToString())
+                .Replace("{{SERVERDIR}}", ServerDir)
+                .Replace("{{CORE}}", StartInfo.Core)
+                .Replace("{{PORT}}", BaseInfo.Port.ToString())
+                .Replace("{{PLAYER}}", BaseInfo.Player.ToString())
+                .Replace("{{WORLD}}", StartInfo.World);
+        }
+
 
         public async Task<ServerStartException> Start()
         {
@@ -290,7 +350,7 @@ namespace EasyCraft.Base.Server
                     Display = "服务器名称",
                     Id = "name",
                     Type = "text",
-                    Editable = user.UserInfo.Type > UserType.Technician,
+                    NoEdit = !user.UserInfo.Can(PermissionId.ChangeServerName),
                     Value = BaseInfo.Name
                 },
                 new()
@@ -298,7 +358,7 @@ namespace EasyCraft.Base.Server
                     Display = "服务器 IP",
                     Id = "ip",
                     Type = "text",
-                    Editable = false,
+                    NoEdit = true,
                     Value = Common.Configuration["ServerIP"]
                 },
                 new()
@@ -306,7 +366,7 @@ namespace EasyCraft.Base.Server
                     Display = "端口",
                     Id = "port",
                     Type = "number",
-                    Editable = user.UserInfo.Type > UserType.Technician,
+                    NoEdit = !user.UserInfo.Can(PermissionId.ChangeServerPort),
                     Value = BaseInfo.Port
                 },
                 new()
@@ -314,7 +374,7 @@ namespace EasyCraft.Base.Server
                     Display = "总玩家数",
                     Id = "player",
                     Type = "number",
-                    Editable = user.UserInfo.Type > UserType.Technician,
+                    NoEdit = !user.UserInfo.Can(PermissionId.ChangeServerMaxPlayer),
                     Value = BaseInfo.Player
                 },
                 new()
@@ -322,7 +382,7 @@ namespace EasyCraft.Base.Server
                     Display = "到期时间",
                     Id = "expireTime",
                     Type = "date",
-                    Editable = user.UserInfo.Type > UserType.Technician,
+                    NoEdit = !user.UserInfo.Can(PermissionId.ChangeServerExpire),
                     Value = BaseInfo.ExpireTime.ToString("yyyy-MM-dd")
                 },
                 new()
@@ -330,7 +390,7 @@ namespace EasyCraft.Base.Server
                     Display = "最大内存",
                     Id = "ram",
                     Type = "number",
-                    Editable = user.UserInfo.Type > UserType.Technician,
+                    NoEdit = !user.UserInfo.Can(PermissionId.ChangeServerRam),
                     Value = BaseInfo.Ram
                 },
                 new()
@@ -338,7 +398,7 @@ namespace EasyCraft.Base.Server
                     Display = "自动开启",
                     Id = "autoStart",
                     Type = "toggle",
-                    Editable = user.UserInfo.Type > UserType.Technician,
+                    NoEdit = !user.UserInfo.Can(PermissionId.ChangeServerAutoStart),
                     Value = BaseInfo.AutoStart
                 },
                 new()
@@ -346,7 +406,7 @@ namespace EasyCraft.Base.Server
                     Display = "默认世界",
                     Id = "world",
                     Type = "text",
-                    Editable = true,
+                    NoEdit = false,
                     Value = StartInfo.World
                 }
             };
@@ -364,7 +424,7 @@ namespace EasyCraft.Base.Server
                     Display = t["display"],
                     Id = t["id"],
                     Type = t["type"],
-                    Editable = t["editable"] == "true"
+                    NoEdit = t["noedit"] == "true"
                 });
             return ret.ToList();
         }
@@ -375,7 +435,7 @@ namespace EasyCraft.Base.Server
         [JsonProperty("display")] public string Display;
         [JsonProperty("id")] public string Id;
         [JsonProperty("type")] public string Type;
-        [JsonProperty("editable")] public bool Editable;
+        [JsonProperty("noedit")] public bool NoEdit;
         [JsonProperty("value")] public object Value;
     }
 }

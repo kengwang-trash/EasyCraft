@@ -73,7 +73,9 @@ namespace EasyCraft.HttpServer.Api
                 { "/server/start/info/update", HttpApi.Create(HttpApis.ApiServerStartInfoUpdate, UserType.Registered) },
                 { "/server/console/clean", HttpApi.Create(HttpApis.ApiServerConsoleClean, UserType.Registered) },
                 { "/server/console/input", HttpApi.Create(HttpApis.ApiServerConsoleInput, UserType.Registered) },
-                { "/server/configs/list", HttpApi.Create(HttpApis.ApiServerConfigsList, UserType.Registered) }
+                { "/server/configs/list", HttpApi.Create(HttpApis.ApiServerConfigsList, UserType.Registered) },
+                { "/server/config/content", HttpApi.Create(HttpApis.ApiServerConfigContent, UserType.Registered) },
+                { "/server/config/content/update", HttpApi.Create(HttpApis.ApiServerConfigContentUpdate, UserType.Registered) }
             };
         }
 

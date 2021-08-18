@@ -100,8 +100,8 @@ namespace EasyCraft.Base.Core
                                 new CoreConfigKnownItem
                                 {
                                     Key = t["key"].ToString(),
-                                    Name = t["display"].ToString(),
-                                    Type = t["type"].ToObject<int>(),
+                                    Display = t["display"].ToString(),
+                                    Type = t["type"].ToString(),
                                     Visible = t["visible"]?.ToObject<bool>() ?? true,
                                     Force = t["force"]?.ToObject<bool>() ?? false,
                                     Value = t["value"]?.ToObject<string>() ?? String.Empty,

@@ -8,7 +8,13 @@ namespace EasyCraft.Base.User
         {
             { PermissionId.Nothing, UserType.Nobody },
             { PermissionId.ChangeCore, UserType.Registered },
-            { PermissionId.ChangeStarter, UserType.Registered }
+            { PermissionId.ChangeStarter, UserType.Registered },
+            { PermissionId.ChangeServerExpire, UserType.Admin },
+            { PermissionId.ChangeServerName, UserType.Admin },
+            { PermissionId.ChangeServerPort, UserType.Admin },
+            { PermissionId.ChangeServerAutoStart, UserType.Admin },
+            { PermissionId.ChangeServerRam , UserType.Admin},
+            { PermissionId.ChangeServerMaxPlayer, UserType.Admin }
         };
 
         public static void LoadPermissions()
@@ -30,6 +36,12 @@ namespace EasyCraft.Base.User
     {
         Nothing,
         ChangeCore,
-        ChangeStarter
+        ChangeStarter,
+        ChangeServerAutoStart,
+        ChangeServerRam,
+        ChangeServerExpire,
+        ChangeServerMaxPlayer,
+        ChangeServerPort,
+        ChangeServerName
     }
 }

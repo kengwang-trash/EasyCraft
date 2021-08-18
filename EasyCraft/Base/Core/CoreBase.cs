@@ -39,8 +39,8 @@ namespace EasyCraft.Base.Core
     public class CoreConfigKnownItem
     {
         public string Key;
-        public string Name;
-        public int Type; // 0 - 布尔值  1 - 文本型  2 - 选择器型
+        public string Display;
+        public string Type; // `toggle` - 布尔值  `text` - 文本型  `select` - 选择器型
         public List<CoreConfigKnownItemSelection> Selection;
         public bool Visible;
         public bool Force;
@@ -49,7 +49,7 @@ namespace EasyCraft.Base.Core
 
     public class CoreConfigKnownItemSelection
     {
-        public string Display;
-        public string Value;
+        [JsonProperty("display")] public string Display;
+        [JsonProperty("value")] public string Value;
     }
 }
