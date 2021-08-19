@@ -67,7 +67,7 @@ namespace EasyCraft.HttpServer.Api
                 { "/starters", HttpApi.Create(HttpApis.ApiStarters, UserType.Registered) },
                 { "/server/console", HttpApi.Create(HttpApis.ApiServerConsole, UserType.Registered) },
                 { "/server/start", HttpApi.CreateAsync(HttpApis.ApiServerStart, UserType.Registered) },
-                { "/server/stop", HttpApi.Create(HttpApis.ApiServerStop, UserType.Registered) },
+                { "/server/stop", HttpApi.CreateAsync(HttpApis.ApiServerStop, UserType.Registered) },
                 { "/server/status", HttpApi.Create(HttpApis.ApiServerStatus, UserType.Registered) },
                 { "/server/base/info/update", HttpApi.Create(HttpApis.ApiServerBaseInfoUpdate, UserType.Registered) },
                 { "/server/start/info/update", HttpApi.Create(HttpApis.ApiServerStartInfoUpdate, UserType.Registered) },

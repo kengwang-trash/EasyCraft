@@ -292,7 +292,7 @@ namespace EasyCraft.Base.Server
                 };
             }
 
-            _ = PluginBase.PluginController.BroadcastEventAsync("OnServerWillStart", new object[] { Id });
+            _ = PluginBase.PluginController.BroadcastEventAsync("OnServerStarted", new object[] { Id });
             return new ServerStartException()
             {
                 Code = 200,
@@ -300,17 +300,27 @@ namespace EasyCraft.Base.Server
             };
         }
 
-        public bool Stop()
+        public async Task<bool> Stop()
         {
             try
             {
                 // 在广播到插件 - 此处事件广播位点可以提出更改
-                _ = PluginBase.PluginController.BroadcastEventAsync("OnServerWillStop", new object[] { Id });
+                var plugins =
+                    (await PluginBase.PluginController.BroadcastEventAsync("OnServerWillStop", new object[] { Id }))
+                    .Where(t => !(bool)t.Value).ToArray();
+                if (plugins.Length > 0)
+                {
+                    StatusInfo.OnConsoleOutput("服务器被插件 {0} 拒绝开启.".Translate(plugins[0].Key));
+                    return false;
+                }
+
                 bool? status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStop")
                     ?.Invoke(null, new object[]
                     {
                         this
                     });
+                if (status is true)
+                    _ = PluginBase.PluginController.BroadcastEventAsync("OnServerStopped", new object[] { Id });
                 return status is true;
             }
             catch (Exception e)

@@ -478,7 +478,7 @@ namespace EasyCraft.HttpServer.Api
             };
         }
 
-        public static ApiReturnBase ApiServerStop(HttpContext context)
+        public static async Task<ApiReturnBase> ApiServerStop(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
             if (!context.Request.HasFormContentType)
@@ -500,7 +500,7 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.PermissionDenied,
                     Msg = "权限不足".Translate(),
                 };
-            var ret = ServerManager.Servers[id].Stop();
+            var ret = await ServerManager.Servers[id].Stop();
             return new ApiReturnBase()
             {
                 Status = ret,

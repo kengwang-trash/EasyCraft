@@ -12,7 +12,6 @@ using EasyCraft.Utils;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Serilog;
-using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
 namespace EasyCraft
@@ -38,12 +37,12 @@ namespace EasyCraft
             Translation.LoadTranslation();
 
             // 初始化加载
-            if (!File.Exists("easycraft.json"))
+            if (!File.Exists(Directory.GetCurrentDirectory() + "/easycraft.json"))
                 InstallEasyCraft();
 
             Console.WriteLine("正在加载日志组件".Translate());
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.File("/logs/log-.log", LogEventLevel.Information, rollingInterval: RollingInterval.Day)
+                .WriteTo.File(Directory.GetCurrentDirectory() + "/logs/log-.log", rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(theme: SystemConsoleTheme.Colored)
                 .CreateLogger();
 
@@ -117,7 +116,7 @@ namespace EasyCraft
         private static void ExitEasyCraft(object sender, ConsoleCancelEventArgs e)
         {
             Log.Information("正在关闭所有服务器".Translate());
-            foreach (var serversValue in ServerManager.Servers.Values) serversValue.Stop();
+            foreach (var serversValue in ServerManager.Servers.Values) _ = serversValue.Stop();
             Log.Information("正在关闭 EasyCraft".Translate());
             Log.CloseAndFlush();
             Environment.Exit(0);
