@@ -74,11 +74,13 @@ namespace EasyCraft.Base.Core
 
         public static void LoadPublicConfigs()
         {
-            foreach (string file in Directory.EnumerateFiles(Directory.GetCurrentDirectory() + "/data/cores/configs",
-                "*.json"))
-            {
-                LoadPublicConfig(Path.GetFileNameWithoutExtension(file));
-            }
+            if (Directory.Exists(Directory.GetCurrentDirectory() + "/data/cores/configs"))
+                foreach (string file in Directory.EnumerateFiles(
+                    Directory.GetCurrentDirectory() + "/data/cores/configs",
+                    "*.json"))
+                {
+                    LoadPublicConfig(Path.GetFileNameWithoutExtension(file));
+                }
         }
 
         public static void LoadPublicConfig(string name, string content = null)

@@ -26,20 +26,13 @@ namespace EasyCraft.HttpServer.Api
                 return ApiReturnBase.IncompleteParameters;
             var user =
                 UserManager.Users.Values.FirstOrDefault(t => t.UserInfo.Name == context.Request.Form["username"]);
-            if (user == null)
-                return new ApiReturnBase
-                {
-                    Status = false,
-                    Code = (int)ApiReturnCode.UserNotFound,
-                    Msg = "用户不存在".Translate()
-                };
-            if (user.UserInfo.Password !=
+            if (user == null || user.UserInfo.Password !=
                 context.Request.Form["password"].ToString().GetMD5())
                 return new ApiReturnBase
                 {
                     Status = false,
                     Code = (int)ApiReturnCode.Unauthorized,
-                    Msg = "登录失败, 密码错误"
+                    Msg = "账号或密码错误"
                 };
             if (user.UserRequest.Auth != null)
                 UserManager.AuthToUid.Remove(user.UserRequest.Auth);

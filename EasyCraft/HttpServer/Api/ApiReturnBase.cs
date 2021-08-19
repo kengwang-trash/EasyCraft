@@ -46,7 +46,6 @@ namespace EasyCraft.HttpServer.Api
         PermissionDenied,
         IncompleteParameters,
         RequestFailed,
-        UserNotFound,
         ServerExpired,
         CoreNotFound,
         PluginReject,

@@ -33,6 +33,8 @@ namespace EasyCraft.Base.Server
             BaseInfo = ServerBaseInfo.CreateFromSqlReader(reader);
             StartInfo = ServerStartInfo.CreateFromSqliteById(reader.GetInt32(0));
             StatusInfo = new();
+            if (!Directory.Exists(ServerDir))
+                Directory.CreateDirectory(ServerDir);
         }
 
         #region 服务器配置文件
@@ -167,6 +169,8 @@ namespace EasyCraft.Base.Server
                 .Replace("{{CORE}}", StartInfo.Core)
                 .Replace("{{PORT}}", BaseInfo.Port.ToString())
                 .Replace("{{PLAYER}}", BaseInfo.Player.ToString())
+                .Replace("{{ENV}}", Directory.GetCurrentDirectory() + "/environment/")
+                .Replace("{{COREDIR}}", Directory.GetCurrentDirectory() + "/data/cores/" + StartInfo.Core)
                 .Replace("{{WORLD}}", StartInfo.World);
         }
 
@@ -269,7 +273,7 @@ namespace EasyCraft.Base.Server
                     ?.Invoke(null, new object[]
                     {
                         this,
-                        PhraseServerVar(Core.Start.Program),
+                        Path.GetFullPath(PhraseServerVar(Core.Start.Program)),
                         PhraseServerVar(Core.Start.Parameter)
                     });
             }
