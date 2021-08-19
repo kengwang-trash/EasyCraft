@@ -427,20 +427,32 @@ namespace EasyCraft.Base.Server
             return ret;
         }
 
-        public async Task<List<ServerConfigItem>> GetServerPluginItems(UserBase user)
+        public async Task<dynamic> GetServerPluginItems(UserBase user)
         {
             // 然后询问插件们有没有要追加的
             // 来了, 又是一个贼长的 LINQ
-            var ret = (await PluginBase.PluginController.BroadcastEventAsync("OnGetServerConfigItems",
-                new object[] { Id, user.UserInfo.Id })).Values.Cast<Dictionary<string, string>>().Select(t =>
-                new ServerConfigItem
+            var ret = (await PluginBase.PluginController.BroadcastEventAsync("OnGetServerPluginItems",
+                new object[] { Id, user.UserInfo.Id })).Select(t => new Dictionary<string, object>()
+            {
                 {
-                    Display = t["display"],
-                    Id = t["id"],
-                    Type = t["type"],
-                    NoEdit = t["noedit"] == "true"
-                });
-            return ret.ToList();
+                    "Plugin", new Dictionary<string, string>()
+                    {
+                        { "id", t.Key },
+                        { "name", PluginBase.PluginController.Plugins[t.Key].Info.Name }
+                    }
+                },
+                {
+                    "Values", ((List<Dictionary<string, object>>)t.Value).Select(v => new ServerConfigItem
+                    {
+                        Display = v["display"].ToString(),
+                        Id = v["id"].ToString(),
+                        Type = v["type"].ToString(),
+                        NoEdit = v["noedit"].ToString() == "true",
+                        Value = v["value"].ToString()
+                    })
+                }
+            });
+            return ret;
         }
     }
 

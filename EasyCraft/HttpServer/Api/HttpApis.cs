@@ -116,13 +116,17 @@ namespace EasyCraft.HttpServer.Api
                 int.TryParse(context.Request.Form["page"], out page);
             if (nowUser.UserInfo.Type < UserType.Technician)
                 data = data.Where(t => t.BaseInfo.Owner == nowUser.UserInfo.Id).ToList();
-            data = data.GetRange(page * 10, Math.Min(10, data.Count - page * 10));
             return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = data
+                Data = new Dictionary<string, object>()
+                {
+                    { "total", data.Count },
+                    { "pages", Math.Ceiling((double)data.Count / 10) },
+                    { "servers", (data.GetRange(page * 10, Math.Min(10, data.Count - page * 10))) }
+                }
             };
         }
 
@@ -830,7 +834,6 @@ namespace EasyCraft.HttpServer.Api
                 }
             };
         }
-
         public static ApiReturnBase ApiServerConfigContentUpdate(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
