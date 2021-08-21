@@ -14,13 +14,13 @@ namespace EasyCraft.Base.User
             Type = UserType.Everyone
         };
 
-        [JsonProperty("email")] public string Email;
-        [JsonProperty("id")] public int Id;
-        [JsonProperty("name")] public string Name;
+        [JsonProperty("email")] public string Email { get; internal set; }
+        [JsonProperty("id")] public int Id { get; internal set; }
+        [JsonProperty("name")] public string Name { get; internal set; }
 
-        [JsonIgnore] public string Password;
+        [JsonIgnore] internal string Password;
 
-        [JsonProperty("type")] public UserType Type;
+        [JsonProperty("type")] public UserType Type { get; internal set; }
 
         public static UserInfoBase CreateFromSqliteReader(SqliteDataReader reader)
         {

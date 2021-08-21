@@ -43,7 +43,7 @@ namespace EasyCraft.HttpServer.Api
         }
     }
 
-    public static class ApiHandler
+    internal static class ApiHandler
     {
         public static Dictionary<string, HttpApi> Apis = new();
 
@@ -75,11 +75,15 @@ namespace EasyCraft.HttpServer.Api
                 { "/server/console/input", HttpApi.Create(HttpApis.ApiServerConsoleInput, UserType.Registered) },
                 { "/server/configs/list", HttpApi.Create(HttpApis.ApiServerConfigsList, UserType.Registered) },
                 { "/server/config/content", HttpApi.Create(HttpApis.ApiServerConfigContent, UserType.Registered) },
-                { "/server/config/content/update", HttpApi.Create(HttpApis.ApiServerConfigContentUpdate, UserType.Registered) }
+                {
+                    "/server/config/content/update",
+                    HttpApi.Create(HttpApis.ApiServerConfigContentUpdate, UserType.Registered)
+                },
+                { "/create/server", HttpApi.Create(HttpApis.ApiCreateServer, UserType.Registered) }
             };
         }
 
-        public static async Task<bool> HandleApi(HttpContext context)
+        public static async Task HandleApi(HttpContext context)
         {
             var apiStr = context.Request.Path.ToString().Substring(4);
             context.Response.ContentType = "application/json; charset=utf-8;";
@@ -103,8 +107,6 @@ namespace EasyCraft.HttpServer.Api
                 else
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(ApiReturnBase.NotLogin));
             }
-
-            return true;
         }
 
         public static UserBase GetCurrentUser(HttpContext context)

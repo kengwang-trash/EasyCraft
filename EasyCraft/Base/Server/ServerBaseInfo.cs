@@ -7,18 +7,17 @@ namespace EasyCraft.Base.Server
 {
     public class ServerBaseInfo
     {
-        [JsonProperty("id")] public int Id;
-        [JsonProperty("name")] public string Name;
-        [JsonProperty("owner")] public int Owner;
-        [JsonProperty("player")] public int Player;
-        [JsonProperty("expireTime")] public DateTime ExpireTime;
+        [JsonProperty("id")] public int Id { get; internal set; }
+        [JsonProperty("name")] public string Name { get; internal set; }
+        [JsonProperty("owner")] public int Owner { get; internal set; }
+        [JsonProperty("player")] public int Player { get; internal set; }
+        [JsonProperty("expireTime")] public DateTime ExpireTime { get; internal set; }
         [JsonProperty("expireTimeRaw")] public string ExpireTimeRaw => ExpireTime.ToString("s");
         [JsonProperty("expired")] public bool Expired => ExpireTime < DateTime.Now;
-
-        [JsonProperty("port")] public int Port;
-        [JsonProperty("ram")] public int Ram;
-        [JsonProperty("autoStart")] public bool AutoStart;
-        [JsonProperty("status")] public ServerStatus Status;
+        [JsonProperty("port")] public int Port { get; internal set; }
+        [JsonProperty("ram")] public int Ram { get; internal set; }
+        [JsonProperty("autoStart")] public bool AutoStart { get; internal set; }
+        [JsonProperty("status")] public ServerStatus Status { get; internal set; }
 
         public static ServerBaseInfo CreateFromSqlReader(SqliteDataReader reader)
         {

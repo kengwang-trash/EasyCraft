@@ -8,7 +8,7 @@ namespace EasyCraft.Database
 {
     public class Database
     {
-        public static string Password;
+        internal static string Password;
         private static SqliteConnection _db = new();
 
         public static bool IsConnected;

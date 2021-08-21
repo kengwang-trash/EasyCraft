@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace EasyCraft.PluginBase
 {
     [JsonObject(MemberSerialization.OptOut)]
-    public class Plugin
+    internal class Plugin
     {
         [JsonProperty("Auth")] public Dictionary<string, bool> Auth;
         [JsonIgnore] public Type Type;
@@ -15,7 +15,7 @@ namespace EasyCraft.PluginBase
         [JsonIgnore] public string Key;
     }
 
-    public class PluginInfo
+    internal class PluginInfo
     {
         public string Id;
         public string Name;

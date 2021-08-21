@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace EasyCraft.Base.User
 {
-    public class Permission
+    internal class Permission
     {
-        public static Dictionary<PermissionId, UserType> PermissionList = new()
+        internal static readonly Dictionary<PermissionId, UserType> PermissionList = new()
         {
             { PermissionId.Nothing, UserType.Nobody },
             { PermissionId.ChangeCore, UserType.Registered },
@@ -13,8 +13,9 @@ namespace EasyCraft.Base.User
             { PermissionId.ChangeServerName, UserType.Admin },
             { PermissionId.ChangeServerPort, UserType.Admin },
             { PermissionId.ChangeServerAutoStart, UserType.Admin },
-            { PermissionId.ChangeServerRam , UserType.Admin},
-            { PermissionId.ChangeServerMaxPlayer, UserType.Admin }
+            { PermissionId.ChangeServerRam, UserType.Admin },
+            { PermissionId.ChangeServerMaxPlayer, UserType.Admin },
+            { PermissionId.CreateServer, UserType.Admin }
         };
 
         public static void LoadPermissions()
@@ -42,6 +43,7 @@ namespace EasyCraft.Base.User
         ChangeServerExpire,
         ChangeServerMaxPlayer,
         ChangeServerPort,
-        ChangeServerName
+        ChangeServerName,
+        CreateServer
     }
 }

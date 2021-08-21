@@ -24,5 +24,26 @@ namespace EasyCraft.Base.Server
                     Log.Warning("加载服务器 {0} 出错: {1}", reader.GetInt32(0), e.Message);
                 }
         }
+
+
+        public static int AddServer(ServerBaseInfo info)
+        {
+            var reader = Database.Database.CreateCommand(
+                "INSERT INTO servers (name, owner, expire, port, ram, autostart, status, player) VALUES ($name,$owner,$expire,$port,$ram,$autostart,$status,$player); SELECT id, name, owner, expire, port, ram, autostart, status, player FROM servers WHERE id = last_insert_rowid();",
+                new Dictionary<string, object>()
+                {
+                    { "$name", info.Name },
+                    { "$owner", info.Owner },
+                    { "$expire", info.ExpireTime },
+                    { "$port", info.Port },
+                    { "$ram", info.Ram },
+                    { "$autostart", info.AutoStart },
+                    { "$status", info.Status },
+                    { "player", info.Player }
+                }).ExecuteReader();
+            reader.Read();
+            Servers[reader.GetInt32(0)] = new ServerBase(reader);
+            return reader.GetInt32(0);
+        }
     }
 }

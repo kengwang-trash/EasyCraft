@@ -6,11 +6,11 @@ namespace EasyCraft.Base.Server
 {
     public class ServerStartInfo
     {
-        [JsonProperty("id")] public int Id;
-        [JsonProperty("core")] public string Core;
-        [JsonIgnore] public string LastCore;
-        [JsonProperty("world")] public string World;
-        [JsonProperty("starter")] public string Starter;
+        [JsonProperty("id")] public int Id { get; internal set; }
+        [JsonProperty("core")] public string Core { get; internal set; }
+        [JsonIgnore] public string LastCore { get; internal set; }
+        [JsonProperty("world")] public string World { get; internal set; }
+        [JsonProperty("starter")] public string Starter { get; internal set; }
 
         public static ServerStartInfo CreateFromSqliteById(int id)
         {

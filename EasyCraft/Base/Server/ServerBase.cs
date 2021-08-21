@@ -17,10 +17,11 @@ namespace EasyCraft.Base.Server
     [JsonObject(MemberSerialization.OptOut)]
     public class ServerBase
     {
-        [JsonProperty("baseInfo")] public ServerBaseInfo BaseInfo;
-        [JsonProperty("id")] public int Id;
-        [JsonProperty("startInfo")] public ServerStartInfo StartInfo;
-        [JsonProperty("statusInfo")] public ServerStatusInfo StatusInfo;
+        [JsonProperty("baseInfo")] public ServerBaseInfo BaseInfo { get; internal set; }
+        [JsonProperty("id")] public int Id { get; internal set; }
+        [JsonProperty("startInfo")] public ServerStartInfo StartInfo { get; internal set; }
+        [JsonProperty("statusInfo")] public ServerStatusInfo StatusInfo { get; internal set; }
+
 
         public static List<ServerConfigItem> ConfigItems = new();
 

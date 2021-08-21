@@ -116,6 +116,17 @@ namespace EasyCraft.HttpServer.Api
                 int.TryParse(context.Request.Form["page"], out page);
             if (nowUser.UserInfo.Type < UserType.Technician)
                 data = data.Where(t => t.BaseInfo.Owner == nowUser.UserInfo.Id).ToList();
+            if (page * 10 > data.Count)
+            {
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.BadRequest,
+                    Msg = "页码超出范围",
+                    Data = null,
+                };
+            }
+
             return new ApiReturnBase
             {
                 Status = true,
@@ -124,8 +135,8 @@ namespace EasyCraft.HttpServer.Api
                 Data = new Dictionary<string, object>()
                 {
                     { "total", data.Count },
-                    { "pages", Math.Ceiling((double)data.Count / 10) },
-                    { "servers", (data.GetRange(page * 10, Math.Min(10, data.Count - page * 10))) }
+                    { "servers", (data.GetRange(page * 10, Math.Min(10, data.Count - page * 10))) },
+                    { "canadd", nowUser.UserInfo.Can(PermissionId.CreateServer) }
                 }
             };
         }
@@ -158,6 +169,45 @@ namespace EasyCraft.HttpServer.Api
                 Code = 200,
                 Msg = "成功获取",
                 Data = ServerManager.Servers[id]
+            };
+        }
+
+        public static ApiReturnBase ApiCreateServer(HttpContext context)
+        {
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (!nowUser.UserInfo.Can(PermissionId.CreateServer))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["name"]) ||
+                string.IsNullOrEmpty(context.Request.Form["owner"]) ||
+                string.IsNullOrEmpty(context.Request.Form["expire"]) ||
+                string.IsNullOrEmpty(context.Request.Form["port"]) ||
+                string.IsNullOrEmpty(context.Request.Form["ram"]) ||
+                string.IsNullOrEmpty(context.Request.Form["autostart"]) ||
+                string.IsNullOrEmpty(context.Request.Form["player"]))
+                return ApiReturnBase.IncompleteParameters;
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功创建".Translate(),
+                Data = ServerManager.AddServer(new ServerBaseInfo
+                {
+                    Name = context.Request.Form["name"],
+                    Owner = int.Parse(context.Request.Form["owner"]),
+                    Player = int.Parse(context.Request.Form["player"]),
+                    ExpireTime = DateTime.Parse(context.Request.Form["expire"]),
+                    Port = int.Parse(context.Request.Form["port"]),
+                    Ram = int.Parse(context.Request.Form["ram"]),
+                    AutoStart = false,
+                    Status = ServerStatus.Normal
+                })
             };
         }
 
@@ -834,6 +884,7 @@ namespace EasyCraft.HttpServer.Api
                 }
             };
         }
+
         public static ApiReturnBase ApiServerConfigContentUpdate(HttpContext context)
         {
             var nowUser = ApiHandler.GetCurrentUser(context);
@@ -907,6 +958,37 @@ namespace EasyCraft.HttpServer.Api
                     Data = e.Message
                 };
             }
+        }
+        
+        public static async Task<ApiReturnBase> ApiServerPluginColumnsUpdate(HttpContext context)
+        {
+            if (!context.Request.HasFormContentType)
+                return ApiReturnBase.IncompleteParameters;
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
+                return ApiReturnBase.IncompleteParameters;
+            if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.NotFound,
+                    Msg = "服务器未找到".Translate(),
+                };
+            var nowUser = ApiHandler.GetCurrentUser(context);
+            if (ServerManager.Servers[id].BaseInfo.Owner != nowUser.UserInfo.Id &&
+                nowUser.UserInfo.Type < UserType.Technician)
+                return new ApiReturnBase
+                {
+                    Status = false,
+                    Code = (int)ApiReturnCode.PermissionDenied,
+                    Msg = "权限不足".Translate(),
+                };
+            return new ApiReturnBase()
+            {
+                Status = true,
+                Code = 200,
+                Msg = "成功获取",
+                Data = await ServerManager.Servers[id].GetServerPluginItems(nowUser)
+            };
         }
     }
 }

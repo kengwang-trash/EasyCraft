@@ -16,7 +16,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 
 namespace EasyCraft
 {
-    public static class Program
+    internal static class Program
     {
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
