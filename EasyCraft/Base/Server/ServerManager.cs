@@ -30,7 +30,7 @@ namespace EasyCraft.Base.Server
         {
             var reader = Database.Database.CreateCommand(
                 "INSERT INTO servers (name, owner, expire, port, ram, autostart, status, player) VALUES ($name,$owner,$expire,$port,$ram,$autostart,$status,$player); SELECT id, name, owner, expire, port, ram, autostart, status, player FROM servers WHERE id = last_insert_rowid();",
-                new Dictionary<string, object>()
+                new Dictionary<string, object>
                 {
                     { "$name", info.Name },
                     { "$owner", info.Owner },

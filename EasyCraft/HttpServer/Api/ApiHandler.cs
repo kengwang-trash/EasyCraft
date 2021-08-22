@@ -98,10 +98,10 @@ namespace EasyCraft.HttpServer.Api
                 if (nowUser.UserInfo.Type >= api.MinUserType)
                     if (api.IsAsync)
                         await context.Response.WriteAsync(JsonConvert.SerializeObject(await api.ApiFuncAsync(context),
-                            new JsonSerializerSettings() { DateFormatString = "yyyy年MM月dd日 HH:mm:ss".Translate() }));
+                            new JsonSerializerSettings { DateFormatString = "yyyy年MM月dd日 HH:mm:ss".Translate() }));
                     else
                         await context.Response.WriteAsync(JsonConvert.SerializeObject(api.ApiFunc(context),
-                            new JsonSerializerSettings() { DateFormatString = "yyyy年MM月dd日 HH:mm:ss".Translate() }));
+                            new JsonSerializerSettings { DateFormatString = "yyyy年MM月dd日 HH:mm:ss".Translate() }));
                 else if (nowUser.UserRequest.IsLogin)
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(ApiReturnBase.PermissionDenied));
                 else

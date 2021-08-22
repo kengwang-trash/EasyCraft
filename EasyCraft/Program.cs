@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using EasyCraft.Base.Core;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.Starter;
@@ -33,21 +34,24 @@ namespace EasyCraft
 == Version " + Common.VersionFull + "  (" + Common.VersionName + @") ==
  == Developed by EasyCraft Team ==
   ==    Under GPL v3 Licence   ==");
+
+
             Console.WriteLine("Loading Language Pack");
             Translation.LoadTranslation();
 
             // 初始化加载
-            if (!File.Exists(Directory.GetCurrentDirectory() + "/easycraft.json"))
+            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/easycraft.json"))
                 InstallEasyCraft();
 
             Console.WriteLine("正在加载日志组件".Translate());
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.File(Directory.GetCurrentDirectory() + "/logs/log-.log", rollingInterval: RollingInterval.Day)
+                .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + "/logs/log-.log",
+                    rollingInterval: RollingInterval.Day)
                 .WriteTo.Console(theme: SystemConsoleTheme.Colored)
                 .CreateLogger();
 
             Common.Configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
                 .AddJsonFile("easycraft.json", true, true)
 #if DEBUG
                 .AddJsonFile("easycraft.development.json", true, true)
@@ -130,11 +134,11 @@ namespace EasyCraft
             Console.WriteLine("这似乎是你第一次使用 EasyCraft, 我们将会带领你进行安装");
             Console.WriteLine("正在为安装做准备......".Translate());
             // 创建必要的路径
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/data");
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/data/cores");
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/data/starters");
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/data/pluigns");
-            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "/data/servers");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/data");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/data/cores");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/data/starters");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/data/pluigns");
+            Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/data/servers");
             Console.WriteLine("请输入此计算机的 IP地址/域名".Translate());
             Console.WriteLine("此内容将会用于在前端服务器IP显示或其他插件调用".Translate());
             Console.Write("> ".Translate());
@@ -144,64 +148,191 @@ namespace EasyCraft
             Console.Write("> ".Translate());
             setting["HttpPort"] = Console.ReadLine();
 
-            Console.WriteLine("很棒! 接下来我们来创建数据库吧~".Translate());
-            Console.WriteLine("为了保证安全,请输入数据库密码:".Translate());
+            Console.WriteLine("如果你的前端为 HTTPS, 那么后端 API 也应当为 HTTPS");
+            Console.WriteLine("后端API 是否使用 HTTPS [yes/no]: ");
             Console.Write("> ".Translate());
-            var pswd = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(pswd))
+            if (Console.ReadLine() == "yes")
             {
-                Console.WriteLine("您真的确认不设置数据库密码吗? 我为你自动生成了一个".Translate());
-                string autopass = Utils.Utils.CreateRandomString(15, true, true, true);
-                Console.WriteLine(autopass);
-                Console.WriteLine("回车即可使用这个密码, 如果想自定义, 请输入自定义密码".Translate());
-                Console.WriteLine("如果你真的不想使用密码, 请输入 「null」".Translate());
+                while (true)
+                {
+                    Console.WriteLine("你是否已经有了pfx后缀的证书, 如有请命名为 cert.pfx 放置在 EasyCraft 根目录, 如有请输入 [yes] ".Translate());
+                    Console.WriteLine("若为 公钥私钥 (.pem , .key) 型请输入 [convert]".Translate());
+                    Console.WriteLine("如没有请输入 [no], 将不会开启 HTTPS 模式".Translate());
+                    Console.Write("> ".Translate());
+                    switch (Console.ReadLine())
+                    {
+                        case "yes":
+                            if (!File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/cert.pfx"))
+                            {
+                                Console.WriteLine("未找到证书文件, 请检查.".Translate());
+                                continue;
+                            }
+
+                            Console.Write("请输入证书密码: ".Translate());
+                            Console.Write("> ".Translate());
+                            var certpasswd = Console.ReadLine();
+                            try
+                            {
+                                var _ = new X509Certificate(AppDomain.CurrentDomain.BaseDirectory + "/cert.pfx",
+                                    certpasswd);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                                Console.WriteLine("请重新输入".Translate());
+                                continue;
+                            }
+
+                            setting["useHttps"] = "true";
+                            setting["certPasswd"] = certpasswd;
+
+                            break;
+                        case "convert":
+                            Console.WriteLine("请将证书文件命名为 cert.pem, cert.key 后放置在 EasyCraft 根目录");
+                            Console.Write("如已完成请按回车键继续...");
+                            Console.ReadLine();
+                            try
+                            {
+                                var certpem = X509Certificate2.CreateFromPemFile(
+                                    AppDomain.CurrentDomain.BaseDirectory + "cert.pem",
+                                    AppDomain.CurrentDomain.BaseDirectory + "cert.key");
+                                Console.WriteLine("载入证书成功,请输入要转换后的密码. 请注意: 此密码将会明文存储");
+                                Console.Write("> ".Translate());
+                                var certpassword = Console.ReadLine();
+                                File.WriteAllBytes(AppDomain.CurrentDomain.BaseDirectory + "/cert.pfx",
+                                    certpem.Export(X509ContentType.Pfx, certpassword));
+                                try
+                                {
+                                    var _ = new X509Certificate(AppDomain.CurrentDomain.BaseDirectory + "/cert.pfx",
+                                        certpassword);
+                                    setting["useHttps"] = "true";
+                                    setting["certPasswd"] = certpassword;
+                                }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e);
+                                    Console.WriteLine("请重新输入".Translate());
+                                    continue;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e);
+                                Console.WriteLine("请重新输入".Translate());
+                                continue;
+                            }
+
+                            break;
+                        case "no":
+                            break;
+                        case "default":
+                            Console.WriteLine("输入有误");
+                            continue;
+                    }
+
+                    break;
+                }
+
+                setting["useHttps"] = "true";
+            }
+
+            string pswd = null;
+            bool noinstall = false;
+            Console.WriteLine("很棒! 接下来我们来设置数据库吧~".Translate());
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/data/database.db"))
+            {
+                while (true)
+                {
+                    Console.WriteLine("检测到数据库文件已存在,是否直接读取? [yes/no]".Translate());
+                    Console.Write("> ".Translate());
+                    if (Console.ReadLine() == "yes")
+                    {
+                        Console.WriteLine("请输入数据库密码, 若无请回车");
+                        Console.Write("> ".Translate());
+                        pswd = Console.ReadLine();
+                        if (!string.IsNullOrEmpty(pswd))
+                            Database.Database.Password = pswd;
+                        else
+                            Database.Database.Password = null;
+                        Database.Database.Connect();
+                        if (!Database.Database.IsConnected)
+                        {
+                            Console.WriteLine("数据库连接失败");
+                            continue;
+                        }
+
+                        noinstall = true;
+                    }
+
+                    break;
+                }
+            }
+
+            if (!Database.Database.IsConnected)
+            {
+                Console.WriteLine("正在创建新的数据库".Translate());
+                Console.WriteLine("为了保证安全,请输入数据库密码:".Translate());
                 Console.Write("> ".Translate());
-                string inputpass = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(inputpass))
-                    pswd = autopass;
-                else if (inputpass == "null")
-                    pswd = null;
-                else
-                    pswd = inputpass;
+                pswd = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(pswd))
+                {
+                    Console.WriteLine("您真的确认不设置数据库密码吗? 我为你自动生成了一个".Translate());
+                    string autopass = Utils.Utils.CreateRandomString(15, true, true, true);
+                    Console.WriteLine(autopass);
+                    Console.WriteLine("回车即可使用这个密码, 如果想自定义, 请输入自定义密码".Translate());
+                    Console.WriteLine("如果你真的不想使用密码, 请输入 「null」".Translate());
+                    Console.Write("> ".Translate());
+                    string inputpass = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(inputpass))
+                        pswd = autopass;
+                    else if (inputpass == "null")
+                        pswd = null;
+                    else
+                        pswd = inputpass;
+                }
             }
 
             if (pswd != null)
             {
                 Console.WriteLine("请记住你的数据库密码: {0}".Translate(pswd));
-                Console.WriteLine("是否自动登录到数据库, 假如您是非个人用途不建议使用".Translate());
+                Console.WriteLine("是否自动登录到数据库. 请注意: 此密码将会明文存储".Translate());
                 Console.WriteLine("启用请输入 [yes]");
                 Console.Write("> ".Translate());
                 if (Console.ReadLine() == "yes")
                     setting["Database_Password"] = pswd;
             }
 
-            Console.WriteLine("即将生成数据库,请稍等.");
-            Database.Database.Password = pswd;
-            if (Database.Database.Connect())
+            if (!noinstall)
             {
-                Database.Database.CreateCommand(InstallSql).ExecuteNonQuery();
-            }
-            else
-            {
-                Console.WriteLine("数据库生成失败,请检查目录可写".Translate());
-                ExitEasyCraft(null, null);
+                Console.WriteLine("即将生成数据库,请稍等.");
+                Database.Database.Password = pswd;
+                if (Database.Database.Connect())
+                {
+                    Database.Database.CreateCommand(InstallSql).ExecuteNonQuery();
+                }
+                else
+                {
+                    Console.WriteLine("数据库生成失败,请检查目录可写".Translate());
+                    ExitEasyCraft(null, null);
+                }
+
+                Console.Write("请输入 EasyCraft 管理员用户名: ".Translate());
+                string username = Console.ReadLine();
+                Console.Write("请输入 EasyCraft 管理员密码: ".Translate());
+                string password = Console.ReadLine();
+                Console.Write("请输入 EasyCraft 管理员邮箱: ".Translate());
+                string email = Console.ReadLine();
+                Database.Database.CreateCommand(
+                    "INSERT INTO users (name, password, type, email) VALUES ( $name, $password , $type , $email )",
+                    new Dictionary<string, object>
+                    {
+                        { "$name", username },
+                        { "$password", password },
+                        { "$email", email },
+                        { "$type", ((int)UserType.SuperUser).ToString() },
+                    }).ExecuteNonQuery();
             }
 
-            Console.Write("请输入 EasyCraft 管理员用户名: ".Translate());
-            string username = Console.ReadLine();
-            Console.Write("请输入 EasyCraft 管理员密码: ".Translate());
-            string password = Console.ReadLine();
-            Console.Write("请输入 EasyCraft 管理员邮箱: ".Translate());
-            string email = Console.ReadLine();
-            Database.Database.CreateCommand(
-                "INSERT INTO users (name, password, type, email) VALUES ( $name, $password , $type , $email )",
-                new Dictionary<string, object>()
-                {
-                    { "$name", username },
-                    { "$password", password },
-                    { "$email", email },
-                    { "$type", ((int)UserType.SuperUser).ToString() },
-                }).ExecuteNonQuery();
             File.WriteAllText("easycraft.json", JsonConvert.SerializeObject(setting));
             Console.WriteLine("恭喜你, 你现在已经成功安装了 EasyCraft!");
         }

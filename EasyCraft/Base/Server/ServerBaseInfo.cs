@@ -57,7 +57,7 @@ namespace EasyCraft.Base.Server
         {
             Database.Database.CreateCommand(
                 "UPDATE servers SET (name,owner,expire,port,ram,autostart,status,player) = ( $name , $owner , $expire , $port , $ram , $autostart , $status , $player ) WHERE id = $id",
-                new Dictionary<string, object>()
+                new Dictionary<string, object>
                 {
                     { "$name", Name },
                     { "$owner", Owner },

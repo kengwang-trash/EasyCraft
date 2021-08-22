@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using EasyCraft.Base.Server;
+using EasyCraft.HttpServer.Api;
 
 namespace EasyCraft.Command
 {
@@ -14,7 +15,7 @@ namespace EasyCraft.Command
             {
                 "hapi", full =>
                 {
-                    if (full == "hapi reload") HttpServer.Api.ApiHandler.InitializeApis();
+                    if (full == "hapi reload") ApiHandler.InitializeApis();
                 }
             },
             {

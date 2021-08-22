@@ -35,7 +35,7 @@ namespace EasyCraft.Base.Server
             Database.Database
                 .CreateCommand(
                     "UPDATE server_start SET ( core , lastcore , world , starter ) = ( $core , $lastcore , $world , $starter ) WHERE id = $id",
-                    new Dictionary<string, object>()
+                    new Dictionary<string, object>
                     {
                         { "$core", Core },
                         { "$lastcore", LastCore },

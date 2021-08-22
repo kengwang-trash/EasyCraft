@@ -53,6 +53,7 @@ namespace EasyCraft.HttpServer.Api
         PasswordNotIdentical,
         IncorrectPasswordFormat,
         NeedLogin,
+        SystemNotSupport,
         
 
         // 下方遵循 HTTP 响应码

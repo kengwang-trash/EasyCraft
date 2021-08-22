@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Net;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using EasyCraft.HttpServer.Api;
@@ -27,7 +28,24 @@ namespace EasyCraft.HttpServer
                     .SuppressStatusMessages(true)
                     .ConfigureLogging(t => t.SetMinimumLevel(LogLevel.None))
                     .UseKestrel()
-                    .ConfigureKestrel(t => t.Listen(IPAddress.Any, port))
+                    .ConfigureKestrel(t =>
+                    {
+                        
+                        if (Common.Configuration["useHttps"] == "true")
+                        {
+                            Log.Information("正在加载 HTTPS 证书".Translate());
+                            t.ListenAnyIP(port, options =>
+                            {
+                                options.UseHttps(AppDomain.CurrentDomain.BaseDirectory+"/cert.pfx",Common.Configuration["certPasswd"]);
+                            });
+                            
+                            
+                        }
+                        else
+                        {
+                            t.ListenAnyIP(port);
+                        }
+                    })
                     .UseStartup<HttpServerStartUp>()
                     .Build();
                 _host.RunAsync();
@@ -62,7 +80,7 @@ namespace EasyCraft.HttpServer
                 else
                 {
                     //await context.Response.Body.WriteAsync(
-                    //    File.ReadAllBytes(Directory.GetCurrentDirectory() + "/front/" + context.Request.Path));
+                    //    File.ReadAllBytes(System.AppDomain.CurrentDomain.BaseDirectory + "/front/" + context.Request.Path));
                     await context.Response.WriteAsync("欢迎使用 EasyCraft", Encoding.UTF8);
                 }
             }

@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System;
 using Microsoft.Extensions.Configuration;
 
 namespace EasyCraft
@@ -11,7 +11,7 @@ namespace EasyCraft
         public static string VersionName = "TestFlight"; //待定 发布时确定
         public static IConfiguration Configuration;
 
-        public static string BaseDir = Directory.GetCurrentDirectory();
-        public static string DataDir = Directory.GetCurrentDirectory() + "/data";
+        public static string BaseDir = AppDomain.CurrentDomain.BaseDirectory;
+        public static string DataDir = AppDomain.CurrentDomain.BaseDirectory + "/data";
     }
 }

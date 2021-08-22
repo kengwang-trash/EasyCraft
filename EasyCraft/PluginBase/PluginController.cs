@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using EasyCraft.Utils;
 using Serilog;
+
 #pragma warning disable 1998
 
 namespace EasyCraft.PluginBase
@@ -17,9 +18,9 @@ namespace EasyCraft.PluginBase
 
         public static void LoadPlugins()
         {
-            if (!Directory.Exists(Directory.GetCurrentDirectory() + "/data/plugins")) return;
+            if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "/data/plugins")) return;
             foreach (var file in
-                Directory.EnumerateFiles(Directory.GetCurrentDirectory() + "/data/plugins", "*.dll"))
+                Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory + "/data/plugins", "*.dll"))
                 try
                 {
                     // 1 - 载入 Assembly , 我们不用文件方便后期动态加载

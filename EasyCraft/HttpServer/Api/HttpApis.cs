@@ -132,7 +132,7 @@ namespace EasyCraft.HttpServer.Api
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = new Dictionary<string, object>()
+                Data = new Dictionary<string, object>
                 {
                     { "total", data.Count },
                     { "servers", (data.GetRange(page * 10, Math.Min(10, data.Count - page * 10))) },
@@ -192,7 +192,7 @@ namespace EasyCraft.HttpServer.Api
                 string.IsNullOrEmpty(context.Request.Form["autostart"]) ||
                 string.IsNullOrEmpty(context.Request.Form["player"]))
                 return ApiReturnBase.IncompleteParameters;
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -239,7 +239,7 @@ namespace EasyCraft.HttpServer.Api
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = new Dictionary<string, object>()
+                Data = new Dictionary<string, object>
                 {
                     { "id", info.Id },
                     { "core", info.Core },
@@ -256,7 +256,7 @@ namespace EasyCraft.HttpServer.Api
 
         public static ApiReturnBase ApiStarters(HttpContext context)
         {
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -309,7 +309,7 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.RequestFailed,
                     Msg = "注册失败"
                 };
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -353,7 +353,7 @@ namespace EasyCraft.HttpServer.Api
             user.UserInfo.Password = context.Request.Form["newpassword"].ToString().GetMD5();
             user.UserInfo.SyncToDatabase();
             _ = ApiLogout(context);
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Msg = "成功修改密码".Translate(),
@@ -383,7 +383,7 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.PermissionDenied,
                     Msg = "权限不足".Translate(),
                 };
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -414,7 +414,7 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.PermissionDenied,
                     Msg = "权限不足".Translate(),
                 };
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -430,7 +430,7 @@ namespace EasyCraft.HttpServer.Api
             if (string.IsNullOrEmpty(context.Request.Form["device"]))
                 return ApiReturnBase.IncompleteParameters;
             int.TryParse(context.Request.Form["device"], out var i);
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -445,7 +445,7 @@ namespace EasyCraft.HttpServer.Api
                 return ApiReturnBase.IncompleteParameters;
             if (string.IsNullOrEmpty(context.Request.Form["branch"]))
                 return ApiReturnBase.IncompleteParameters;
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -488,12 +488,12 @@ namespace EasyCraft.HttpServer.Api
                     Math.Min(ServerManager.Servers[id].StatusInfo.ConsoleMessages.Count - start, 100));
             }
 
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
                 Msg = "成功获取",
-                Data = new Dictionary<string, object>()
+                Data = new Dictionary<string, object>
                 {
                     { "lastid", ServerManager.Servers[id].StatusInfo.ConsoleMessages.Count },
                     { "logs", logs }
@@ -555,7 +555,7 @@ namespace EasyCraft.HttpServer.Api
                     Msg = "权限不足".Translate(),
                 };
             var ret = await ServerManager.Servers[id].Stop();
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = ret,
                 Code = ret ? 200 : (int)ApiReturnCode.RequestFailed,
@@ -585,7 +585,7 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.PermissionDenied,
                     Msg = "权限不足".Translate(),
                 };
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -654,7 +654,7 @@ namespace EasyCraft.HttpServer.Api
             }
 
             ServerManager.Servers[id].BaseInfo.SyncToDatabase();
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -809,7 +809,7 @@ namespace EasyCraft.HttpServer.Api
             }
 
 
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
@@ -869,11 +869,11 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.NotFound,
                     Msg = "配置不存在".Translate(),
                 };
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,
-                Data = new Dictionary<string, object>()
+                Data = new Dictionary<string, object>
                 {
                     { "configInfo", ServerManager.Servers[id].Core.ConfigInfo[configId] },
                     {
@@ -941,7 +941,7 @@ namespace EasyCraft.HttpServer.Api
             {
                 ServerManager.Servers[id].WriteConfigFile(ServerManager.Servers[id].Core.ConfigInfo[configId].File,
                     JsonConvert.DeserializeObject<Dictionary<string, string>>(context.Request.Form["values"]));
-                return new ApiReturnBase()
+                return new ApiReturnBase
                 {
                     Status = true,
                     Code = 200,
@@ -982,7 +982,7 @@ namespace EasyCraft.HttpServer.Api
                     Code = (int)ApiReturnCode.PermissionDenied,
                     Msg = "权限不足".Translate(),
                 };
-            return new ApiReturnBase()
+            return new ApiReturnBase
             {
                 Status = true,
                 Code = 200,

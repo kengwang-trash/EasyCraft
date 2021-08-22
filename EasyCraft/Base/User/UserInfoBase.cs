@@ -38,7 +38,7 @@ namespace EasyCraft.Base.User
         {
             Database.Database.CreateCommand(
                     "UPDATE users SET (name,password,type,email) = ( $name , $password , $type , $email ) WHERE id = $id",
-                    new Dictionary<string, object>()
+                    new Dictionary<string, object>
                     {
                         { "$name", Name },
                         { "$password", Password },

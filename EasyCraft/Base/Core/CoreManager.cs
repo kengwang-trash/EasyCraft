@@ -17,7 +17,7 @@ namespace EasyCraft.Base.Core
         {
             LoadPublicConfigs();
             foreach (string directory in
-                Directory.EnumerateDirectories(Directory.GetCurrentDirectory() + "/data/cores"))
+                Directory.EnumerateDirectories(AppDomain.CurrentDomain.BaseDirectory + "/data/cores"))
             {
                 try
                 {
@@ -44,11 +44,7 @@ namespace EasyCraft.Base.Core
                                     Branch = json["info"]["branch"]?.ToString() ?? "未知分支".Translate(),
                                     Name = json["info"]["name"]?.ToString() ?? "未知核心".Translate(),
                                 },
-                                Start = new CoreStartSimpleInfo()
-                                {
-                                    Program = json["startinfo"]["program"].ToString(),
-                                    Parameter = json["startinfo"]["param"].ToString()
-                                }
+                                Start = json["startinfo"].ToObject<Dictionary<string, CoreStartSimpleInfo>>()
                             };
                             string config = Path.GetFileName(directory);
                             if (json["configs"].Type != JTokenType.String)
@@ -74,9 +70,9 @@ namespace EasyCraft.Base.Core
 
         public static void LoadPublicConfigs()
         {
-            if (Directory.Exists(Directory.GetCurrentDirectory() + "/data/cores/configs"))
+            if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "/data/cores/configs"))
                 foreach (string file in Directory.EnumerateFiles(
-                    Directory.GetCurrentDirectory() + "/data/cores/configs",
+                    AppDomain.CurrentDomain.BaseDirectory + "/data/cores/configs",
                     "*.json"))
                 {
                     LoadPublicConfig(Path.GetFileNameWithoutExtension(file));
@@ -86,13 +82,14 @@ namespace EasyCraft.Base.Core
         public static void LoadPublicConfig(string name, string content = null)
         {
             if (content == null)
-                content = File.ReadAllText(Directory.GetCurrentDirectory() + "/data/cores/configs/" + name + ".json");
+                content = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + "/data/cores/configs/" + name +
+                                           ".json");
             var json = JArray.Parse(content);
             ConfigInfos[name] =
                 (json.ToObject<List<JToken>>() ?? new List<JToken>()).Select(
                     keyValue =>
                     {
-                        return new CoreConfigInfo()
+                        return new CoreConfigInfo
                         {
                             File = keyValue["file"]?.ToString(),
                             Display = keyValue["display"]?.ToString(),

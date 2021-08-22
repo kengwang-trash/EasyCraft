@@ -8,6 +8,7 @@ using EasyCraft.Base.Core;
 using EasyCraft.Base.Starter;
 using EasyCraft.Base.User;
 using EasyCraft.HttpServer.Api;
+using EasyCraft.PluginBase;
 using EasyCraft.Utils;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json;
@@ -25,7 +26,7 @@ namespace EasyCraft.Base.Server
 
         public static List<ServerConfigItem> ConfigItems = new();
 
-        [JsonIgnore] public string ServerDir => Directory.GetCurrentDirectory() + "/data/servers/" + Id + "/";
+        [JsonIgnore] public string ServerDir => AppDomain.CurrentDomain.BaseDirectory + "data/servers/" + Id + "/";
         [JsonIgnore] public CoreBase Core => CoreManager.Cores[StartInfo.Core];
 
         public ServerBase(SqliteDataReader reader)
@@ -97,10 +98,13 @@ namespace EasyCraft.Base.Server
         {
             foreach (var kvConfigInfo in CoreManager.Cores[StartInfo.Core].ConfigInfo)
             {
-                if (!File.Exists(ServerDir + "/" + kvConfigInfo.File) &&
-                    kvConfigInfo.Required)
-                    File.Create(ServerDir + "/" + kvConfigInfo.File);
-                WriteConfigFile(kvConfigInfo.File);
+                if (!File.Exists(ServerDir + "/" + kvConfigInfo.File))
+                    if (kvConfigInfo.Required)
+                        File.Create(ServerDir + "/" + kvConfigInfo.File);
+                    else
+                        continue;
+                else
+                    WriteConfigFile(kvConfigInfo.File);
             }
         }
 
@@ -129,7 +133,7 @@ namespace EasyCraft.Base.Server
                             if (knownItem.Visible)
                             {
                                 if (knownItem.Force) value = PhraseServerVar(knownItem.Value);
-                                ret.Add(new Dictionary<string, object>()
+                                ret.Add(new Dictionary<string, object>
                                 {
                                     { "key", knownItem.Key },
                                     { "display", knownItem.Display },
@@ -141,7 +145,7 @@ namespace EasyCraft.Base.Server
                         }
                         else
                         {
-                            ret.Add(new Dictionary<string, object>()
+                            ret.Add(new Dictionary<string, object>
                             {
                                 { "key", kvp[0] },
                                 { "display", kvp[0] },
@@ -163,6 +167,7 @@ namespace EasyCraft.Base.Server
 
         public string PhraseServerVar(string origin)
         {
+            if (origin == null) return null;
             if (origin == "{{REMOVE}}") return "";
             return origin
                 .Replace("{{SERVERID}}", Id.ToString())
@@ -170,8 +175,8 @@ namespace EasyCraft.Base.Server
                 .Replace("{{CORE}}", StartInfo.Core)
                 .Replace("{{PORT}}", BaseInfo.Port.ToString())
                 .Replace("{{PLAYER}}", BaseInfo.Player.ToString())
-                .Replace("{{ENV}}", Directory.GetCurrentDirectory() + "/environment/")
-                .Replace("{{COREDIR}}", Directory.GetCurrentDirectory() + "/data/cores/" + StartInfo.Core)
+                .Replace("{{ENV}}", AppDomain.CurrentDomain.BaseDirectory + "/environment/")
+                .Replace("{{COREDIR}}", Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "/data/cores/" + StartInfo.Core))
                 .Replace("{{WORLD}}", StartInfo.World);
         }
 
@@ -212,8 +217,18 @@ namespace EasyCraft.Base.Server
                 };
             }
 
+            if (!Core.Start.ContainsKey(Environment.OSVersion.Platform == PlatformID.Win32NT ? "windows" : "linux"))
+            {
+                StatusInfo.OnConsoleOutput("核心不支持当前系统版本.".Translate());
+                return new ServerStartException
+                {
+                    Code = (int)ApiReturnCode.SystemNotSupport,
+                    Message = "核心不支持当前系统版本.".Translate()
+                };
+            }
+
             // 在广播到插件 - 此处事件广播位点可以提出更改
-            var ret = (await PluginBase.PluginController.BroadcastEventAsync("OnServerWillStart", new object[] { Id }))
+            var ret = (await PluginController.BroadcastEventAsync("OnServerWillStart", new object[] { Id }))
                 .Where(t => !(bool)t.Value).ToArray();
             if (ret.Length != 0)
             {
@@ -234,7 +249,7 @@ namespace EasyCraft.Base.Server
                 {
                     StatusInfo.OnConsoleOutput("你的核心已更换, 正在加载核心文件".Translate());
                     Utils.Utils.DirectoryCopy(
-                        Directory.GetCurrentDirectory() + "/data/cores/" + StartInfo.Core + "/files",
+                        AppDomain.CurrentDomain.BaseDirectory + "/data/cores/" + StartInfo.Core + "/files",
                         ServerDir);
                     StartInfo.LastCore = StartInfo.Core;
                     StartInfo.SyncToDatabase();
@@ -270,12 +285,13 @@ namespace EasyCraft.Base.Server
             bool? status;
             try
             {
+                string system = Environment.OSVersion.Platform == PlatformID.Win32NT ? "windows" : "linux";
                 status = (bool?)StarterManager.Starters[StartInfo.Starter].Type.GetMethod("ServerStart")
                     ?.Invoke(null, new object[]
                     {
                         this,
-                        Path.GetFullPath(PhraseServerVar(Core.Start.Program)),
-                        PhraseServerVar(Core.Start.Parameter)
+                        Path.GetFullPath(PhraseServerVar(Core.Start[system].Program)),
+                        PhraseServerVar(Core.Start[system].Parameter)
                     });
             }
             catch
@@ -286,15 +302,15 @@ namespace EasyCraft.Base.Server
             if (status is not true)
             {
                 StatusInfo.OnConsoleOutput("开服器返回错误, 无法开服".Translate());
-                return new ServerStartException()
+                return new ServerStartException
                 {
                     Code = (int)ApiReturnCode.RequestFailed,
                     Message = "开服器返回错误, 无法开服".Translate()
                 };
             }
 
-            _ = PluginBase.PluginController.BroadcastEventAsync("OnServerStarted", new object[] { Id });
-            return new ServerStartException()
+            _ = PluginController.BroadcastEventAsync("OnServerStarted", new object[] { Id });
+            return new ServerStartException
             {
                 Code = 200,
                 Message = "成功开服".Translate()
@@ -307,7 +323,7 @@ namespace EasyCraft.Base.Server
             {
                 // 在广播到插件 - 此处事件广播位点可以提出更改
                 var plugins =
-                    (await PluginBase.PluginController.BroadcastEventAsync("OnServerWillStop", new object[] { Id }))
+                    (await PluginController.BroadcastEventAsync("OnServerWillStop", new object[] { Id }))
                     .Where(t => !(bool)t.Value).ToArray();
                 if (plugins.Length > 0)
                 {
@@ -321,7 +337,7 @@ namespace EasyCraft.Base.Server
                         this
                     });
                 if (status is true)
-                    _ = PluginBase.PluginController.BroadcastEventAsync("OnServerStopped", new object[] { Id });
+                    _ = PluginController.BroadcastEventAsync("OnServerStopped", new object[] { Id });
                 return status is true;
             }
             catch (Exception e)
@@ -358,7 +374,7 @@ namespace EasyCraft.Base.Server
         public List<ServerConfigItem> GetServerConfigItems(UserBase user)
         {
             // 首先是 EasyCraft 默认提供的
-            var ret = new List<ServerConfigItem>()
+            var ret = new List<ServerConfigItem>
             {
                 new()
                 {
@@ -432,14 +448,14 @@ namespace EasyCraft.Base.Server
         {
             // 然后询问插件们有没有要追加的
             // 来了, 又是一个贼长的 LINQ
-            var ret = (await PluginBase.PluginController.BroadcastEventAsync("OnGetServerPluginItems",
-                new object[] { Id, user.UserInfo.Id })).Select(t => new Dictionary<string, object>()
+            var ret = (await PluginController.BroadcastEventAsync("OnGetServerPluginItems",
+                new object[] { Id, user.UserInfo.Id })).Select(t => new Dictionary<string, object>
             {
                 {
-                    "Plugin", new Dictionary<string, string>()
+                    "Plugin", new Dictionary<string, string>
                     {
                         { "id", t.Key },
-                        { "name", PluginBase.PluginController.Plugins[t.Key].Info.Name }
+                        { "name", PluginController.Plugins[t.Key].Info.Name }
                     }
                 },
                 {
