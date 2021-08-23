@@ -699,7 +699,7 @@ namespace EasyCraft.HttpServer.Api
             var nowUser = ApiHandler.GetCurrentUser(context);
             if (!context.Request.HasFormContentType)
                 return ApiReturnBase.IncompleteParameters;
-            if (string.IsNullOrEmpty(context.Request.Form["id"]) || string.IsNullOrEmpty(context.Request.Form["cmd"]))
+            if (string.IsNullOrEmpty(context.Request.Form["id"]))
                 return ApiReturnBase.IncompleteParameters;
             if (!int.TryParse(context.Request.Form["id"], out var id) || !ServerManager.Servers.ContainsKey(id))
                 return new ApiReturnBase

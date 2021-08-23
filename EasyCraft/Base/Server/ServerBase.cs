@@ -99,10 +99,14 @@ namespace EasyCraft.Base.Server
             foreach (var kvConfigInfo in CoreManager.Cores[StartInfo.Core].ConfigInfo)
             {
                 if (!File.Exists(ServerDir + "/" + kvConfigInfo.File))
-                    if (kvConfigInfo.Required)
-                        File.Create(ServerDir + "/" + kvConfigInfo.File);
-                    else
-                        continue;
+                    switch (kvConfigInfo.Required)
+                    {
+                        case true:
+                            File.Create(ServerDir + "/" + kvConfigInfo.File);
+                            break;
+                        default:
+                            continue;
+                    }
                 else
                     WriteConfigFile(kvConfigInfo.File);
             }
@@ -176,7 +180,8 @@ namespace EasyCraft.Base.Server
                 .Replace("{{PORT}}", BaseInfo.Port.ToString())
                 .Replace("{{PLAYER}}", BaseInfo.Player.ToString())
                 .Replace("{{ENV}}", AppDomain.CurrentDomain.BaseDirectory + "/environment/")
-                .Replace("{{COREDIR}}", Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "/data/cores/" + StartInfo.Core))
+                .Replace("{{COREDIR}}",
+                    Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory + "/data/cores/" + StartInfo.Core))
                 .Replace("{{WORLD}}", StartInfo.World);
         }
 
@@ -291,7 +296,9 @@ namespace EasyCraft.Base.Server
                     {
                         this,
                         Path.GetFullPath(PhraseServerVar(Core.Start[system].Program)),
-                        PhraseServerVar(Core.Start[system].Parameter)
+                        PhraseServerVar(Core.Start[system].Parameter),
+                        EncodingConvert(Core.Encoding["input"]),
+                        EncodingConvert(Core.Encoding["output"])
                     });
             }
             catch
@@ -315,6 +322,15 @@ namespace EasyCraft.Base.Server
                 Code = 200,
                 Message = "成功开服".Translate()
             };
+        }
+
+        public Encoding EncodingConvert(string name)
+        {
+            if (name == "default")
+                return Encoding.Default;
+            if (name == "utf-8")
+                return new UTF8Encoding(false); //无BOM
+            return Encoding.GetEncoding(name);
         }
 
         public async Task<bool> Stop()

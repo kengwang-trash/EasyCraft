@@ -50,9 +50,8 @@ namespace EasyCraft.Base.Starter
                     };
                 }
                 catch (Exception e)
-                    {
-                        Log.Warning("开服器 {0} 加载失败: {1}".Translate(), Path.GetFileName(file), e.Message);
-                    continue;
+                {
+                    Log.Warning("开服器 {0} 加载失败: {1}".Translate(), Path.GetFileName(file), e.Message);
                 }
             }
         }

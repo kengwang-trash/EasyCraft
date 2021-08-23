@@ -44,7 +44,10 @@ namespace EasyCraft.Base.Core
                                     Branch = json["info"]["branch"]?.ToString() ?? "未知分支".Translate(),
                                     Name = json["info"]["name"]?.ToString() ?? "未知核心".Translate(),
                                 },
-                                Start = json["startinfo"].ToObject<Dictionary<string, CoreStartSimpleInfo>>()
+                                Start = json["startinfo"].ToObject<Dictionary<string, CoreStartSimpleInfo>>(),
+                                Encoding = json["console"]?.ToObject<Dictionary<string, string>>() ??
+                                           new Dictionary<string, string>()
+                                               { { "input", "default" }, { "output", "default" } }
                             };
                             string config = Path.GetFileName(directory);
                             if (json["configs"].Type != JTokenType.String)

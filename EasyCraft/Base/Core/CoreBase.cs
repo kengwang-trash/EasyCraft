@@ -8,6 +8,7 @@ namespace EasyCraft.Base.Core
         [JsonProperty("id")] public string Id;
         [JsonProperty("info")] public CoreInfoBase Info;
         [JsonIgnore] public Dictionary<string, CoreStartSimpleInfo> Start;
+        [JsonIgnore] public Dictionary<string, string> Encoding;
         [JsonIgnore] public string CoreConfig;
         public List<CoreConfigInfo> ConfigInfo => CoreManager.ConfigInfos[CoreConfig];
     }

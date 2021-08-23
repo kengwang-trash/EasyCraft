@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using EasyCraft.Base.Core;
 using EasyCraft.Base.Server;
 using EasyCraft.Base.Starter;
@@ -22,7 +23,11 @@ namespace EasyCraft
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
+            //Pre-Load
             Console.CancelKeyPress += ExitEasyCraft;
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            
+            
             Console.WriteLine(@"
  _____                 ____            __ _
 | ____|__ _ ___ _   _ / ___|_ __ __ _ / _| |_
